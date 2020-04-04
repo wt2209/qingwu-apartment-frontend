@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'umi';
 import React from 'react';
 import { connect } from 'dva';
-import SelectLang from '@/components/SelectLang';
 import { ConnectProps, ConnectState } from '@/models/connect';
 import logo from '../assets/logo.svg';
 import styles from './UserLayout.less';
@@ -40,23 +39,20 @@ const UserLayout: React.FC<UserLayoutProps> = props => {
         <meta name="description" content={title} />
       </Helmet>
 
-      <div className={styles.container}>
-        <div className={styles.lang}>
-          <SelectLang />
-        </div>
+      <div className={styles.container} style={{ paddingTop: 60 }}>
         <div className={styles.content}>
           <div className={styles.top}>
             <div className={styles.header}>
               <Link to="/">
                 <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>Ant Design</span>
+                <span className={styles.title}>公寓管理系统</span>
               </Link>
             </div>
-            <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+            <div className={styles.desc}>适用于三个公寓的通用管理系统</div>
           </div>
           {children}
         </div>
-        <DefaultFooter />
+        <DefaultFooter links={[]} copyright="2020 wt2209" />
       </div>
     </>
   );
