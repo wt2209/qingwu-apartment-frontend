@@ -5,6 +5,7 @@ import { Redirect } from 'umi';
 import { stringify } from 'querystring';
 import { ConnectState, ConnectProps } from '@/models/connect';
 import { CurrentUser } from '@/models/user';
+import login from '@/pages/user/login';
 
 interface SecurityLayoutProps extends ConnectProps {
   loading?: boolean;
@@ -20,13 +21,24 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
     isReady: false,
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     this.setState({
       isReady: true,
     });
     const { dispatch } = this.props;
     if (dispatch) {
-      dispatch({
+      const token = localStorage.getItem('access_token')
+      if (token) {
+        await dispatch({
+          type: 'login/changeLoginStatus',
+          payload: {
+            status: 'ok',
+            accessToken: token
+          }
+        })
+      }
+
+      await dispatch({
         type: 'user/fetchCurrent',
       });
     }
@@ -37,7 +49,7 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
     const { children, loading, currentUser } = this.props;
     // You can replace it to your authentication rule (such as check token exists)
     // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）
-    const isLogin = currentUser && currentUser.userid;
+    const isLogin = currentUser && currentUser.id;
     const queryString = stringify({
       redirect: window.location.href,
     });
@@ -52,7 +64,8 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
   }
 }
 
-export default connect(({ user, loading }: ConnectState) => ({
-  currentUser: user.currentUser,
-  loading: loading.models.user,
+export default connect((states: ConnectState) => ({
+  currentUser: states.user.currentUser,
+  loading: states.loading.models.user,
+  accessToken: states.login.accessToken,
 }))(SecurityLayout);

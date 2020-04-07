@@ -9,6 +9,7 @@ import { getPageQuery } from '@/utils/utils';
 
 export interface StateType {
   status?: 'ok' | 'error';
+  accessToken: string;
   type?: string;
   currentAuthority?: 'user' | 'guest' | 'admin';
 }
@@ -30,6 +31,7 @@ const Model: LoginModelType = {
 
   state: {
     status: undefined,
+    accessToken: '',
   },
 
   effects: {
@@ -40,7 +42,8 @@ const Model: LoginModelType = {
         payload: response,
       });
       // Login successfully
-      if (response.status === 'ok') {
+      if (response.access_token) {
+        localStorage.setItem('access_token', response.access_token);
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params as { redirect: string };
@@ -79,7 +82,8 @@ const Model: LoginModelType = {
       setAuthority(payload.currentAuthority);
       return {
         ...state,
-        status: payload.status,
+        status: payload.access_token ? 'ok' : 'error',
+        accessToken: payload.access_token,
         type: payload.type,
       };
     },

@@ -4,8 +4,11 @@ import { Reducer } from 'redux';
 import { queryCurrent, query as queryUsers } from '@/services/user';
 
 export interface CurrentUser {
-  avatar?: string;
+  id?: number;
+  username?: string;
   name?: string;
+  areas?: string;
+  avatar?: string;
   title?: string;
   group?: string;
   signature?: string;
@@ -13,7 +16,6 @@ export interface CurrentUser {
     key: string;
     label: string;
   }[];
-  userid?: string;
   unreadCount?: number;
 }
 

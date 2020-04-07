@@ -51,7 +51,26 @@ const errorHandler = (error: { response: Response }): Response => {
 const request = extend({
   prefix: 'http://140.143.233.128',
   errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
+  credentials: 'omit', // 默认请求是否带上cookie
+  headers: {
+    Accept: 'application/json',
+  },
+});
+
+request.interceptors.request.use((url, options) => {
+  const { headers, ...rest } = options
+  return (
+    {
+      url,
+      options: {
+        ...rest,
+        headers: {
+          ...headers,
+          Authorization: `Bearer ${localStorage.getItem('access_token')}` || ''
+        }
+      },
+    }
+  );
 });
 
 export default request;
