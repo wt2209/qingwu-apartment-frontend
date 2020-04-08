@@ -8,7 +8,7 @@ export async function queryRoom(params?: RoomListParams) {
 }
 
 export async function removeRoom(params: { key: number[] }) {
-  return request('/api/rule', {
+  return request('/api/rooms', {
     method: 'POST',
     data: {
       ...params,
@@ -18,7 +18,7 @@ export async function removeRoom(params: { key: number[] }) {
 }
 
 export async function addRoom(params: RoomListParams) {
-  return request('/api/room', {
+  return request('/api/rooms', {
     method: 'POST',
     data: {
       ...params,
@@ -28,7 +28,7 @@ export async function addRoom(params: RoomListParams) {
 }
 
 export async function updateRoom(params: RoomListParams) {
-  return request('/api/room', {
+  return request('/api/rooms', {
     method: 'POST',
     data: {
       ...params,

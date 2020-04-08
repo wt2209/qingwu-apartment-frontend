@@ -2,8 +2,10 @@
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
+import router from 'umi/router';
 import { extend } from 'umi-request';
 import { notification } from 'antd';
+import { stringify } from 'querystring';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -38,6 +40,14 @@ const errorHandler = (error: { response: Response }): Response => {
       message: `请求错误 ${status}: ${url}`,
       description: errorText,
     });
+
+    if (response.status === 401) {
+      const queryString = stringify({
+        redirect: window.location.href,
+      });
+      router.push(`/user/login?${queryString}`);
+    }
+
   } else if (!response) {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',
@@ -51,8 +61,8 @@ const errorHandler = (error: { response: Response }): Response => {
  * 配置request请求时的默认参数
  */
 const request = extend({
-  // prefix: 'http://140.143.233.128',
-  prefix: 'http://qingwu-apartment.wsl',
+  prefix: 'http://140.143.233.128',
+  // prefix: 'http://qingwu-apartment.wsl',
   errorHandler, // 默认错误处理
   credentials: 'omit', // 默认请求是否带上cookie
   headers: {

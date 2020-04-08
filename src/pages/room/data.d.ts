@@ -6,6 +6,7 @@ export interface RoomListItem {
   unit: string;
   building: string;
   area: AreaListItem;
+  category: any;
   rent: number;
   number: number;
   updatedAt?: Date;
