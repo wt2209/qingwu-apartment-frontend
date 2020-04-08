@@ -5,8 +5,8 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { RoomListItem } from './data.d';
-import { queryRoom, updateRoom, addRoom, removeRoom } from './service';
+import { AreaListItem } from './data.d';
+import { queryArea, updateArea, addArea, removeArea } from './service';
 
 /**
  * 添加节点
@@ -15,8 +15,8 @@ import { queryRoom, updateRoom, addRoom, removeRoom } from './service';
 const handleAdd = async (fields: FormValueType) => {
   const hide = message.loading('正在添加');
   try {
-    await addRoom({
-      title: fields.title,
+    await addArea({
+      description: fields.description,
     });
     hide();
     message.success('添加成功');
@@ -33,20 +33,20 @@ const handleAdd = async (fields: FormValueType) => {
  * @param fields
  */
 const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('正在修改');
+  const hide = message.loading('正在配置');
   try {
-    await updateRoom({
+    await updateArea({
       title: fields.title,
-      building: fields.building,
-      unit: fields.unit,
+      description: fields.description,
+      id: fields.id,
     });
     hide();
 
-    message.success('修改成功');
+    message.success('配置成功');
     return true;
   } catch (error) {
     hide();
-    message.error('修改失败请重试！');
+    message.error('配置失败请重试！');
     return false;
   }
 };
@@ -55,12 +55,12 @@ const handleUpdate = async (fields: FormValueType) => {
  *  删除节点
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: RoomListItem[]) => {
+const handleRemove = async (selectedRows: AreaListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    await removeRoom({
-      key: selectedRows.map(row => row.id),
+    await removeArea({
+      key: selectedRows.map((row) => row.id),
     });
     hide();
     message.success('删除成功，即将刷新');
@@ -72,44 +72,25 @@ const handleRemove = async (selectedRows: RoomListItem[]) => {
   }
 };
 
-const RoomList: React.FC<{}> = () => {
+const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-  const [formValues, setFormValues] = useState({});
+  const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef<ActionType>();
-  const columns: ProColumns<RoomListItem>[] = [
+  const columns: ProColumns<AreaListItem>[] = [
     {
-      title: '房间号',
-      dataIndex: 'title',
-      rules: [
-        {
-          required: true,
-          message: '房间号必须填写',
-        },
-      ],
+      title: '规则名称',
+      dataIndex: 'name',
     },
     {
-      title: '楼号',
-      dataIndex: 'building',
-      sorter: true,
-      rules: [
-        {
-          required: true,
-          message: '楼号必须填写',
-        },
-      ],
+      title: '描述',
+      dataIndex: 'desc',
     },
     {
-      title: '单元',
-      dataIndex: 'unit',
+      title: '服务调用次数',
+      dataIndex: 'callNo',
       sorter: true,
-      rules: [
-        {
-          required: true,
-          message: '单元必须填写',
-        },
-      ],
-
+      renderText: (val: string) => `${val} 万`,
     },
     {
       title: '状态',
@@ -136,10 +117,10 @@ const RoomList: React.FC<{}> = () => {
           <a
             onClick={() => {
               handleUpdateModalVisible(true);
-              setFormValues(record);
+              setStepFormValues(record);
             }}
           >
-            修改
+            配置
           </a>
           <Divider type="vertical" />
           <a href="">订阅警报</a>
@@ -150,10 +131,10 @@ const RoomList: React.FC<{}> = () => {
 
   return (
     <PageHeaderWrapper>
-      <ProTable<RoomListItem>
-        headerTitle="房间明细"
+      <ProTable<AreaListItem>
+        headerTitle="查询表格"
         actionRef={actionRef}
-        rowKey="id"
+        rowKey="key"
         toolBarRender={(action, { selectedRows }) => [
           <Button icon={<PlusOutlined />} type="primary" onClick={() => handleModalVisible(true)}>
             新建
@@ -162,7 +143,7 @@ const RoomList: React.FC<{}> = () => {
             <Dropdown
               overlay={
                 <Menu
-                  onClick={async e => {
+                  onClick={async (e) => {
                     if (e.key === 'remove') {
                       await handleRemove(selectedRows);
                       action.reload();
@@ -181,20 +162,12 @@ const RoomList: React.FC<{}> = () => {
             </Dropdown>
           ),
         ]}
-        tableAlertRender={({ selectedRowKeys, selectedRows }) => (
-          <div>
-            已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-            <span>
-              服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.id, 0)} 万
-            </span>
-          </div>
-        )}
-        request={params => queryRoom(params)}
+        request={(params) => queryArea(params)}
         columns={columns}
         rowSelection={{}}
       />
       <CreateForm
-        onSubmit={async value => {
+        onSubmit={async (value) => {
           const success = await handleAdd(value);
           if (success) {
             handleModalVisible(false);
@@ -206,13 +179,13 @@ const RoomList: React.FC<{}> = () => {
         onCancel={() => handleModalVisible(false)}
         modalVisible={createModalVisible}
       />
-      {formValues && Object.keys(formValues).length ? (
+      {stepFormValues && Object.keys(stepFormValues).length ? (
         <UpdateForm
-          onSubmit={async value => {
+          onSubmit={async (value) => {
             const success = await handleUpdate(value);
             if (success) {
               handleModalVisible(false);
-              setFormValues({});
+              setStepFormValues({});
               if (actionRef.current) {
                 actionRef.current.reload();
               }
@@ -220,14 +193,14 @@ const RoomList: React.FC<{}> = () => {
           }}
           onCancel={() => {
             handleUpdateModalVisible(false);
-            setFormValues({});
+            setStepFormValues({});
           }}
           updateModalVisible={updateModalVisible}
-          values={formValues}
+          values={stepFormValues}
         />
       ) : null}
     </PageHeaderWrapper>
   );
 };
 
-export default RoomList;
+export default TableList;

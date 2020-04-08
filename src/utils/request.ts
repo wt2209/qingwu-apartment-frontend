@@ -11,8 +11,10 @@ const codeMessage = {
   202: '一个请求已经进入后台排队（异步任务）。',
   204: '删除数据成功。',
   400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
-  401: '用户没有权限（令牌、用户名、密码错误）。',
-  403: '用户得到授权，但是访问是被禁止的。',
+  // 401: '用户没有权限（令牌、用户名、密码错误）。',
+  401: '请重新登录',
+  // 403: '用户得到授权，但是访问是被禁止的。',
+  403: '没有权限',
   404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
   406: '请求的格式不可得。',
   410: '请求的资源被永久删除，且不会再得到的。',
@@ -49,7 +51,8 @@ const errorHandler = (error: { response: Response }): Response => {
  * 配置request请求时的默认参数
  */
 const request = extend({
-  prefix: 'http://140.143.233.128',
+  // prefix: 'http://140.143.233.128',
+  prefix: 'http://qingwu-apartment.wsl',
   errorHandler, // 默认错误处理
   credentials: 'omit', // 默认请求是否带上cookie
   headers: {
@@ -66,7 +69,7 @@ request.interceptors.request.use((url, options) => {
         ...rest,
         headers: {
           ...headers,
-          Authorization: `Bearer ${localStorage.getItem('access_token')}` || ''
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         }
       },
     }

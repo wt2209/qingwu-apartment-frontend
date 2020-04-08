@@ -142,6 +142,12 @@ export default {
               component: './room',
             },
             {
+              name: '查询表格',
+              icon: 'smile',
+              path: '/areas',
+              component: './area',
+            },
+            {
               component: './404',
             },
           ],

@@ -5,7 +5,6 @@ import { Redirect } from 'umi';
 import { stringify } from 'querystring';
 import { ConnectState, ConnectProps } from '@/models/connect';
 import { CurrentUser } from '@/models/user';
-import login from '@/pages/user/login';
 
 interface SecurityLayoutProps extends ConnectProps {
   loading?: boolean;
@@ -64,8 +63,8 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
   }
 }
 
-export default connect((states: ConnectState) => ({
-  currentUser: states.user.currentUser,
-  loading: states.loading.models.user,
-  accessToken: states.login.accessToken,
+export default connect(({ user, loading, login }: ConnectState) => ({
+  currentUser: user.currentUser,
+  loading: loading.models.user,
+  accessToken: login.accessToken,
 }))(SecurityLayout);

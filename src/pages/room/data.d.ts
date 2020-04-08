@@ -1,8 +1,11 @@
+import { AreaListItem } from "../area/data";
+
 export interface RoomListItem {
   id: number;
   title: string;
   unit: string;
   building: string;
+  area: AreaListItem;
   rent: number;
   number: number;
   updatedAt?: Date;
