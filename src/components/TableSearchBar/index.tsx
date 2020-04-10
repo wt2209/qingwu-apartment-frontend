@@ -9,7 +9,7 @@ interface TableSearchBarProps {
   onExport: (values: any) => void,
 }
 const TableSearchBar: React.FC<TableSearchBarProps> = (props: TableSearchBarProps) => {
-  return (<Card style={{ marginBottom: 26 }} >
+  return (<Card style={{ marginBottom: 26 }} bodyStyle={{ paddingBottom: 0 }} >
     <Form
       layout="horizontal"
       onFinish={props.onSearch}
@@ -20,16 +20,16 @@ const TableSearchBar: React.FC<TableSearchBarProps> = (props: TableSearchBarProp
           switch (item.type) {
             case 'input':
               return (
-                <Col md={5} sm={24} key={key}>
-                  <Form.Item name={key} label={item.label} style={{ marginBottom: 0 }}>
+                <Col lg={6} md={8} sm={24} key={key} style={{ marginBottom: 24 }}>
+                  <Form.Item labelCol={{ span: 6 }} name={key} label={item.label} style={{ marginBottom: 0 }}>
                     <Input />
                   </Form.Item>
                 </Col>
               )
             case 'select':
               return (
-                <Col md={5} sm={24} key={key}>
-                  <Form.Item name={key} label={item.label} style={{ marginBottom: 0 }}>
+                <Col lg={6} md={8} sm={24} key={key} style={{ marginBottom: 24 }}>
+                  <Form.Item labelCol={{ span: 6 }} name={key} label={item.label} style={{ marginBottom: 0 }}>
                     <Select placeholder="请选择">
                       {item.options && Object.keys(item.options).map((k: string) => {
                         return <Select.Option value={k} key={`searchSelect-${k}`}>{item.options && item.options[k]}</Select.Option>
@@ -43,7 +43,7 @@ const TableSearchBar: React.FC<TableSearchBarProps> = (props: TableSearchBarProp
           }
 
         })}
-        <Col md={4} sm={24} style={{ textAlign: 'right', paddingRight: 24 }}>
+        <Col lg={6} md={8} sm={24} style={{ paddingLeft: 24, textAlign: 'right', marginBottom: 24 }}>
           <span>
             <Form.Item style={{ marginBottom: 0 }}>
               <Button type="primary" htmlType="submit">

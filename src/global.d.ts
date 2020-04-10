@@ -7,3 +7,13 @@ export interface SearchItems {
     }
   }
 }
+
+
+export interface ResponseListData {
+  data: any
+  meta: {
+    total: number;
+    current_page: number;
+    per_page: number;
+  }
+}

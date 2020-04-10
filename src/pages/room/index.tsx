@@ -1,14 +1,16 @@
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message, Form, Row, Col, Input, Select, Card } from 'antd';
+import Icon, { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Divider, Dropdown, Menu, message, Table, Card, Alert } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
+import moment from 'moment';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { RoomListItem, RoomListParams } from './data.d';
 import { queryRoom, updateRoom, addRoom, removeRoom } from './service';
 import { SearchItems } from '../../global.d';
 import TableSearchBar from '@/components/TableSearchBar';
+import ListTable from '@/components/ListTable';
 /**
  * 添加节点
  * @param fields
@@ -98,10 +100,6 @@ const RoomList: React.FC<{}> = () => {
       label: '楼号',
       type: 'input',
     },
-    unit: {
-      label: '单元',
-      type: 'input',
-    },
     status: {
       label: '状态',
       type: 'select',
@@ -117,7 +115,7 @@ const RoomList: React.FC<{}> = () => {
     setParams({
       ...params,
       page,
-      pageSize: pageSize
+      pageSize
     })
   }
 
@@ -156,7 +154,7 @@ const RoomList: React.FC<{}> = () => {
   const columns: ProColumns<RoomListItem>[] = [
     {
       title: '所属区域',
-      renderText: (_, row) => (row.area && row.area.title) ? row.area.title : ''
+      render: (_, row) => (row.area && row.area.title) ? row.area.title : ''
     },
     {
       title: '房间号',
@@ -170,7 +168,7 @@ const RoomList: React.FC<{}> = () => {
     },
     {
       title: '类型',
-      renderText: (_, row) => (row.category && row.category.title) ? row.category.title : ''
+      render: (_, row) => (row.category && row.category.title) ? row.category.title : ''
     },
     {
       title: '楼号',
@@ -187,12 +185,7 @@ const RoomList: React.FC<{}> = () => {
       title: '单元',
       dataIndex: 'unit',
       sorter: true,
-      rules: [
-        {
-          required: true,
-          message: '单元必须填写',
-        },
-      ],
+      hideInSearch: true
     },
     {
       title: '状态',
@@ -206,14 +199,10 @@ const RoomList: React.FC<{}> = () => {
     },
     {
       title: '上次调度时间',
-      dataIndex: 'updatedAt',
-      sorter: true,
-      valueType: 'dateTime',
+      render: (_, row) => row.updatedAt && moment(row.updatedAt).format('YYYY-MM-DD')
     },
     {
       title: '操作',
-      dataIndex: 'option',
-      valueType: 'option',
       render: (_, record) => (
         <>
           <a
@@ -233,8 +222,62 @@ const RoomList: React.FC<{}> = () => {
 
   return (
     <PageHeaderWrapper>
+
+      <ListTable<RoomListItem>
+        request={queryRoom}
+        search={searchItems}
+        initialParams={params}
+        columns={columns}
+        tableAlertRender={({ selectedRowKeys, selectedRows }) => (
+          <div>
+            已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
+            <span>
+              服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.rent, 0)} 万
+            </span>
+          </div>
+        )}
+      />
       <TableSearchBar items={searchItems} onSearch={handleSearch} onExport={handleExport} />
 
+      <Card bodyStyle={{ padding: 0 }} >
+        <div className="ant-pro-table-toolbar">
+          <div className="ant-pro-table-toolbar-title">
+            房间明细
+          </div>
+          <div className="ant-pro-table-toolbar-option" >
+            <div className="ant-pro-table-toolbar-item">
+              <Button type="primary" icon={<PlusOutlined />}>
+                新建
+              </Button>
+            </div>
+          </div>
+
+        </div>
+        <div className="ant-pro-table-alert">
+          <Alert message={
+            <div>
+              已选择 <a style={{ fontWeight: 600 }}>0</a> 项&nbsp;&nbsp;
+            <span>
+                服务调用次数总计 1 万
+            </span>
+            </div>
+          } type="info" showIcon />
+        </div>
+        <Table
+          rowKey="id"
+          loading={loading}
+          rowSelection={{
+            onChange: (selectedRowKeys, selectedRows) => {
+              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            },
+          }}
+          columns={columns}
+          dataSource={rooms}
+          size="middle"
+          pagination={pagination}
+
+        />
+      </Card>
       <ProTable<RoomListItem>
         headerTitle="房间明细"
         actionRef={actionRef}
@@ -267,7 +310,6 @@ const RoomList: React.FC<{}> = () => {
             </Dropdown>
           ),
         ]}
-        search={false}
         dataSource={rooms}
         pagination={pagination}
         columns={columns}
