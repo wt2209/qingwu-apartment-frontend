@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { SearchItems } from '@/global.d';
 import { Card, Row, Col, Input, Select, Button, Form } from 'antd';
+import { FormInstance } from 'antd/lib/form';
 
 
 interface TableSearchBarProps {
   items: SearchItems,
   onSearch: (values: { [key: string]: string }) => void,
   onExport: (values: any) => void,
+  onReset: () => void,
 }
 const TableSearchBar: React.FC<TableSearchBarProps> = (props: TableSearchBarProps) => {
+  const formRef = useRef<FormInstance>(null);
+
+  const handleReset = () => {
+    if (formRef && formRef.current) {
+      formRef.current.resetFields()
+    }
+    props.onReset()
+  }
   return (<Card style={{ marginBottom: 26 }} bodyStyle={{ paddingBottom: 0 }} >
     <Form
+      ref={formRef}
       layout="horizontal"
       onFinish={props.onSearch}
     >
@@ -48,6 +59,9 @@ const TableSearchBar: React.FC<TableSearchBarProps> = (props: TableSearchBarProp
             <Form.Item style={{ marginBottom: 0 }}>
               <Button type="primary" htmlType="submit">
                 查询
+            </Button>
+              <Button type="default" style={{ marginLeft: 8 }} onClick={handleReset}>
+                重置
             </Button>
               <Button type="default" style={{ marginLeft: 8 }} onClick={props.onExport}>
                 导出

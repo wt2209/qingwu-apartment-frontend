@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Table from 'antd/lib/table';
 import { SearchItems, ResponseListData } from '@/global.d';
 import TableSearchBar from '../TableSearchBar';
-import { Card, Button, Alert } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Card, Alert } from 'antd';
 import { RoomListParams } from '@/pages/room/data';
 
 interface ListTableProps<T> {
@@ -12,7 +11,9 @@ interface ListTableProps<T> {
   search: SearchItems;
   request: (params: { page: number, pageSize: number }) => Promise<ResponseListData>;
   initialParams: any;
+  actionRef: any;
   tableAlertRender?: ((selectedRowKeys: (string | number)[], selectedRows: T[]) => React.ReactNode) | false;
+  toolBarRender?: (action: { reload: () => void; }, selectedRowKeys?: (string | number)[], selectedRows?: T[]) => React.ReactNode[];
 }
 
 
@@ -22,6 +23,15 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
   const [params, setParams] = useState(props.initialParams);
+  const [rows, setRows] = useState({
+    selectedRowKeys: [],
+    selectedRows: []
+  })
+
+  const initialAlertMessage = props.tableAlertRender
+    ? props.tableAlertRender([], [])
+    : (<div>已选择 <a style={{ fontWeight: 600 }}>0</a> 项</div>)
+  const [alertMessage, setAlertMessage] = useState(initialAlertMessage);
 
   const fetchData = async () => {
     const query = props.request;
@@ -29,17 +39,21 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
     const { data, meta } = await query(params)
     setList(data)
     setLoading(false)
-    setTotal(meta.total)
+    if (meta && meta.total) {
+      setTotal(meta.total)
+    }
   }
 
   const rowKey = props.rowKey || 'id';
+  const { actionRef } = props;
 
   const rowSelection = {
-    onChange: props.tableAlertRender ? props.tableAlertRender : (selectedRowKeys, selectedRows) => (
-      <div>
-        已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-      </div>
-    )
+    onChange: (selectedRowKeys: any, selectedRows: any) => {
+      setRows({ selectedRowKeys, selectedRows })
+      if (props.tableAlertRender) {
+        setAlertMessage(props.tableAlertRender(selectedRowKeys, selectedRows))
+      }
+    }
   }
 
   const handlePageChange = (page: number, pageSize: number | undefined = 20) => {
@@ -66,6 +80,10 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
     })
   }
 
+  const handleReset = () => {
+    setParams(props.initialParams)
+  }
+
   useEffect(() => {
     fetchData()
   }, [params])
@@ -74,7 +92,7 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
 
   return (
     <>
-      <TableSearchBar items={props.search} onSearch={handleSearch} onExport={handleExport} />
+      <TableSearchBar items={props.search} onSearch={handleSearch} onExport={handleExport} onReset={handleReset} />
       <Card bodyStyle={{ padding: 0 }} >
         <div className="ant-pro-table-toolbar">
           <div className="ant-pro-table-toolbar-title">
@@ -82,35 +100,25 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
           </div>
           <div className="ant-pro-table-toolbar-option" >
             <div className="ant-pro-table-toolbar-item">
-              <Button type="primary" icon={<PlusOutlined />}>
-                新建
-              </Button>
+              {props.toolBarRender && props.toolBarRender(actionRef.current, rows.selectedRowKeys, rows.selectedRows).map((item, index) => {
+                // eslint-disable-next-line react/no-array-index-key
+                return <span key={`tool-bar-action-${index}`} style={{ marginLeft: 8 }}>{item}</span>
+              })
+              }
             </div>
           </div>
         </div>
         <div className="ant-pro-table-alert">
-          <Alert message={
-            <div>
-              已选择 <a style={{ fontWeight: 600 }}>0</a> 项&nbsp;&nbsp;
-            <span>
-                服务调用次数总计 1 万
-            </span>
-            </div>
-          } type="info" showIcon />
+          <Alert message={alertMessage} type="info" showIcon />
         </div>
         <Table
           rowKey={rowKey}
           loading={loading}
-          rowSelection={{
-            onChange: (selectedRowKeys, selectedRows) => {
-              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            },
-          }}
+          rowSelection={rowSelection}
           columns={props.columns}
           dataSource={list}
           size="middle"
           pagination={pagination}
-
         />
       </Card>
     </>

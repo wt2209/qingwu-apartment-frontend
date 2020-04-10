@@ -1,16 +1,16 @@
-import Icon, { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message, Table, Card, Alert } from 'antd';
-import React, { useState, useRef, useEffect } from 'react';
+import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Divider, Dropdown, Menu, message } from 'antd';
+import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
+import { ProColumns, ActionType } from '@ant-design/pro-table';
 import moment from 'moment';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { RoomListItem, RoomListParams } from './data.d';
+import { RoomListItem } from './data.d';
 import { queryRoom, updateRoom, addRoom, removeRoom } from './service';
 import { SearchItems } from '../../global.d';
-import TableSearchBar from '@/components/TableSearchBar';
 import ListTable from '@/components/ListTable';
+
 /**
  * 添加节点
  * @param fields
@@ -79,17 +79,16 @@ const RoomList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [formValues, setFormValues] = useState({});
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(false)
-  const [total, setTotal] = useState(0)
-  const [params, setParams] = useState({
+  const actionRef = useRef<ActionType>();
+
+  const initialParams = {
     title: '',
     building: '',
     unit: '',
     status: 'all',
     page: 1,
     pageSize: 20,
-  });
+  };
 
   const searchItems: SearchItems = {
     title: {
@@ -110,46 +109,6 @@ const RoomList: React.FC<{}> = () => {
       }
     }
   }
-
-  const handlePageChange = (page: number, pageSize: number | undefined = 20) => {
-    setParams({
-      ...params,
-      page,
-      pageSize
-    })
-  }
-
-  const handleSearch = (values: RoomListParams) => {
-    setParams({
-      ...params,
-      ...values,
-      page: 1, // 点击查询后永远显示第一页
-    })
-  }
-
-  const handleExport = () => { }
-
-  const fetchData = async () => {
-    setLoading(true)
-    const { data, meta } = await queryRoom(params)
-    setRooms(data)
-    setLoading(false)
-    setTotal(meta.total)
-  }
-
-  const pagination = {
-    total,
-    current: params.page,
-    pageSize: params.pageSize,
-    onChange: handlePageChange,
-    onShowSizeChange: handlePageChange,
-  }
-
-  const actionRef = useRef<ActionType>();
-
-  useEffect(() => {
-    fetchData()
-  }, [params])
 
   const columns: ProColumns<RoomListItem>[] = [
     {
@@ -222,13 +181,13 @@ const RoomList: React.FC<{}> = () => {
 
   return (
     <PageHeaderWrapper>
-
       <ListTable<RoomListItem>
         request={queryRoom}
+        actionRef={actionRef}
         search={searchItems}
-        initialParams={params}
+        initialParams={initialParams}
         columns={columns}
-        tableAlertRender={({ selectedRowKeys, selectedRows }) => (
+        tableAlertRender={(selectedRowKeys, selectedRows) => (
           <div>
             已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
             <span>
@@ -236,54 +195,7 @@ const RoomList: React.FC<{}> = () => {
             </span>
           </div>
         )}
-      />
-      <TableSearchBar items={searchItems} onSearch={handleSearch} onExport={handleExport} />
-
-      <Card bodyStyle={{ padding: 0 }} >
-        <div className="ant-pro-table-toolbar">
-          <div className="ant-pro-table-toolbar-title">
-            房间明细
-          </div>
-          <div className="ant-pro-table-toolbar-option" >
-            <div className="ant-pro-table-toolbar-item">
-              <Button type="primary" icon={<PlusOutlined />}>
-                新建
-              </Button>
-            </div>
-          </div>
-
-        </div>
-        <div className="ant-pro-table-alert">
-          <Alert message={
-            <div>
-              已选择 <a style={{ fontWeight: 600 }}>0</a> 项&nbsp;&nbsp;
-            <span>
-                服务调用次数总计 1 万
-            </span>
-            </div>
-          } type="info" showIcon />
-        </div>
-        <Table
-          rowKey="id"
-          loading={loading}
-          rowSelection={{
-            onChange: (selectedRowKeys, selectedRows) => {
-              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            },
-          }}
-          columns={columns}
-          dataSource={rooms}
-          size="middle"
-          pagination={pagination}
-
-        />
-      </Card>
-      <ProTable<RoomListItem>
-        headerTitle="房间明细"
-        actionRef={actionRef}
-        loading={loading}
-        rowKey="id"
-        toolBarRender={(action, { selectedRows }) => [
+        toolBarRender={(action, selectedRowKeys, selectedRows) => [
           <Button icon={<PlusOutlined />} type="primary" onClick={() => handleModalVisible(true)}>
             新建
           </Button>,
@@ -294,7 +206,9 @@ const RoomList: React.FC<{}> = () => {
                   onClick={async e => {
                     if (e.key === 'remove') {
                       await handleRemove(selectedRows);
-                      action.reload();
+                      if (action) {
+                        action.reload();
+                      }
                     }
                   }}
                   selectedKeys={[]}
@@ -310,10 +224,6 @@ const RoomList: React.FC<{}> = () => {
             </Dropdown>
           ),
         ]}
-        dataSource={rooms}
-        pagination={pagination}
-        columns={columns}
-        rowSelection={{}}
       />
       <CreateForm
         onSubmit={async value => {
