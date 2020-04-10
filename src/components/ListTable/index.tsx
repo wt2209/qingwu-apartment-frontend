@@ -7,10 +7,12 @@ import { RoomListParams } from '@/pages/room/data';
 
 interface ListTableProps<T> {
   rowKey?: string;
+  size?: 'middle' | 'large' | 'small';
+  search?: SearchItems;
+  title: string;
   columns: any;
-  search: SearchItems;
   request: (params: { page: number, pageSize: number }) => Promise<ResponseListData>;
-  initialParams: any;
+  initialParams: { page: number, pageSize: number };
   actionRef: any;
   tableAlertRender?: ((selectedRowKeys: (string | number)[], selectedRows: T[]) => React.ReactNode) | false;
   toolBarRender?: (action: { reload: () => void; }, selectedRowKeys?: (string | number)[], selectedRows?: T[]) => React.ReactNode[];
@@ -18,7 +20,6 @@ interface ListTableProps<T> {
 
 
 const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
-
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
@@ -30,7 +31,11 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
 
   const initialAlertMessage = props.tableAlertRender
     ? props.tableAlertRender([], [])
-    : (<div>已选择 <a style={{ fontWeight: 600 }}>0</a> 项</div>)
+    : (
+      <div>
+        已选择 <a style={{ fontWeight: 600 }}> 0 </a> 项&nbsp;&nbsp;
+      </div>
+    )
   const [alertMessage, setAlertMessage] = useState(initialAlertMessage);
 
   const fetchData = async () => {
@@ -52,6 +57,12 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
       setRows({ selectedRowKeys, selectedRows })
       if (props.tableAlertRender) {
         setAlertMessage(props.tableAlertRender(selectedRowKeys, selectedRows))
+      } else {
+        setAlertMessage(
+          <div>
+            已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
+          </div>
+        )
       }
     }
   }
@@ -92,11 +103,11 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
 
   return (
     <>
-      <TableSearchBar items={props.search} onSearch={handleSearch} onExport={handleExport} onReset={handleReset} />
+      {props.search && <TableSearchBar items={props.search} onSearch={handleSearch} onExport={handleExport} onReset={handleReset} />}
       <Card bodyStyle={{ padding: 0 }} >
         <div className="ant-pro-table-toolbar">
           <div className="ant-pro-table-toolbar-title">
-            房间明细
+            {props.title}
           </div>
           <div className="ant-pro-table-toolbar-option" >
             <div className="ant-pro-table-toolbar-item">
@@ -117,13 +128,12 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
           rowSelection={rowSelection}
           columns={props.columns}
           dataSource={list}
-          size="middle"
+          size={props.size ? props.size : 'middle'}
           pagination={pagination}
         />
       </Card>
     </>
   )
-
 }
 
 export default ListTable;

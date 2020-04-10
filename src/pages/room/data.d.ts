@@ -9,6 +9,7 @@ export interface RoomListItem {
   category: any;
   rent: number;
   number: number;
+  deletedAt?: Date | null;
   updatedAt?: Date;
   createdAt?: Date;
 }

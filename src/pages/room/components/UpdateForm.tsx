@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Form, Button, Input, Modal } from 'antd';
+import { Form, Button, Modal } from 'antd';
 
 import { RoomListItem } from '../data.d';
+import CommonFormItems from './CommonFormItems';
 
 export interface FormValueType extends Partial<RoomListItem> { }
 
@@ -44,23 +45,11 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
 
   const handleNext = async () => {
     const fieldsValue = await form.validateFields();
+    console.log(fieldsValue)
+    return
     setFormVals({ ...formVals, ...fieldsValue });
     handleUpdate(formVals);
   };
-
-  const renderContent = () => (
-    <>
-      <FormItem name="title" label="房间号">
-        <Input style={{ width: '100%' }} />
-      </FormItem>
-      <FormItem name="building" label="楼号">
-        <Input style={{ width: '100%' }} />
-      </FormItem>
-      <FormItem name="unit" label="单元">
-        <Input style={{ width: '100%' }} />
-      </FormItem>
-    </>
-  );
 
   const renderFooter = () => (
     <>
@@ -71,9 +60,15 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
     </>
   );
 
+  const initialValues = {
+    ...formVals,
+    area_id: formVals.area ? formVals.area.id : 2,
+    category_id: formVals.category ? formVals.category.id : undefined,
+  }
+
   return (
     <Modal
-      width={640}
+      width={800}
       bodyStyle={{ padding: '32px 40px 48px' }}
       destroyOnClose
       title="修改房间"
@@ -85,15 +80,22 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
       <Form
         {...formLayout}
         form={form}
-        initialValues={{
-          title: formVals.title,
-          building: formVals.building,
-          unit: formVals.unit,
-          rent: formVals.rent,
-          number: formVals.number,
-        }}
+        initialValues={initialValues}
       >
-        {renderContent()}
+
+        <CommonFormItems />
+
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="房间收费项目"
+          extra={
+            <p>以逗号分隔不同年份的月度费用，如: 600, 700, 800。<br />以上示例指第一年600元/月，第二年700元/月，第三年及以后800元/月</p>
+          }
+        >
+          {/* <Button type="link" onClick={() => { setChargeCount(() => chargeCount + 1) }}>添加一项</Button>
+        {chargeGroups.map(item => item)} */}
+        </FormItem>
       </Form>
     </Modal>
   );

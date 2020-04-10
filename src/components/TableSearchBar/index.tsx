@@ -19,11 +19,18 @@ const TableSearchBar: React.FC<TableSearchBarProps> = (props: TableSearchBarProp
     }
     props.onReset()
   }
+
+  const initialValues = {}
+  Object.keys(props.items).forEach(key => {
+    initialValues[key] = props.items[key].default || ''
+  })
+
   return (<Card style={{ marginBottom: 26 }} bodyStyle={{ paddingBottom: 0 }} >
     <Form
       ref={formRef}
       layout="horizontal"
       onFinish={props.onSearch}
+      initialValues={initialValues}
     >
       <Row gutter={{ md: 24, lg: 16, xl: 8 }}>
         {Object.keys(props.items).map((key: string) => {
@@ -52,7 +59,6 @@ const TableSearchBar: React.FC<TableSearchBarProps> = (props: TableSearchBarProp
             default:
               return '尚未定义';
           }
-
         })}
         <Col lg={6} md={8} sm={24} style={{ paddingLeft: 24, textAlign: 'right', marginBottom: 24 }}>
           <span>

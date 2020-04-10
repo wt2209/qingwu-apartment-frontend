@@ -1,5 +1,5 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message } from 'antd';
+import { Button, Divider, Dropdown, Menu, message, Badge } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ProColumns, ActionType } from '@ant-design/pro-table';
@@ -102,6 +102,7 @@ const RoomList: React.FC<{}> = () => {
     status: {
       label: '状态',
       type: 'select',
+      default: 'all',
       options: {
         all: '全部',
         using: '在用',
@@ -117,47 +118,45 @@ const RoomList: React.FC<{}> = () => {
     },
     {
       title: '房间号',
-      dataIndex: 'title',
-      rules: [
-        {
-          required: true,
-          message: '房间号必须填写',
-        },
-      ],
+      dataIndex: 'title'
     },
     {
       title: '类型',
-      render: (_, row) => (row.category && row.category.title) ? row.category.title : ''
+      render: (_, row) => (row.category && row.category.title) ? row.category.title : '',
     },
     {
       title: '楼号',
       dataIndex: 'building',
-      sorter: true,
-      rules: [
-        {
-          required: true,
-          message: '楼号必须填写',
-        },
-      ],
     },
     {
       title: '单元',
       dataIndex: 'unit',
-      sorter: true,
-      hideInSearch: true
     },
     {
       title: '状态',
-      dataIndex: 'status',
-      valueEnum: {
-        0: { text: '关闭', status: 'Default' },
-        1: { text: '运行中', status: 'Processing' },
-        2: { text: '已上线', status: 'Success' },
-        3: { text: '异常', status: 'Error' },
-      },
+      render: (_, row) => (
+        row.deletedAt ? <Badge color='red' text='已删除' /> : <Badge color='green' text='在用' />
+      )
     },
     {
-      title: '上次调度时间',
+      title: '收费项目',
+      render: () => {
+        const items = [
+          { title: '租赁房租', fees: '600,700,800' },
+          { title: '单身床位费', fees: '0，0，0，0，230' },
+          { title: '租赁物业费', fees: '42' },
+        ]
+        return (
+          <>
+            {items.map(item =>
+              <p style={{ marginBottom: 0 }}>{item.title}: {item.fees}</p>
+            )}
+          </>
+        )
+      }
+    },
+    {
+      title: '上次修改时间',
       render: (_, row) => row.updatedAt && moment(row.updatedAt).format('YYYY-MM-DD')
     },
     {
@@ -173,7 +172,7 @@ const RoomList: React.FC<{}> = () => {
             修改
           </a>
           <Divider type="vertical" />
-          <a href="">订阅警报</a>
+          <a href="">删除</a>
         </>
       ),
     },
@@ -182,19 +181,12 @@ const RoomList: React.FC<{}> = () => {
   return (
     <PageHeaderWrapper>
       <ListTable<RoomListItem>
+        title="房间明细"
         request={queryRoom}
         actionRef={actionRef}
         search={searchItems}
         initialParams={initialParams}
         columns={columns}
-        tableAlertRender={(selectedRowKeys, selectedRows) => (
-          <div>
-            已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-            <span>
-              服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.rent, 0)} 万
-            </span>
-          </div>
-        )}
         toolBarRender={(action, selectedRowKeys, selectedRows) => [
           <Button icon={<PlusOutlined />} type="primary" onClick={() => handleModalVisible(true)}>
             新建
