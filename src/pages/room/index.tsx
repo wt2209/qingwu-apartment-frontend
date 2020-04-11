@@ -181,6 +181,7 @@ const RoomList: React.FC<{}> = () => {
   return (
     <PageHeaderWrapper>
       <ListTable<RoomListItem>
+        rowKey="id"
         title="房间明细"
         request={queryRoom}
         actionRef={actionRef}

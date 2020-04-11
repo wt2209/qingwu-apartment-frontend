@@ -4,6 +4,7 @@ import { SearchItems, ResponseListData } from '@/global.d';
 import TableSearchBar from '../TableSearchBar';
 import { Card, Alert } from 'antd';
 import { RoomListParams } from '@/pages/room/data';
+import 'antd/es/table/style/index.less';
 
 interface ListTableProps<T> {
   rowKey?: string;
@@ -42,7 +43,10 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
     const query = props.request;
     setLoading(true)
     const { data, meta } = await query(params)
-    setList(data)
+    if (data) {
+      setList(data)
+    }
+
     setLoading(false)
     if (meta && meta.total) {
       setTotal(meta.total)
@@ -105,12 +109,12 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
     <>
       {props.search && <TableSearchBar items={props.search} onSearch={handleSearch} onExport={handleExport} onReset={handleReset} />}
       <Card bodyStyle={{ padding: 0 }} >
-        <div className="ant-pro-table-toolbar">
-          <div className="ant-pro-table-toolbar-title">
+        <div className="list-table-toolbar">
+          <div className="list-table-toolbar-title">
             {props.title}
           </div>
-          <div className="ant-pro-table-toolbar-option" >
-            <div className="ant-pro-table-toolbar-item">
+          <div className="list-table-toolbar-option" >
+            <div className="list-table-toolbar-item">
               {props.toolBarRender && props.toolBarRender(actionRef.current, rows.selectedRowKeys, rows.selectedRows).map((item, index) => {
                 // eslint-disable-next-line react/no-array-index-key
                 return <span key={`tool-bar-action-${index}`} style={{ marginLeft: 8 }}>{item}</span>
@@ -119,7 +123,7 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
             </div>
           </div>
         </div>
-        <div className="ant-pro-table-alert">
+        <div className="list-table-alert">
           <Alert message={alertMessage} type="info" showIcon />
         </div>
         <Table

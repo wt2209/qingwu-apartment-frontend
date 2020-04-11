@@ -2,11 +2,12 @@ import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Dropdown, Menu, message } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
+import { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { AreaListItem } from './data.d';
 import { queryArea, updateArea, addArea, removeArea } from './service';
+import ListTable from '@/components/ListTable';
 
 /**
  * 添加节点
@@ -77,41 +78,23 @@ const TableList: React.FC<{}> = () => {
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef<ActionType>();
+
+  const initialParams = {
+    page: 1,
+    pageSize: 20,
+  };
+
   const columns: ProColumns<AreaListItem>[] = [
     {
-      title: '规则名称',
-      dataIndex: 'name',
+      title: '区域',
+      dataIndex: 'title',
     },
     {
-      title: '描述',
-      dataIndex: 'desc',
-    },
-    {
-      title: '服务调用次数',
-      dataIndex: 'callNo',
-      sorter: true,
-      renderText: (val: string) => `${val} 万`,
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      valueEnum: {
-        0: { text: '关闭', status: 'Default' },
-        1: { text: '运行中', status: 'Processing' },
-        2: { text: '已上线', status: 'Success' },
-        3: { text: '异常', status: 'Error' },
-      },
-    },
-    {
-      title: '上次调度时间',
-      dataIndex: 'updatedAt',
-      sorter: true,
-      valueType: 'dateTime',
+      title: '说明',
+      dataIndex: 'description',
     },
     {
       title: '操作',
-      dataIndex: 'option',
-      valueType: 'option',
       render: (_, record) => (
         <>
           <a
@@ -120,10 +103,10 @@ const TableList: React.FC<{}> = () => {
               setStepFormValues(record);
             }}
           >
-            配置
+            修改
           </a>
           <Divider type="vertical" />
-          <a href="">订阅警报</a>
+          <a href="">删除</a>
         </>
       ),
     },
@@ -131,11 +114,14 @@ const TableList: React.FC<{}> = () => {
 
   return (
     <PageHeaderWrapper>
-      <ProTable<AreaListItem>
-        headerTitle="查询表格"
+      <ListTable<AreaListItem>
+        rowKey="id"
+        title="房间明细"
+        request={queryArea}
         actionRef={actionRef}
-        rowKey="key"
-        toolBarRender={(action, { selectedRows }) => [
+        initialParams={initialParams}
+        columns={columns}
+        toolBarRender={(action, selectedRowKeys, selectedRows) => [
           <Button icon={<PlusOutlined />} type="primary" onClick={() => handleModalVisible(true)}>
             新建
           </Button>,
@@ -143,10 +129,12 @@ const TableList: React.FC<{}> = () => {
             <Dropdown
               overlay={
                 <Menu
-                  onClick={async (e) => {
+                  onClick={async e => {
                     if (e.key === 'remove') {
                       await handleRemove(selectedRows);
-                      action.reload();
+                      if (action) {
+                        action.reload();
+                      }
                     }
                   }}
                   selectedKeys={[]}
@@ -162,10 +150,8 @@ const TableList: React.FC<{}> = () => {
             </Dropdown>
           ),
         ]}
-        request={(params) => queryArea(params)}
-        columns={columns}
-        rowSelection={{}}
       />
+
       <CreateForm
         onSubmit={async (value) => {
           const success = await handleAdd(value);

@@ -34,11 +34,11 @@ const plugins: IPlugin[] = [
       },
       pwa: pwa
         ? {
-            workboxPluginMode: 'InjectManifest',
-            workboxOptions: {
-              importWorkboxFrom: 'local',
-            },
-          }
+          workboxPluginMode: 'InjectManifest',
+          workboxOptions: {
+            importWorkboxFrom: 'local',
+          },
+        }
         : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
@@ -136,13 +136,13 @@ export default {
               component: './ListTableList',
             },
             {
-              name: '查询表格',
-              icon: 'smile',
+              name: '房间管理',
+              icon: 'home',
               path: '/rooms',
               component: './room',
             },
             {
-              name: '查询表格',
+              name: '区域管理',
               icon: 'smile',
               path: '/areas',
               component: './area',

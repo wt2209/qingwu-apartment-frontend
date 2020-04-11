@@ -45,9 +45,8 @@ const errorHandler = (error: { response: Response }): Response => {
       const queryString = stringify({
         redirect: window.location.href,
       });
-      router.push(`/user/login?${queryString}`);
+      router.replace(`/user/login?${queryString}`);
     }
-
   } else if (!response) {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',

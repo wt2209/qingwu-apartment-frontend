@@ -38,7 +38,7 @@ const TableSearchBar: React.FC<TableSearchBarProps> = (props: TableSearchBarProp
           switch (item.type) {
             case 'input':
               return (
-                <Col lg={6} md={8} sm={24} key={key} style={{ marginBottom: 24 }}>
+                <Col lg={6} md={12} sm={24} key={key} style={{ marginBottom: 12 }}>
                   <Form.Item labelCol={{ span: 6 }} name={key} label={item.label} style={{ marginBottom: 0 }}>
                     <Input />
                   </Form.Item>
@@ -46,7 +46,7 @@ const TableSearchBar: React.FC<TableSearchBarProps> = (props: TableSearchBarProp
               )
             case 'select':
               return (
-                <Col lg={6} md={8} sm={24} key={key} style={{ marginBottom: 24 }}>
+                <Col lg={6} md={12} sm={24} key={key} style={{ marginBottom: 12 }}>
                   <Form.Item labelCol={{ span: 6 }} name={key} label={item.label} style={{ marginBottom: 0 }}>
                     <Select placeholder="请选择">
                       {item.options && Object.keys(item.options).map((k: string) => {
@@ -60,24 +60,24 @@ const TableSearchBar: React.FC<TableSearchBarProps> = (props: TableSearchBarProp
               return '尚未定义';
           }
         })}
-        <Col lg={6} md={8} sm={24} style={{ paddingLeft: 24, textAlign: 'right', marginBottom: 24 }}>
+        <Col xl={6} lg={6} md={12} sm={24} style={{ textAlign: 'right', marginBottom: 12 }}>
           <span>
             <Form.Item style={{ marginBottom: 0 }}>
               <Button type="primary" htmlType="submit">
                 查询
-            </Button>
+              </Button>
               <Button type="default" style={{ marginLeft: 8 }} onClick={handleReset}>
                 重置
-            </Button>
+              </Button>
               <Button type="default" style={{ marginLeft: 8 }} onClick={props.onExport}>
                 导出
-            </Button>
+              </Button>
             </Form.Item>
           </span>
         </Col>
       </Row>
     </Form>
-  </Card>)
+  </Card >)
 }
 
 

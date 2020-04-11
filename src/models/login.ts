@@ -64,6 +64,7 @@ const Model: LoginModelType = {
     },
 
     logout() {
+      localStorage.removeItem('access_token');
       const { redirect } = getPageQuery();
       // Note: There may be security issues, please note
       if (window.location.pathname !== '/user/login' && !redirect) {
