@@ -136,6 +136,12 @@ export default {
               component: './ListTableList',
             },
             {
+              name: '居住',
+              icon: 'home',
+              path: '/livings',
+              component: './living',
+            },
+            {
               name: '房间管理',
               icon: 'home',
               path: '/rooms',
