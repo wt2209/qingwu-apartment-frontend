@@ -13,9 +13,11 @@ function Person(props) {
       bordered={false}
     >
       <div style={{ display: 'flex', alignItems: 'center', paddingBottom: 4 }}>
-        <div style={{ flex: 2, fontSize: 16, fontWeight: 'bold' }}>
-          {person.name}（{person.gender}
-          {person.education ? `，${person.education}` : null}）
+        <div style={{ flex: 2, fontWeight: 'bold' }}>
+          <span style={{ fontSize: 16 }}>{person.name}</span>
+          <span style={{ fontSize: 14 }}>
+            （{person.gender} {person.education ? `，${person.education}` : null}）
+          </span>
         </div>
         <div style={{ flex: 1, fontSize: 14, fontWeight: 'bold', textAlign: 'right' }}>
           {record.category.title}

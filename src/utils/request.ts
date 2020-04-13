@@ -60,8 +60,8 @@ const errorHandler = (error: { response: Response }): Response => {
  * 配置request请求时的默认参数
  */
 const request = extend({
-  prefix: 'http://140.143.233.128',
-  // prefix: 'http://qingwu-apartment.wsl',
+  // prefix: 'http://140.143.233.128',
+  prefix: 'http://qingwu-apartment.wsl',
   errorHandler, // 默认错误处理
   credentials: 'omit', // 默认请求是否带上cookie
   headers: {
