@@ -1,10 +1,19 @@
 import request from '@/utils/request';
-import { RoomListParams } from './data.d';
+import { RoomListParams, RoomFormValueType } from './data.d';
 
 export async function queryRoom(params?: RoomListParams) {
   return request('/api/rooms', {
-    params,
-  });
+    params: {
+      ...params,
+      page: params && params.current,
+    },
+  }).then(res => ({
+    data: res.data,
+    total: res.meta.total,
+    success: true,
+    pageSize: res.meta.per_page,
+    current: res.meta.current_page
+  }))
 }
 
 export async function removeRoom(params: { key: number[] }) {
@@ -27,12 +36,12 @@ export async function addRoom(params: RoomListParams) {
   });
 }
 
-export async function updateRoom(params: RoomListParams) {
-  return request('/api/rooms', {
+export async function updateRoom(id: number | undefined, formVals: RoomFormValueType) {
+  return request(`/api/rooms/${id}`, {
     method: 'POST',
     data: {
-      ...params,
-      method: 'update',
+      ...formVals,
+      _method: 'put',
     },
   });
 }

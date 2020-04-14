@@ -1,17 +1,28 @@
 import { AreaListItem } from "../area/data";
 
+export interface RoomFormValueType {
+  title: string | undefined;
+  building: string | undefined;
+  unit: string | undefined;
+  number: number | undefined;
+  area_id: number | undefined;
+  category_id: number | undefined;
+  remark: string | undefined;
+}
+
+
 export interface RoomListItem {
   id: number;
   title: string;
   unit: string;
   building: string;
-  area: AreaListItem;
-  category: any;
-  rent: number;
+  area?: AreaListItem;
+  category?: any;
   number: number;
-  deletedAt?: Date | null;
-  updatedAt?: Date;
-  createdAt?: Date;
+  remark: string | undefined;
+  deleted_at?: Date | null;
+  updated_at?: Date;
+  created_at?: Date;
 }
 
 export interface RoomListPagination {
@@ -32,5 +43,5 @@ export interface RoomListParams {
   sorter?: string;
   status?: string;
   pageSize?: number;
-  page?: number;
+  current?: number;
 }

@@ -14,11 +14,9 @@ interface ListTableProps<T> {
   columns: any;
   request: (params: { page: number, pageSize: number }) => Promise<ResponseListData>;
   initialParams: { page: number, pageSize: number };
-  actionRef: any;
   tableAlertRender?: ((selectedRowKeys: (string | number)[], selectedRows: T[]) => React.ReactNode) | false;
-  toolBarRender?: (action: { reload: () => void; }, selectedRowKeys?: (string | number)[], selectedRows?: T[]) => React.ReactNode[];
+  toolBarRender?: (ref: any, selectedRowKeys?: (string | number)[], selectedRows?: T[]) => React.ReactNode[];
 }
-
 
 const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
   const [list, setList] = useState([]);
@@ -42,19 +40,19 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
   const fetchData = async () => {
     const query = props.request;
     setLoading(true)
-    const { data, meta } = await query(params)
-    if (data) {
-      setList(data)
+    const res = await query(params)
+    if (res) {
+      if (res.data) {
+        setList(res.data)
+      }
+      if (res.meta && res.meta.total) {
+        setTotal(res.meta.total)
+      }
     }
-
     setLoading(false)
-    if (meta && meta.total) {
-      setTotal(meta.total)
-    }
   }
 
   const rowKey = props.rowKey || 'id';
-  const { actionRef } = props;
 
   const rowSelection = {
     onChange: (selectedRowKeys: any, selectedRows: any) => {
@@ -79,13 +77,13 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
     })
   }
 
-  const pagination = {
+  const pagination = total ? {
     total,
     current: params.page,
     pageSize: params.pageSize,
     onChange: handlePageChange,
     onShowSizeChange: handlePageChange,
-  }
+  } : false
 
   const handleSearch = (values: RoomListParams) => {
     setParams({
@@ -115,7 +113,7 @@ const ListTable: <T>(props: ListTableProps<T>) => JSX.Element = props => {
           </div>
           <div className="list-table-toolbar-option" >
             <div className="list-table-toolbar-item">
-              {props.toolBarRender && props.toolBarRender(actionRef.current, rows.selectedRowKeys, rows.selectedRows).map((item, index) => {
+              {props.toolBarRender && props.toolBarRender(fetchData, rows.selectedRowKeys, rows.selectedRows).map((item, index) => {
                 // eslint-disable-next-line react/no-array-index-key
                 return <span key={`tool-bar-action-${index}`} style={{ marginLeft: 8 }}>{item}</span>
               })

@@ -1,22 +1,18 @@
 import React, { useState } from 'react';
 import { Form, Button, Modal } from 'antd';
 
-import { RoomListItem } from '../data.d';
+import { RoomListItem, RoomFormValueType } from '../data.d';
 import CommonFormItems from './CommonFormItems';
 
-export interface FormValueType extends Partial<RoomListItem> { }
-
 export interface UpdateFormProps {
-  onCancel: (flag?: boolean, formVals?: FormValueType) => void;
-  onSubmit: (values: FormValueType) => void;
+  onCancel: (flag?: boolean, formVals?: RoomFormValueType) => void;
+  onSubmit: (values: RoomFormValueType) => void;
   updateModalVisible: boolean;
   values: Partial<RoomListItem>;
 }
-const FormItem = Form.Item;
 
 export interface UpdateFormState {
-  formVals: FormValueType;
-  currentStep: number;
+  formVals: RoomFormValueType;
 }
 
 const formLayout = {
@@ -25,12 +21,14 @@ const formLayout = {
 };
 
 const UpdateForm: React.FC<UpdateFormProps> = props => {
-  const [formVals, setFormVals] = useState<FormValueType>({
+  const [formVals, setFormVals] = useState<RoomFormValueType>({
     title: props.values.title,
     building: props.values.building,
     unit: props.values.unit,
-    rent: props.values.rent,
     number: props.values.number,
+    area_id: props.values.area ? props.values.area.id : undefined,
+    category_id: props.values.category ? props.values.category.id : undefined,
+    remark: props.values.remark,
   });
 
   const [form] = Form.useForm();
@@ -39,32 +37,24 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
     onSubmit: handleUpdate,
     onCancel: handleUpdateModalVisible,
     updateModalVisible,
-    values,
   } = props;
 
 
   const handleNext = async () => {
     const fieldsValue = await form.validateFields();
-    console.log(fieldsValue)
-    return
-    setFormVals({ ...formVals, ...fieldsValue });
-    handleUpdate(formVals);
+    const result = { ...formVals, ...fieldsValue }
+    setFormVals(result);
+    handleUpdate(result);
   };
 
   const renderFooter = () => (
     <>
-      <Button onClick={() => handleUpdateModalVisible(false, values)}>取消</Button>
+      <Button onClick={() => handleUpdateModalVisible(false)}>取消</Button>
       <Button type="primary" onClick={() => handleNext()}>
         确定
       </Button>
     </>
   );
-
-  const initialValues = {
-    ...formVals,
-    area_id: formVals.area ? formVals.area.id : 2,
-    category_id: formVals.category ? formVals.category.id : undefined,
-  }
 
   return (
     <Modal
@@ -74,30 +64,17 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
       title="修改房间"
       visible={updateModalVisible}
       footer={renderFooter()}
-      onCancel={() => handleUpdateModalVisible(false, values)}
+      onCancel={() => handleUpdateModalVisible(false)}
       afterClose={() => handleUpdateModalVisible()}
     >
       <Form
         {...formLayout}
         form={form}
-        initialValues={initialValues}
+        initialValues={formVals}
       >
-
         <CommonFormItems />
-
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="房间收费项目"
-          extra={
-            <p>以逗号分隔不同年份的月度费用，如: 600, 700, 800。<br />以上示例指第一年600元/月，第二年700元/月，第三年及以后800元/月</p>
-          }
-        >
-          {/* <Button type="link" onClick={() => { setChargeCount(() => chargeCount + 1) }}>添加一项</Button>
-        {chargeGroups.map(item => item)} */}
-        </FormItem>
       </Form>
-    </Modal>
+    </Modal >
   );
 };
 

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Form, Input, Modal, Select, Button } from 'antd';
-import { RoomListItem } from '../data';
+import { RoomFormValueType } from '../data';
 import CommonFormItems from './CommonFormItems';
 
 const FormItem = Form.Item;
 
 interface CreateFormProps {
   modalVisible: boolean;
-  onSubmit: (fieldsValue: Partial<RoomListItem>) => void;
+  onSubmit: (fieldsValue: RoomFormValueType) => void;
   onCancel: () => void;
 }
 
@@ -19,10 +19,8 @@ const CreateForm: React.FC<CreateFormProps> = props => {
 
   const okHandle = async () => {
     const fieldsValue = await form.validateFields();
-    console.log(fieldsValue);
-    return
     form.resetFields();
-    handleAdd(fieldsValue);
+    handleAdd((fieldsValue as RoomFormValueType));
   };
 
   const chargeGroups = []
