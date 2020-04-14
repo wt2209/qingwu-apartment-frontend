@@ -5,8 +5,8 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { AreaListItem } from './data.d';
-import { queryArea, updateArea, addArea, removeArea } from './service';
+import { TableListItem } from './data.d';
+import { updateRule, addRule, removeRule, queryCategory } from './service';
 
 /**
  * 添加节点
@@ -15,7 +15,7 @@ import { queryArea, updateArea, addArea, removeArea } from './service';
 const handleAdd = async (fields: FormValueType) => {
   const hide = message.loading('正在添加');
   try {
-    await addArea(fields);
+    await addRule(fields);
     hide();
     message.success('添加成功');
     return true;
@@ -30,10 +30,10 @@ const handleAdd = async (fields: FormValueType) => {
  * 更新节点
  * @param fields
  */
-const handleUpdate = async (id: number, fields: FormValueType) => {
+const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
-    await updateArea(id, fields);
+    await updateRule(fields);
     hide();
 
     message.success('配置成功');
@@ -49,11 +49,11 @@ const handleUpdate = async (id: number, fields: FormValueType) => {
  *  删除节点
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: AreaListItem[]) => {
+const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    await removeArea({
+    await removeRule({
       key: selectedRows.map((row) => row.id),
     });
     hide();
@@ -71,26 +71,41 @@ const TableList: React.FC<{}> = () => {
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef<ActionType>();
-
-  const columns: ProColumns<AreaListItem>[] = [
+  const columns: ProColumns<TableListItem>[] = [
     {
-      title: '区域',
+      title: '类型名称',
       dataIndex: 'title',
     },
     {
-      title: '说明',
-      dataIndex: 'description',
+      title: 'type',
+      dataIndex: 'desc',
     },
     {
-      title: '创建时间',
-      dataIndex: 'created_at',
+      title: '服务调用次数',
+      dataIndex: 'callNo',
+      sorter: true,
+      renderText: (val: string) => `${val} 万`,
     },
     {
-      title: '上次修改时间',
-      dataIndex: 'updated_at',
+      title: '状态',
+      dataIndex: 'status',
+      valueEnum: {
+        0: { text: '关闭', status: 'Default' },
+        1: { text: '运行中', status: 'Processing' },
+        2: { text: '已上线', status: 'Success' },
+        3: { text: '异常', status: 'Error' },
+      },
+    },
+    {
+      title: '上次调度时间',
+      dataIndex: 'updatedAt',
+      sorter: true,
+      valueType: 'dateTime',
     },
     {
       title: '操作',
+      dataIndex: 'option',
+      valueType: 'option',
       render: (_, record) => (
         <>
           <a
@@ -99,13 +114,10 @@ const TableList: React.FC<{}> = () => {
               setStepFormValues(record);
             }}
           >
-            修改
+            配置
           </a>
           <Divider type="vertical" />
-          {record.deleted_at
-            ? <a href="">启用</a>
-            : <a href="">禁用</a>
-          }
+          <a href="">订阅警报</a>
         </>
       ),
     },
@@ -113,20 +125,19 @@ const TableList: React.FC<{}> = () => {
 
   return (
     <PageHeaderWrapper>
-      <ProTable<AreaListItem>
-        headerTitle="区域明细"
+      <ProTable<TableListItem>
+        headerTitle="查询表格"
         actionRef={actionRef}
-        rowKey="id"
-        search={false}
+        rowKey="key"
         toolBarRender={(action, { selectedRows }) => [
-          <Button type="primary" onClick={() => handleModalVisible(true)}>
-            <PlusOutlined /> 新建
+          <Button icon={<PlusOutlined />} type="primary" onClick={() => handleModalVisible(true)}>
+            新建
           </Button>,
           selectedRows && selectedRows.length > 0 && (
             <Dropdown
               overlay={
                 <Menu
-                  onClick={async e => {
+                  onClick={async (e) => {
                     if (e.key === 'remove') {
                       await handleRemove(selectedRows);
                       action.reload();
@@ -145,11 +156,18 @@ const TableList: React.FC<{}> = () => {
             </Dropdown>
           ),
         ]}
-        request={params => queryArea(params)}
+        tableAlertRender={({ selectedRowKeys, selectedRows }) => (
+          <div>
+            已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
+            <span>
+              服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} 万
+            </span>
+          </div>
+        )}
+        request={(params) => queryCategory(params)}
         columns={columns}
         rowSelection={{}}
       />
-
       <CreateForm
         onSubmit={async (value) => {
           const success = await handleAdd(value);
@@ -165,8 +183,8 @@ const TableList: React.FC<{}> = () => {
       />
       {stepFormValues && Object.keys(stepFormValues).length ? (
         <UpdateForm
-          onSubmit={async (id, value) => {
-            const success = await handleUpdate(id, value);
+          onSubmit={async (value) => {
+            const success = await handleUpdate(value);
             if (success) {
               handleModalVisible(false);
               setStepFormValues({});

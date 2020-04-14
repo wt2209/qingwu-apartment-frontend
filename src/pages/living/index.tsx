@@ -380,7 +380,7 @@ const Living = () => {
             {areas.map(area =>
               <CheckableTag
                 key={`area-${area}`}
-                style={{ fontSize: 14 }}
+                style={{ fontSize: 16 }}
                 checked={selectedArea === area}
                 onChange={checked => handleAreaChange(area, checked)}
               >
@@ -394,7 +394,7 @@ const Living = () => {
             {buildings.map(building =>
               <CheckableTag
                 key={`building-${building}`}
-                style={{ fontSize: 14 }}
+                style={{ fontSize: 16 }}
                 checked={selectedBuilding === building}
                 onChange={checked => handleBuildingChange(building, checked)}
               >
@@ -409,7 +409,7 @@ const Living = () => {
               {units.map(unit =>
                 <CheckableTag
                   key={`unit-${unit}`}
-                  style={{ fontSize: 14 }}
+                  style={{ fontSize: 16 }}
                   checked={selectedUnit === unit}
                   onChange={checked => handleUnitChange(unit, checked)}
                 >

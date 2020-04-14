@@ -1,8 +1,8 @@
 import request from '@/utils/request';
-import { AreaListParams } from './data.d';
+import { TableListParams } from './data.d';
 
-export async function queryArea(params?: AreaListParams) {
-  return request('/api/areas', {
+export async function queryCategory(params?: TableListParams) {
+  return request('/api/categories', {
     params: {
       ...params,
       page: params && params.current,
@@ -14,31 +14,29 @@ export async function queryArea(params?: AreaListParams) {
     pageSize: res.meta.per_page,
     current: res.meta.current_page
   }))
-
 }
 
-export async function removeArea(params: { key: number[] }) {
-  return request('/api/areas', {
+export async function removeCategory(params: { key: number[] }) {
+  return request('/api/rule', {
     method: 'POST',
     data: {
       ...params,
-      method: 'delete',
+      _method: 'delete',
     },
   });
 }
 
-export async function addArea(params: AreaListParams) {
-  return request('/api/areas', {
+export async function addRule(params: TableListParams) {
+  return request('/api/rule', {
     method: 'POST',
     data: {
       ...params,
-      method: 'post',
     },
   });
 }
 
-export async function updateArea(id: number, params: AreaListParams) {
-  return request(`/api/areas/${id}`, {
+export async function updateRule(params: TableListParams) {
+  return request('/api/rule', {
     method: 'POST',
     data: {
       ...params,

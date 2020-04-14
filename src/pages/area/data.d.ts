@@ -2,9 +2,9 @@ export interface AreaListItem {
   id: number;
   title: string;
   description?: string;
-  deletedAt?: Date;
-  updatedAt?: Date;
-  createdAt?: Date;
+  deleted_at?: Date;
+  updated_at?: Date;
+  created_at?: Date;
 }
 
 export interface AreaListPagination {
@@ -25,5 +25,5 @@ export interface AreaListParams {
   description?: string;
   id?: number;
   pageSize?: number;
-  currentPage?: number;
+  current?: number;
 }
