@@ -232,21 +232,19 @@ const Living = () => {
 
   const fetchTree = async () => {
     setLoading(true);
-    const cachedTree = localStorage.getItem('room-tree')
-    let tree;
-    if (cachedTree) {
-      tree = cachedTree;
-    } else {
-      const res = await queryTree();
-      tree = res.data
-    }
+    const res = await queryTree();
+    const tree = res.data
     setLoading(false);
     setRoomTree(tree);
-    setAreas(Object.keys(tree))
+    const allAreas = Object.keys(tree)
+    setAreas(allAreas)
+    if (allAreas.length === 1) {
+      setSelectedArea(allAreas[0])
+      setBuildings(Object.keys(tree[allAreas[0]]))
+    }
   }
 
   const fetchData = async (params: LivingFetchParams) => {
-    console.log(params);
     setLoading(true)
     const data = await new Promise((resolve) => {
       setTimeout(() => {
@@ -259,31 +257,30 @@ const Living = () => {
 
   useEffect(() => {
     fetchTree()
-    return () => {
-      localStorage.removeItem('room-tree');
-    }
   }, [])
 
   const handleAreaChange = (area: string, checked: boolean) => {
-    setSelectedArea(checked ? area : '');
-    setSelectedBuilding('');
-    setSelectedUnit('');
-    setBuildings(checked ? Object.keys(roomTree[area]) : [])
-    setUnits([]);
+    if (checked) {
+      setSelectedArea(area);
+      setSelectedBuilding('');
+      setSelectedUnit('');
+      setBuildings(checked ? Object.keys(roomTree[area]) : [])
+      setUnits([]);
+    }
   }
 
   const handleBuildingChange = (building: string, checked: boolean) => {
-    setSelectedBuilding(checked ? building : '');
-    setSelectedUnit('');
-    setUnits(checked ? roomTree[selectedArea][building] : [])
+    if (checked) {
+      setSelectedBuilding(checked ? building : '');
+      setSelectedUnit('');
+      setUnits(checked ? roomTree[selectedArea][building] : [])
+    }
   }
 
   const handleUnitChange = (unit: string, checked: boolean) => {
     if (checked) {
       setSelectedUnit(unit)
       fetchData({ area: selectedArea, building: selectedBuilding, unit: selectedUnit })
-    } else {
-      setSelectedUnit('')
     }
   }
 

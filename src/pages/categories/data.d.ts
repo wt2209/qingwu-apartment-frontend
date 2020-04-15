@@ -1,4 +1,4 @@
-export interface TableListItem {
+export interface CategoryListItem {
   id: number;
   title: string;
   type: 'person' | 'company' | 'functional';

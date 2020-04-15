@@ -1,17 +1,13 @@
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Divider, message, Select, Badge } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { AreaListItem } from './data.d';
-import { queryArea, updateArea, addArea, removeArea } from './service';
+import { queryArea, updateArea, addArea, restoreArea, removeArea } from './service';
 
-/**
- * 添加节点
- * @param fields
- */
 const handleAdd = async (fields: FormValueType) => {
   const hide = message.loading('正在添加');
   try {
@@ -26,10 +22,6 @@ const handleAdd = async (fields: FormValueType) => {
   }
 };
 
-/**
- * 更新节点
- * @param fields
- */
 const handleUpdate = async (id: number, fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
@@ -45,26 +37,23 @@ const handleUpdate = async (id: number, fields: FormValueType) => {
   }
 };
 
-/**
- *  删除节点
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: AreaListItem[]) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
+const handleChangeStatus = async (id: number, status: boolean) => {
+  const hide = message.loading('正在修改');
   try {
-    await removeArea({
-      key: selectedRows.map((row) => row.id),
-    });
+    if (status) {
+      await restoreArea(id)
+    } else {
+      await removeArea(id)
+    }
     hide();
-    message.success('删除成功，即将刷新');
+    message.success('修改成功');
     return true;
   } catch (error) {
     hide();
-    message.error('删除失败，请重试');
+    message.error('修改失败请重试！');
     return false;
   }
-};
+}
 
 const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -76,35 +65,67 @@ const TableList: React.FC<{}> = () => {
     {
       title: '区域',
       dataIndex: 'title',
+      hideInSearch: true,
     },
     {
       title: '说明',
       dataIndex: 'description',
+      hideInSearch: true,
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      render: (_, row) => (
+        row.deleted_at ? <Badge color='red' text='已停用' /> : <Badge color='green' text='在用' />
+      ),
+      renderFormItem: () => {
+        return (
+          <Select>
+            <Select.Option value="all">全部</Select.Option >
+            <Select.Option value="using">在用</Select.Option>
+            <Select.Option value="deleted">已停用</Select.Option>
+          </Select >
+        )
+      },
     },
     {
       title: '创建时间',
       dataIndex: 'created_at',
+      valueType: 'date',
+      hideInSearch: true,
     },
     {
       title: '上次修改时间',
       dataIndex: 'updated_at',
+      valueType: 'date',
+      hideInSearch: true,
     },
     {
       title: '操作',
       render: (_, record) => (
         <>
-          <a
-            onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
-            }}
-          >
-            修改
-          </a>
-          <Divider type="vertical" />
           {record.deleted_at
-            ? <a href="">启用</a>
-            : <a href="">禁用</a>
+            ? <a onClick={async () => {
+              await handleChangeStatus(record.id, true)
+              if (actionRef.current) {
+                actionRef.current.reload()
+              }
+            }}>启用</a>
+            : (
+              <>
+                <a onClick={async () => {
+                  await handleChangeStatus(record.id, false)
+                  if (actionRef.current) {
+                    actionRef.current.reload()
+                  }
+                }}>禁用</a>
+                <Divider type="vertical" style={{ margin: 0 }} />
+                <a onClick={() => {
+                  handleUpdateModalVisible(true);
+                  setStepFormValues(record);
+                }}>修改</a>
+              </>
+            )
           }
         </>
       ),
@@ -117,33 +138,11 @@ const TableList: React.FC<{}> = () => {
         headerTitle="区域明细"
         actionRef={actionRef}
         rowKey="id"
-        search={false}
-        toolBarRender={(action, { selectedRows }) => [
+        form={{ initialValues: { status: 'all' } }}
+        toolBarRender={() => [
           <Button type="primary" onClick={() => handleModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
-          selectedRows && selectedRows.length > 0 && (
-            <Dropdown
-              overlay={
-                <Menu
-                  onClick={async e => {
-                    if (e.key === 'remove') {
-                      await handleRemove(selectedRows);
-                      action.reload();
-                    }
-                  }}
-                  selectedKeys={[]}
-                >
-                  <Menu.Item key="remove">批量删除</Menu.Item>
-                  <Menu.Item key="approval">批量审批</Menu.Item>
-                </Menu>
-              }
-            >
-              <Button>
-                批量操作 <DownOutlined />
-              </Button>
-            </Dropdown>
-          ),
         ]}
         request={params => queryArea(params)}
         columns={columns}

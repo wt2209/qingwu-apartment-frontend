@@ -16,12 +16,20 @@ export async function queryRoom(params?: RoomListParams) {
   }))
 }
 
-export async function removeRoom(params: { key: number[] }) {
-  return request('/api/rooms', {
+export async function removeRoom(id: number) {
+  return request(`/api/rooms/${id}`, {
     method: 'POST',
     data: {
-      ...params,
-      method: 'delete',
+      _method: 'delete',
+    },
+  });
+}
+
+export async function restoreRoom(id: number) {
+  return request(`/api/rooms/${id}`, {
+    method: 'POST',
+    data: {
+      _method: 'patch',
     },
   });
 }

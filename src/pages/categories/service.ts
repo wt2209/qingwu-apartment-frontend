@@ -1,5 +1,9 @@
 import request from '@/utils/request';
-import { TableListParams } from './data.d';
+import { TableListParams, CategoryListItem } from './data.d';
+
+export async function getAllCategories() {
+  return request('/api/all-categories');
+}
 
 export async function queryCategory(params?: TableListParams) {
   return request('/api/categories', {
@@ -16,30 +20,36 @@ export async function queryCategory(params?: TableListParams) {
   }))
 }
 
-export async function removeCategory(params: { key: number[] }) {
-  return request('/api/rule', {
+export async function removeCategory(id: number) {
+  return request(`/api/categories/${id}`, {
     method: 'POST',
     data: {
-      ...params,
       _method: 'delete',
     },
   });
 }
 
-export async function addRule(params: TableListParams) {
-  return request('/api/rule', {
+export async function restoreCategory(id: number) {
+  return request(`/api/categories/${id}`, {
     method: 'POST',
     data: {
-      ...params,
+      _method: 'patch',
     },
   });
 }
 
-export async function updateRule(params: TableListParams) {
-  return request('/api/rule', {
+export async function addCategory(data: Partial<CategoryListItem>) {
+  return request('/api/categories', {
+    method: 'POST',
+    data,
+  });
+}
+
+export async function updateCategory(id: number, data: Partial<CategoryListItem>) {
+  return request(`/api/categories/${id}`, {
     method: 'POST',
     data: {
-      ...params,
+      ...data,
       _method: 'put',
     },
   });

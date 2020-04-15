@@ -3,8 +3,12 @@ import { Form, Button, Modal } from 'antd';
 
 import { RoomListItem, RoomFormValueType } from '../data.d';
 import CommonFormItems from './CommonFormItems';
+import { AreaListItem } from '@/pages/area/data';
+import { CategoryListItem } from '@/pages/categories/data';
 
 export interface UpdateFormProps {
+  areas: AreaListItem[] | undefined;
+  categories: CategoryListItem[] | undefined;
   onCancel: (flag?: boolean, formVals?: RoomFormValueType) => void;
   onSubmit: (values: RoomFormValueType) => void;
   updateModalVisible: boolean;
@@ -72,7 +76,7 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
         form={form}
         initialValues={formVals}
       >
-        <CommonFormItems />
+        <CommonFormItems areas={props.areas} categories={props.categories} />
       </Form>
     </Modal >
   );

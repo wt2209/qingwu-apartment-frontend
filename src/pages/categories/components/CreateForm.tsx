@@ -1,11 +1,11 @@
 import React from 'react';
-import { Form, Input, Modal } from 'antd';
-
-const FormItem = Form.Item;
+import { Form, Modal } from 'antd';
+import CommonFormItems from './CommonFormItems';
+import { CategoryListItem } from '../data';
 
 interface CreateFormProps {
   modalVisible: boolean;
-  onSubmit: (fieldsValue: { desc: string }) => void;
+  onSubmit: (fieldsValue: Partial<CategoryListItem>) => void;
   onCancel: () => void;
 }
 
@@ -24,18 +24,12 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
       title="新建规则"
       visible={modalVisible}
       onOk={okHandle}
+      okText="确定"
+      cancelText="取消"
       onCancel={() => onCancel()}
     >
       <Form form={form}>
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="描述"
-          name="desc"
-          rules={[{ required: true, message: '请输入至少五个字符的规则描述！', min: 5 }]}
-        >
-          <Input placeholder="请输入" />
-        </FormItem>
+        <CommonFormItems />
       </Form>
     </Modal>
   );

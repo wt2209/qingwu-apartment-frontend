@@ -1,22 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import FormItem from 'antd/lib/form/FormItem';
 import { Select, Input, InputNumber } from 'antd';
-import { queryArea } from '@/pages/area/service';
 import { AreaListItem } from '@/pages/area/data';
+import { CategoryListItem } from '@/pages/categories/data';
 
-const CommonFormItems = () => {
-  const [categories, setCategories] = useState<Array<any>>([])
-  const [areas, setAreas] = useState<Array<AreaListItem>>([])
+interface Props {
+  areas: AreaListItem[] | undefined;
+  categories: CategoryListItem[] | undefined;
+}
 
-  useEffect(() => {
-    (async () => {
-      const areaRes = await queryArea()
-      if (areaRes.data) {
-        setAreas(areaRes.data)
-      }
-    })()
-  }, [])
-
+const CommonFormItems = (props: Props) => {
   return (
     <>
       <FormItem
@@ -26,8 +19,8 @@ const CommonFormItems = () => {
         rules={[{ required: true, message: "必须选择" }]}
         name="area_id">
         <Select placeholder="请选择">
-          {areas.map(area => (
-            <Select.Option key={`areas-${area.id}`} value={area.id}>{area.title}</Select.Option>
+          {props.areas && props.areas.map(area => (
+            <Select.Option key={area.id} value={area.id}>{area.title}</Select.Option>
           ))}
         </Select>
       </FormItem>
@@ -38,10 +31,9 @@ const CommonFormItems = () => {
         rules={[{ required: true, message: "必须选择" }]}
         name="category_id">
         <Select placeholder="请选择">
-          <Select.Option value={1}>租赁</Select.Option>
-          <Select.Option value={2}>新员工</Select.Option>
-          <Select.Option value={3}>单身职工</Select.Option>
-          <Select.Option value={4}>派遣工</Select.Option>
+          {props.categories && props.categories.map(category => (
+            <Select.Option key={category.id} value={category.id}>{category.title}</Select.Option>
+          ))}
         </Select>
       </FormItem>
       <FormItem

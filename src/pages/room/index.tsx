@@ -1,20 +1,18 @@
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message, Badge, Input, Select } from 'antd';
-import React, { useState, useRef } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Divider, message, Badge, Select } from 'antd';
+import React, { useState, useRef, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import moment from 'moment';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import { RoomListItem, RoomFormValueType } from './data.d';
-import { queryRoom, updateRoom, addRoom, removeRoom } from './service';
-import { SearchItems } from '../../global.d';
-import ListTable from '@/components/ListTable';
+import { queryRoom, updateRoom, addRoom, removeRoom, restoreRoom } from './service';
+import { AreaListItem } from '../area/data';
+import { CategoryListItem } from '../categories/data';
+import { getAllCategories } from '../categories/service';
+import { getAllAreas } from '../area/service';
 
-/**
- * 添加节点
- * @param fields
- */
 const handleAdd = async (fields: RoomFormValueType) => {
   const hide = message.loading('正在添加');
   try {
@@ -31,16 +29,11 @@ const handleAdd = async (fields: RoomFormValueType) => {
   }
 };
 
-/**
- * 更新节点
- * @param fields
- */
 const handleUpdate = async (id: number | undefined, fields: RoomFormValueType) => {
   const hide = message.loading('正在修改');
   try {
     await updateRoom(id, fields);
     hide();
-
     message.success('修改成功');
     return true;
   } catch (error) {
@@ -50,44 +43,69 @@ const handleUpdate = async (id: number | undefined, fields: RoomFormValueType) =
   }
 };
 
-/**
- *  删除节点
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: RoomListItem[]) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
+const handleChangeStatus = async (id: number, status: boolean) => {
+  const hide = message.loading('正在修改');
   try {
-    await removeRoom({
-      key: selectedRows.map(row => row.id),
-    });
+    if (status) {
+      await restoreRoom(id)
+    } else {
+      await removeRoom(id)
+    }
     hide();
-    message.success('删除成功，即将刷新');
+    message.success('修改成功');
     return true;
   } catch (error) {
     hide();
-    message.error('删除失败，请重试');
+    message.error('修改失败请重试！');
     return false;
   }
-};
+}
 
 const RoomList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [formValues, setFormValues] = useState<Partial<RoomListItem>>({});
+  const [areas, setAreas] = useState<AreaListItem[]>()
+  const [categories, setCategories] = useState<CategoryListItem[]>()
   const actionRef = useRef<ActionType>();
+
+  useEffect(() => {
+    Promise.all([getAllAreas(), getAllCategories()])
+      .then(res => {
+        if (res[0].data) {
+          setAreas(res[0].data)
+        }
+        if (res[1].data) {
+          setCategories(res[1].data)
+        }
+      })
+  }, [])
 
   const columns: ProColumns<RoomListItem>[] = [
     {
       title: '所属区域',
-      dataIndex: 'area_id',
+      dataIndex: 'areas[]',
       render: (_, row) => (row.area && row.area.title) ? row.area.title : '',
       renderFormItem: () => {
         return (
-          <Select>
-            <Select.Option value="all">全部</Select.Option>
-            <Select.Option value="using">在用</Select.Option>
-            <Select.Option value="deleted">已删除</Select.Option>
+          <Select mode="multiple" placeholder="请选择">
+            {areas && areas.map(area => (
+              <Select.Option key={area.id} value={area.id}>{area.title}</Select.Option>
+            ))}
+          </Select>
+        )
+      }
+    },
+    {
+      title: '类型',
+      dataIndex: 'categories[]',
+      render: (_, row) => (row.category && row.category.title) ? row.category.title : '',
+      renderFormItem: () => {
+        return (
+          <Select mode="multiple" placeholder="请选择">
+            {categories && categories.map(category => (
+              <Select.Option key={category.id} value={category.id}>{category.title}</Select.Option>
+            ))}
           </Select>
         )
       }
@@ -95,10 +113,6 @@ const RoomList: React.FC<{}> = () => {
     {
       title: '房间号',
       dataIndex: 'title'
-    },
-    {
-      title: '类型',
-      render: (_, row) => (row.category && row.category.title) ? row.category.title : '',
     },
     {
       title: '楼号',
@@ -113,14 +127,16 @@ const RoomList: React.FC<{}> = () => {
       title: '状态',
       dataIndex: 'status',
       render: (_, row) => (
-        row.deleted_at ? <Badge color='red' text='已删除' /> : <Badge color='green' text='在用' />
+        row.deleted_at ? <Badge color='red' text='已停用' /> : <Badge color='green' text='在用' />
       ),
       renderFormItem: () => {
-        return <Select>
-          <Select.Option value="all">全部</Select.Option>
-          <Select.Option value="using">在用</Select.Option>
-          <Select.Option value="deleted">已删除</Select.Option>
-        </Select>
+        return (
+          <Select>
+            <Select.Option value="all">全部</Select.Option>
+            <Select.Option value="using">在用</Select.Option>
+            <Select.Option value="deleted">已停用</Select.Option>
+          </Select>
+        )
       },
     },
     {
@@ -136,16 +152,29 @@ const RoomList: React.FC<{}> = () => {
       title: '操作',
       render: (_, record) => (
         <>
-          <a
-            onClick={() => {
-              handleUpdateModalVisible(true);
-              setFormValues(record);
-            }}
-          >
-            修改
-          </a>
-          <Divider type="vertical" />
-          <a href="">删除</a>
+          {record.deleted_at
+            ? <a onClick={async () => {
+              await handleChangeStatus(record.id, true)
+              if (actionRef.current) {
+                actionRef.current.reload()
+              }
+            }}>启用</a>
+            : (
+              <>
+                <a onClick={async () => {
+                  await handleChangeStatus(record.id, false)
+                  if (actionRef.current) {
+                    actionRef.current.reload()
+                  }
+                }}>禁用</a>
+                <Divider type="vertical" style={{ margin: 0 }} />
+                <a onClick={() => {
+                  handleUpdateModalVisible(true);
+                  setFormValues(record);
+                }}>修改</a>
+              </>
+            )
+          }
         </>
       ),
     },
@@ -158,47 +187,19 @@ const RoomList: React.FC<{}> = () => {
         actionRef={actionRef}
         form={{ initialValues: { status: 'all' } }}
         rowKey="id"
-        toolBarRender={(action, { selectedRows }) => [
+        toolBarRender={() => [
           <Button type="primary" onClick={() => handleModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
-          selectedRows && selectedRows.length > 0 && (
-            <Dropdown
-              overlay={
-                <Menu
-                  onClick={async e => {
-                    if (e.key === 'remove') {
-                      await handleRemove(selectedRows);
-                      action.reload();
-                    }
-                  }}
-                  selectedKeys={[]}
-                >
-                  <Menu.Item key="remove">批量删除</Menu.Item>
-                  <Menu.Item key="approval">批量审批</Menu.Item>
-                </Menu>
-              }
-            >
-              <Button>
-                批量操作 <DownOutlined />
-              </Button>
-            </Dropdown>
-          ),
         ]}
-        tableAlertRender={({ selectedRowKeys, selectedRows }) => (
-          <div>
-            已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-            <span>
-              服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} 万
-            </span>
-          </div>
-        )}
         request={params => queryRoom(params)}
         columns={columns}
         rowSelection={{}}
       />
 
       <CreateForm
+        areas={areas}
+        categories={categories}
         onSubmit={async value => {
           const success = await handleAdd(value);
           if (success) {
@@ -214,6 +215,8 @@ const RoomList: React.FC<{}> = () => {
       {
         formValues && Object.keys(formValues).length ? (
           <UpdateForm
+            areas={areas}
+            categories={categories}
             onSubmit={async value => {
               const success = await handleUpdate(formValues.id, value);
               if (success) {

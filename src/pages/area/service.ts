@@ -1,6 +1,10 @@
 import request from '@/utils/request';
 import { AreaListParams } from './data.d';
 
+export async function getAllAreas() {
+  return request('/api/all-areas');
+}
+
 export async function queryArea(params?: AreaListParams) {
   return request('/api/areas', {
     params: {
@@ -17,12 +21,20 @@ export async function queryArea(params?: AreaListParams) {
 
 }
 
-export async function removeArea(params: { key: number[] }) {
-  return request('/api/areas', {
+export async function removeArea(id: number) {
+  return request(`/api/areas/${id}`, {
     method: 'POST',
     data: {
-      ...params,
-      method: 'delete',
+      _method: 'delete',
+    },
+  });
+}
+
+export async function restoreArea(id: number) {
+  return request(`/api/areas/${id}`, {
+    method: 'POST',
+    data: {
+      _method: 'patch',
     },
   });
 }

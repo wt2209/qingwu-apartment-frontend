@@ -142,28 +142,35 @@ export default {
               component: './living',
             },
             {
-              name: '房间管理',
-              icon: 'home',
-              path: '/rooms',
-              component: './room',
-            },
-            {
-              name: '区域管理',
-              icon: 'smile',
-              path: '/areas',
-              component: './area',
-            },
-            {
-              name: '卡片列表',
-              icon: 'smile',
-              path: '/chargerules',
-              component: './chargeRules',
-            },
-            {
-              name: '类型管理',
-              icon: 'smile',
-              path: '/categories',
-              component: './categories',
+              name: '基础结构',
+              icon: 'apartment',
+              path: '/basic',
+              routes: [
+                {
+                  name: '房间管理',
+                  icon: 'smile',
+                  path: '/basic/rooms',
+                  component: './room',
+                },
+                {
+                  name: '区域管理',
+                  icon: 'smile',
+                  path: '/basic/areas',
+                  component: './area',
+                },
+                {
+                  name: '类型管理',
+                  icon: 'smile',
+                  path: '/basic/categories',
+                  component: './categories',
+                },
+                {
+                  name: '收费规则',
+                  icon: 'smile',
+                  path: '/basic/chargerules',
+                  component: './chargeRules',
+                },
+              ],
             },
             {
               component: './404',
