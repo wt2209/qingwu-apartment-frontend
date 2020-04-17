@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { RoomListParams, RoomFormValueType } from './data.d';
+import { RoomListParams, RoomFormValueType, RoomListItem } from './data.d';
 
 export async function queryRoom(params?: RoomListParams) {
   return request('/api/rooms', {
@@ -34,13 +34,10 @@ export async function restoreRoom(id: number) {
   });
 }
 
-export async function addRoom(params: RoomListParams) {
+export async function addRoom(data: Partial<RoomListItem>) {
   return request('/api/rooms', {
     method: 'POST',
-    data: {
-      ...params,
-      method: 'post',
-    },
+    data,
   });
 }
 

@@ -1,21 +1,12 @@
-export interface ChargeRuleListItem {
+export interface FeeTypeListItem {
   id: number;
   title: string;
-  type: string;
-  way: string;
-  rule: ChargeRule[];
-  period: number;
-  remark: string;
-  updated_at: Date | undefined;
-  created_at: Date | undefined;
-  deleted_at: Date | undefined;
-}
-
-export interface ChargeRule {
-  title: string;
-  fee: number[];
   turn_in: boolean;
-  rate: string;
+  rate: number;
+  remark: string;
+  created_at: Date | null;
+  updated_at: Date | null;
+  deleted_at: Date | null;
 }
 
 export interface TableListPagination {
@@ -25,7 +16,7 @@ export interface TableListPagination {
 }
 
 export interface TableListData {
-  list: ChargeRuleListItem[];
+  list: FeeTypeListItem[];
   pagination: Partial<TableListPagination>;
 }
 

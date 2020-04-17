@@ -16,9 +16,7 @@ import { getAllAreas } from '../area/service';
 const handleAdd = async (fields: RoomFormValueType) => {
   const hide = message.loading('正在添加');
   try {
-    await addRoom({
-      title: fields.title,
-    });
+    await addRoom(fields);
     hide();
     message.success('添加成功');
     return true;

@@ -16,7 +16,6 @@ interface CreateFormProps {
 const CreateForm: React.FC<CreateFormProps> = props => {
   const [form] = Form.useForm();
 
-
   const { modalVisible, onSubmit: handleAdd, onCancel } = props;
 
   const okHandle = async () => {

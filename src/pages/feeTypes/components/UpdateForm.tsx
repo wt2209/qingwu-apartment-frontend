@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { Form, Button, Modal } from 'antd';
 
-import { ChargeRuleListItem } from '../data.d';
+import { FeeTypeListItem } from '../data.d';
 import CommonFormItems from './CommonFormItems';
 
-export interface FormValueType extends Partial<ChargeRuleListItem> {
+export interface FormValueType extends Partial<FeeTypeListItem> {
 }
 
 export interface UpdateFormProps {
   onCancel: (flag?: boolean, formVals?: FormValueType) => void;
   onSubmit: (id: number, values: FormValueType) => void;
   updateModalVisible: boolean;
-  values: Partial<ChargeRuleListItem>;
+  values: Partial<FeeTypeListItem>;
+}
+
+export interface UpdateFormState {
+  formVals: FormValueType;
 }
 
 const formLayout = {
@@ -19,17 +23,13 @@ const formLayout = {
   wrapperCol: { span: 13 },
 };
 
-const UpdateForm: React.FC<UpdateFormProps> = (props) => {
+const UpdateForm: React.FC<UpdateFormProps> = props => {
   const [formVals, setFormVals] = useState<FormValueType>({
     title: props.values.title,
-    type: props.values.type,
-    way: props.values.way,
-    rule: props.values.rule,
-    period: props.values.period,
+    turn_in: props.values.turn_in,
+    rate: props.values.rate,
     remark: props.values.remark,
   });
-
-  const rulesCount = (formVals && formVals.rule) ? formVals.rule.length : 0
 
   const [form] = Form.useForm();
 
@@ -60,21 +60,22 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
 
   return (
     <Modal
-      width={800}
+      width={640}
       bodyStyle={{ padding: '32px 40px 48px' }}
       destroyOnClose
-      title="修改交费规则"
+      title="修改类型"
       visible={updateModalVisible}
       footer={renderFooter()}
       onCancel={() => handleUpdateModalVisible(false, values)}
       afterClose={() => handleUpdateModalVisible()}
     >
+
       <Form
         {...formLayout}
         form={form}
         initialValues={formVals}
       >
-        <CommonFormItems form={form} rulesCount={rulesCount} />
+        <CommonFormItems />
       </Form>
     </Modal>
   );

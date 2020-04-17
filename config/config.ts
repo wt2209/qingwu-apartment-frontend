@@ -167,8 +167,14 @@ export default {
                 {
                   name: '收费规则',
                   icon: 'smile',
-                  path: '/basic/chargerules',
+                  path: '/basic/charge-rules',
                   component: './chargeRules',
+                },
+                {
+                  name: '费用类型',
+                  icon: 'smile',
+                  path: '/basic/fee-types',
+                  component: './feeTypes',
                 },
               ],
             },

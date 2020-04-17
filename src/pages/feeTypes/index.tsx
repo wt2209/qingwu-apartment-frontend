@@ -5,18 +5,13 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { queryChargeRule, updateChargeRule, addChargeRule, restoreChargeRule, removeChargeRule } from './service';
-import { ChargeRuleListItem } from './data';
-import { ChargeRuleTypeMapper, ChargeRuleWayMapper } from './mapper'
+import { queryFeeType, restoreFeeType, removeFeeType, updateFeeType, addFeeType } from './service';
+import { FeeTypeListItem } from './data';
 
-/**
- * 添加节点
- * @param fields
- */
 const handleAdd = async (fields: FormValueType) => {
   const hide = message.loading('正在添加');
   try {
-    await addChargeRule(fields);
+    await addFeeType(fields);
     hide();
     message.success('添加成功');
     return true;
@@ -27,14 +22,10 @@ const handleAdd = async (fields: FormValueType) => {
   }
 };
 
-/**
- * 更新节点
- * @param fields
- */
 const handleUpdate = async (id: number, fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
-    await updateChargeRule(id, fields);
+    await updateFeeType(id, fields);
     hide();
 
     message.success('配置成功');
@@ -50,9 +41,9 @@ const handleChangeStatus = async (id: number, status: boolean) => {
   const hide = message.loading('正在修改');
   try {
     if (status) {
-      await restoreChargeRule(id)
+      await restoreFeeType(id)
     } else {
-      await removeChargeRule(id)
+      await removeFeeType(id)
     }
     hide();
     message.success('修改成功');
@@ -69,42 +60,35 @@ const TableList: React.FC<{}> = () => {
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef<ActionType>();
-  const columns: ProColumns<ChargeRuleListItem>[] = [
+  const columns: ProColumns<FeeTypeListItem>[] = [
     {
-      title: '名称',
+      title: '费用名称',
       dataIndex: 'title',
       hideInSearch: true,
     },
     {
-      title: '缴费间隔',
-      dataIndex: 'period',
+      title: '每日滞纳金率',
+      dataIndex: 'rate',
+      renderText: (rate) => `${parseFloat(rate)}%`,
       hideInSearch: true,
-      renderText: text => `${text} 个月`
     },
     {
-      title: '所属类型',
-      dataIndex: 'type',
-      valueEnum: ChargeRuleTypeMapper,
-    },
-    {
-      title: '缴费方式',
-      dataIndex: 'way',
-      valueEnum: ChargeRuleWayMapper,
-    },
-    {
-      title: '缴费项目',
-      render: (_, { rule }) => (
-        <div>
-          {rule.map(item => (
-            <div key={item.title} style={{ margin: '3px 0' }}>
-              <Badge color="green" />
-              <Tag color={item.turn_in ? 'success' : 'warning'} >{item.turn_in ? '上交' : '自留'}</Tag>
-              {item.title}: {item.fee.join(', ')}
-              {parseFloat(item.rate) > 0 ? <Tag style={{ marginLeft: 20 }} color="error">日滞纳金：{parseFloat(item.rate)}%</Tag> : null}
-            </div>
-          ))}
-        </div>
+      title: '是否上交',
+      dataIndex: 'turn_in',
+      render: (turnIn) => (
+        <Tag color={turnIn ? 'success' : 'warning'} >{turnIn ? '上交' : '自留'}</Tag>
+      ),
+      renderFormItem: () => (
+        <Select placeholder="请选择">
+          <Select.Option value={1}>上交</Select.Option >
+          <Select.Option value={0}>自留</Select.Option>
+        </Select >
       )
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      hideInSearch: true,
     },
     {
       title: '状态',
@@ -123,8 +107,15 @@ const TableList: React.FC<{}> = () => {
       },
     },
     {
-      title: '备注',
-      dataIndex: 'remark',
+      title: '创建时间',
+      dataIndex: 'created_at',
+      valueType: 'date',
+      hideInSearch: true,
+    },
+    {
+      title: '上次修改时间',
+      dataIndex: 'updated_at',
+      valueType: 'date',
       hideInSearch: true,
     },
     {
@@ -151,7 +142,10 @@ const TableList: React.FC<{}> = () => {
                 <Divider type="vertical" style={{ margin: 0 }} />
                 <a onClick={() => {
                   handleUpdateModalVisible(true);
-                  setStepFormValues(record);
+                  setStepFormValues({
+                    ...record,
+                    turn_in: !!record.turn_in
+                  });
                 }}>修改</a>
               </>
             )
@@ -163,8 +157,8 @@ const TableList: React.FC<{}> = () => {
 
   return (
     <PageHeaderWrapper>
-      <ProTable<ChargeRuleListItem>
-        headerTitle="收费规则"
+      <ProTable<FeeTypeListItem>
+        headerTitle="费用类型"
         actionRef={actionRef}
         rowKey="id"
         form={{ initialValues: { status: 'all' } }}
@@ -173,12 +167,12 @@ const TableList: React.FC<{}> = () => {
             新建
           </Button>,
         ]}
-        request={(params) => queryChargeRule(params)}
+        request={params => queryFeeType(params)}
         columns={columns}
         rowSelection={{}}
       />
       <CreateForm
-        onSubmit={async (value) => {
+        onSubmit={async value => {
           const success = await handleAdd(value);
           if (success) {
             handleModalVisible(false);
