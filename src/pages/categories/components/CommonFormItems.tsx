@@ -1,12 +1,11 @@
 import React from 'react';
-import FormItem from 'antd/lib/form/FormItem';
-import { Select, Input } from 'antd';
+import { Select, Input, Form } from 'antd';
 import { typeMapper } from '../mapper';
 
 const CommonFormItems = () => {
   return (
     <>
-      <FormItem
+      <Form.Item
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="名称"
@@ -14,8 +13,8 @@ const CommonFormItems = () => {
         rules={[{ required: true, message: '请输入名称！' }]}
       >
         <Input placeholder="请输入" />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="类别"
@@ -26,23 +25,23 @@ const CommonFormItems = () => {
             <Select.Option key={key} value={key}>{typeMapper[key]}</Select.Option>
           ))}
         </Select>
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="水电收费方式"
         name="utility_type"
       >
         <Input placeholder="请输入" />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="备注"
         name="remark"
       >
         <Input.TextArea placeholder="请输入" />
-      </FormItem>
+      </Form.Item>
     </>
   )
 }

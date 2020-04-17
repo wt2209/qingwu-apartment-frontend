@@ -16,6 +16,10 @@ export async function queryRoom(params?: RoomListParams) {
   }))
 }
 
+export async function getRoom(id: number) {
+  return request(`/api/rooms/${id}`)
+}
+
 export async function removeRoom(id: number) {
   return request(`/api/rooms/${id}`, {
     method: 'POST',

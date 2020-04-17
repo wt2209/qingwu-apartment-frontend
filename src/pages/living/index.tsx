@@ -9,6 +9,7 @@ import Company from './components/Company';
 import Functional from './components/Functional';
 import { LivingListItem } from './data';
 import { queryTree, LivingFetchParams } from './service';
+import CreateForm from './components/CreateForm';
 
 const initialList = [
   {
@@ -216,9 +217,19 @@ const initialList = [
       },
     ],
   },
+  {
+    id: 6,
+    roomName: '3-3-101',
+    building: '3#',
+    unit: '3单元',
+    number: 1,
+    remark: '房间的说明',
+    records: [],
+  },
 ]
 
 const Living = () => {
+  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [roomTree, setRoomTree] = useState({});
   const [areas, setAreas] = useState<Array<any>>([]);
@@ -227,6 +238,7 @@ const Living = () => {
   const [selectedBuilding, setSelectedBuilding] = useState('');
   const [units, setUnits] = useState<Array<any>>([]);
   const [selectedUnit, setSelectedUnit] = useState('');
+  const [createFormRoomId, setCreateFormRoomId] = useState(0)
 
   const [list] = useState(initialList)
 
@@ -349,10 +361,12 @@ const Living = () => {
             <Button
               type="dashed"
               style={{ border: '0', backgroundColor: '#5dade2', width: '100%', height: 225 }}
+              onClick={() => {
+                handleModalVisible(true)
+                setCreateFormRoomId(living.id)
+              }}
             >
-              <Link to={`/living/livings/create/${living.id}`}>
-                <PlusOutlined style={{ fontSize: 30, color: 'rgba(0,0,0,0.65)' }} />
-              </Link>
+              <PlusOutlined style={{ fontSize: 30, color: 'rgba(0,0,0,0.65)' }} />
             </Button>
           </Card.Grid>,
         );
@@ -449,6 +463,11 @@ const Living = () => {
           </Row>
         </div>
       </div>
+      {createFormRoomId && <CreateForm
+        roomId={createFormRoomId}
+        modalVisible={createModalVisible}
+        onCancel={() => handleModalVisible(false)} />
+      }
     </PageHeaderWrapper >
   )
 }

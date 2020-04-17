@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import FormItem from 'antd/lib/form/FormItem';
 import { Select, Input, InputNumber, Form, Button, Switch } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { ChargeRuleWayMapper, ChargeRuleTypeMapper } from '../mapper';
@@ -95,7 +94,7 @@ const CommonFormItems = (props: Props) => {
 
   return (
     <>
-      <FormItem
+      <Form.Item
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 18 }}
         label="名称"
@@ -103,8 +102,8 @@ const CommonFormItems = (props: Props) => {
         rules={[{ required: true, message: '请输入名称！' }]}
       >
         <Input placeholder="请输入" />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 18 }}
         label="缴费间隔"
@@ -118,8 +117,8 @@ const CommonFormItems = (props: Props) => {
           formatter={value => value ? `${value} 个月` : ''}
           parser={value => value ? value.replace(' 个月', '') : 1}
           placeholder="月数" />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 18 }}
         label="所属类型"
@@ -136,8 +135,8 @@ const CommonFormItems = (props: Props) => {
             <Select.Option key={type} value={type}>{ChargeRuleTypeMapper[type]}</Select.Option>
           ))}
         </Select>
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 18 }}
         label="交费方式"
@@ -154,16 +153,16 @@ const CommonFormItems = (props: Props) => {
             <Select.Option key={type} value={type}>{ChargeRuleWayMapper[type]}</Select.Option>
           ))}
         </Select>
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 18 }}
         label="备注"
         name="remark"
       >
         <Input.TextArea placeholder="请输入" />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 18 }}
         label="房间收费项目"
@@ -173,7 +172,7 @@ const CommonFormItems = (props: Props) => {
       >
         <Button type="link" onClick={() => { setRulesCount(() => rulesCount + 1) }}>添加一项</Button>
         {ruleGroups.map(item => item)}
-      </FormItem>
+      </Form.Item>
     </>
   )
 }

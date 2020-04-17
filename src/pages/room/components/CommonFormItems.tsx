@@ -1,6 +1,5 @@
 import React from 'react';
-import FormItem from 'antd/lib/form/FormItem';
-import { Select, Input, InputNumber } from 'antd';
+import { Select, Input, InputNumber, Form } from 'antd';
 import { AreaListItem } from '@/pages/area/data';
 import { CategoryListItem } from '@/pages/categories/data';
 
@@ -12,7 +11,7 @@ interface Props {
 const CommonFormItems = (props: Props) => {
   return (
     <>
-      <FormItem
+      <Form.Item
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="区域"
@@ -23,8 +22,8 @@ const CommonFormItems = (props: Props) => {
             <Select.Option key={area.id} value={area.id}>{area.title}</Select.Option>
           ))}
         </Select>
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="类型"
@@ -35,8 +34,8 @@ const CommonFormItems = (props: Props) => {
             <Select.Option key={category.id} value={category.id}>{category.title}</Select.Option>
           ))}
         </Select>
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="房间号"
@@ -44,8 +43,8 @@ const CommonFormItems = (props: Props) => {
         rules={[{ required: true, message: '请输入房间号！' }]}
       >
         <Input placeholder="请输入" />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="楼号"
@@ -53,8 +52,8 @@ const CommonFormItems = (props: Props) => {
         rules={[{ required: true, message: '请输入楼号！' }]}
       >
         <Input placeholder="请输入" />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="单元"
@@ -62,8 +61,8 @@ const CommonFormItems = (props: Props) => {
         rules={[{ required: true, message: '请输入单元！' }]}
       >
         <Input placeholder="请输入" />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="房间人数"
@@ -71,15 +70,15 @@ const CommonFormItems = (props: Props) => {
         rules={[{ required: true, message: '请输入房间最大人数！' }]}
       >
         <InputNumber min={1} placeholder="请输入" />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
         label="备注"
         name="remark"
       >
         <Input.TextArea placeholder="请输入" />
-      </FormItem>
+      </Form.Item>
     </>
   )
 

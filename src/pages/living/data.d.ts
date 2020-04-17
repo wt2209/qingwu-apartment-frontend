@@ -1,7 +1,7 @@
 // 已房间为主题，计算出来的 “居住情况”
 export interface LivingListItem {
   id: number;
-  roomName: string;
+  title: string;
   building: string;
   unit: string;
   number: number; // 最大人数
