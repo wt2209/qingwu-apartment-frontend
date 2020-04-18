@@ -9,6 +9,13 @@ export interface LivingListItem {
   records: RecordListItem[];
 }
 
+export interface LivingFetchParams {
+  area?: string;
+  building?: string;
+  unit?: string;
+  keyword?: string;
+}
+
 export interface BuildingTreeItem {
   building: string;
   units: string[];

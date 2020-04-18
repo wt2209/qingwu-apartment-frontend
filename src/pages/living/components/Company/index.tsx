@@ -53,10 +53,10 @@ const Company = (props) => {
       </div>
       <div style={{ position: 'absolute', bottom: 6 }}>
         <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
-          公司详情
+          详情
           </Tag>
         <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-          公司改名
+          改名
           </Tag>
         <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
           调房

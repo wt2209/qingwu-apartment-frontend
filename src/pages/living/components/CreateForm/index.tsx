@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Steps, Form, Button } from 'antd';
+import { Modal, Steps, Form, Button, Spin } from 'antd';
 import BasicInfoStep from './components/BasicInfoStep';
 import UploadStep from './components/UploadStep';
 import ChargeRuleStep from './components/ChargeRuleStep';
@@ -26,6 +26,7 @@ const CreateForm = (props: Props) => {
   const [currentStep, setCurrentStep] = useState(0)
   const [categories, setCategories] = useState()
   const [room, setRoom] = useState<RoomListItem>()
+  const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
   const { roomId } = props
   const [formVals, setFormVals] = useState({
@@ -35,6 +36,7 @@ const CreateForm = (props: Props) => {
 
   useEffect(() => {
     (async () => {
+      setLoading(true)
       const res = await Promise.all([getRoom(roomId), getAllCategories()])
       if (res[0] && res[0].data) {
         const currentRoom = res[0].data
@@ -44,14 +46,16 @@ const CreateForm = (props: Props) => {
       if (res[1] && res[1].data) {
         setCategories(res[1].data)
       }
+      setLoading(false)
     })()
   }, [roomId])
 
-  const backward = () => {
-    setCurrentStep(() => currentStep - 1)
+  const handleCancel = () => {
+    setCurrentStep(0)
+    onCancel()
   }
-  const handleNext = async () => {
 
+  const handleNext = async () => {
     const fields = await form.validateFields()
     setFormVals({ ...formVals, ...fields })
     if (currentStep === 2) {
@@ -75,7 +79,7 @@ const CreateForm = (props: Props) => {
     if (currentStep === 1) {
       return (
         <>
-          <Button onClick={backward}>
+          <Button onClick={() => setCurrentStep(() => currentStep - 1)}>
             上一步
           </Button>
           <Button style={{ marginLeft: 12 }} type="primary" onClick={() => handleNext()}>
@@ -87,10 +91,10 @@ const CreateForm = (props: Props) => {
     if (currentStep === 2) {
       return (
         <>
-          <Button style={{ float: 'left' }} onClick={backward}>
+          <Button onClick={() => setCurrentStep(() => currentStep - 1)}>
             上一步
           </Button>
-          <Button type="primary" onClick={() => handleNext()}>
+          <Button style={{ marginLeft: 12 }} type="primary" onClick={() => handleNext()}>
             完成
           </Button>
         </>
@@ -105,33 +109,35 @@ const CreateForm = (props: Props) => {
     );
   }
 
-
   return (
     <Modal
-      width={800}
+      width={600}
       destroyOnClose
       title="新建规则"
       visible={modalVisible}
-      onCancel={() => onCancel()}
+      onCancel={() => handleCancel()}
       footer={null}
     >
-      <Steps style={{ maxWidth: 1000, margin: '0 auto', paddingTop: 16 }} current={currentStep}>
+      <Steps style={{ marginBottom: 28 }} size="small" current={currentStep}>
         <Step title="填写基本信息" />
         <Step title="设置收费规则" />
         <Step title="上传入住凭证" />
-        <Step title="完成" />
       </Steps>
-      <Form
-        form={form}
-        layout="horizontal"
-        initialValues={room}
-        className={styles.stepForm}
-      >
-        {renderContent()}
-        <Form.Item wrapperCol={{ span: 22 }} style={{ textAlign: 'right', marginTop: 24 }}>
-          {renderFooter()}
-        </Form.Item>
-      </Form>
+      <Spin spinning={loading}>
+        <Form
+          form={form}
+          layout="horizontal"
+          initialValues={room}
+          className={styles.stepForm}
+        >
+          <div style={{ minHeight: 400 }}>
+            {renderContent()}
+          </div>
+          <Form.Item wrapperCol={{ span: 22 }} style={{ textAlign: 'right', marginTop: 24 }}>
+            {renderFooter()}
+          </Form.Item>
+        </Form>
+      </Spin>
     </Modal >
   );
 };

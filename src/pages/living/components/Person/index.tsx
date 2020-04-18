@@ -1,10 +1,7 @@
 import React from 'react';
 import { Card, Divider, Tag } from 'antd';
 
-export interface PersonState { }
-export interface PersonProps {
-}
-function Person(props) {
+function Person(props: { record: any; }) {
   const { record } = props;
   const { person } = record;
   return (
@@ -30,21 +27,21 @@ function Person(props) {
           <p style={{ marginBottom: 0 }}>{person.phone}</p>
         </div>
         <div style={{ flex: 5 }}>
-          <p style={{ marginBottom: 0 }}>工号：{person.serial}</p>
-          <p style={{ marginBottom: 0 }}>入住：{person.enteredAt}</p>
+          <p style={{ marginBottom: 0 }}>工号:&nbsp;{person.serial}</p>
+          <p style={{ marginBottom: 0 }}>入住:&nbsp;{person.enteredAt}</p>
         </div>
       </div>
       <Divider style={{ margin: 2, backgroundColor: '#7ec4e6' }} />
       <div>
         {person.contractStart && (
           <p style={{ marginBottom: 0 }}>
-            劳动合同：
+            劳动合同:&nbsp;
             {person.contractStart}~{person.contractEnd}
           </p>
         )}
         {record.rentStart && (
           <p style={{ marginBottom: 0 }}>
-            租赁期限：
+            租赁期限:&nbsp;
             {record.rentStart}~{record.rentEnd}
           </p>
         )}

@@ -1,6 +1,10 @@
 import request from '@/utils/request';
 import { TableListParams, ChargeRuleListItem } from './data.d';
 
+export async function getAllChargeRules() {
+  return request('/api/all-charge-rules');
+}
+
 export async function queryChargeRule(params?: TableListParams) {
   return request('/api/charge-rules', {
     params,
