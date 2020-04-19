@@ -5,7 +5,7 @@ import { queryTree } from '../../service';
 import { LivingFetchParams } from '../../data';
 
 interface Props {
-  fetchData: (params: LivingFetchParams) => void;
+  onSubmit: (params: LivingFetchParams) => void;
   params: LivingFetchParams;
 }
 
@@ -18,7 +18,7 @@ const SelectBuilding = (props: Props) => {
   const [units, setUnits] = useState<Array<any>>([]);
   const [selectedUnit, setSelectedUnit] = useState('');
 
-  const { fetchData, params } = props
+  const { onSubmit, params } = props
 
   useEffect(() => {
     if (!params.area) {
@@ -68,7 +68,7 @@ const SelectBuilding = (props: Props) => {
 
   const handleUnitChange = (unit: string, checked: boolean) => {
     if (checked) {
-      fetchData({ area: selectedArea, building: selectedBuilding, unit })
+      onSubmit({ area: selectedArea, building: selectedBuilding, unit })
     }
   }
 

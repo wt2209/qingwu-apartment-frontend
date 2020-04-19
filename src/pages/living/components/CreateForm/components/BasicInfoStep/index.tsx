@@ -16,6 +16,7 @@ interface Props {
 const BasicInfo = (props: Props) => {
   const { room, categories, itemLayout } = props
 
+  console.log(room)
   const renderContent = () => {
     switch (room?.category.type) {
       case 'person':

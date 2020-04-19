@@ -40,8 +40,9 @@ const CreateForm = (props: Props) => {
       const res = await Promise.all([getRoom(roomId), getAllCategories()])
       if (res[0] && res[0].data) {
         const currentRoom = res[0].data
+        const { type } = currentRoom?.category
         setRoom(currentRoom)
-        setFormVals({ ...formVals, type: currentRoom.category.type })
+        setFormVals({ ...formVals, type })
       }
       if (res[1] && res[1].data) {
         setCategories(res[1].data)
