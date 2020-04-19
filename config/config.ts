@@ -142,6 +142,12 @@ export default {
               component: './living',
             },
             {
+              name: '维修',
+              icon: 'tool',
+              path: '/repairs',
+              component: './repairs',
+            },
+            {
               name: '基础结构',
               icon: 'apartment',
               path: '/basic',
