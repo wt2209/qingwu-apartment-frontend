@@ -5,8 +5,6 @@ import CompanyFormItems from "../CompanyFormItems";
 import { RoomListItem } from "@/pages/room/data";
 import { CategoryListItem } from "@/pages/categories/data";
 
-
-
 interface Props {
   room: RoomListItem | undefined;
   categories: CategoryListItem[] | undefined;
@@ -16,7 +14,7 @@ interface Props {
 const BasicInfo = (props: Props) => {
   const { room, categories, itemLayout } = props
 
-  console.log(room)
+  const filteredCategories = categories?.filter(item => item.type === room?.category.type)
   const renderContent = () => {
     switch (room?.category.type) {
       case 'person':
@@ -32,9 +30,13 @@ const BasicInfo = (props: Props) => {
 
   return (
     <Fragment>
-      <Form.Item {...itemLayout} label="类型" name="category_id">
+      <Form.Item
+        {...itemLayout}
+        label="类型"
+        rules={[{ required: true, message: '必须选择' }]}
+        name="category_id">
         <Select placeholder="请选择">
-          {categories?.map(category =>
+          {filteredCategories?.map(category =>
             <Select.Option key={category.id} value={category.id}>{category.title}</Select.Option>
           )}
         </Select>

@@ -107,7 +107,8 @@ const Living = (props: Props) => {
           {room.title}
         </span>
         <span style={{ display: 'block', fontSize: 14, fontWeight: 'normal' }} >
-          {room.area.title}&nbsp;&nbsp;&nbsp;( {room.category.title} )
+          {room.area ? room.area.title : ''}
+          {room.category ? `（${room?.category.title}）` : ''}
         </span>
       </div>
       <div style={{ fontSize: 14, flex: 3 }}>{room.remark}</div>
@@ -169,13 +170,14 @@ const Living = (props: Props) => {
         </div>
       </div>
       <BackTop />
-      {createFormRoomId
-        ? <CreateForm
-          categories={categories}
-          roomId={createFormRoomId}
-          modalVisible={createModalVisible}
-          onCancel={() => handleModalVisible(false)} />
-        : null
+      {
+        createFormRoomId
+          ? <CreateForm
+            categories={categories}
+            roomId={createFormRoomId}
+            modalVisible={createModalVisible}
+            onCancel={() => handleModalVisible(false)} />
+          : null
       }
     </PageHeaderWrapper >
   )

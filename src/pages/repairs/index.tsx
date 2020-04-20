@@ -166,7 +166,7 @@ const ListContent = (data: { data: RepairListItem }) => {
       <div className={styles.listContentItem}>
         <span>付款方</span>
         <p>
-          {item.payer === 'company' ? <Tag color="green">公司</Tag> : <Tag color="">公司</Tag>}
+          {item.payer === 'company' ? <Tag color="green">公司</Tag> : <Tag color="red">物业</Tag>}
         </p>
       </div>
       <div className={styles.listContentItem}>
@@ -293,7 +293,7 @@ export const Repairs: FC<RepairsProps> = (props) => {
 
   return (
     <div>
-      <PageHeaderWrapper>
+      <PageHeaderWrapper title={false}>
         <div className={styles.standardList}>
           <Card bordered={false}>
             <Row>

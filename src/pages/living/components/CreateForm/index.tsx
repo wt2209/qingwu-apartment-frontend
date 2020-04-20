@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Steps, Form, Button, Spin } from 'antd';
+import moment from 'moment';
 import BasicInfoStep from './components/BasicInfoStep';
 import UploadStep from './components/UploadStep';
 import ChargeRuleStep from './components/ChargeRuleStep';
@@ -32,6 +33,11 @@ const CreateForm = (props: Props) => {
   const [formVals, setFormVals] = useState({
     room_id: roomId,
     type: '',
+    category_id: undefined,
+    record_at: moment(),
+    person: {
+      education: '其他',
+    }
   })
 
   useEffect(() => {
@@ -42,7 +48,9 @@ const CreateForm = (props: Props) => {
         const currentRoom = res.data
         const { type } = currentRoom?.category
         setRoom(currentRoom)
-        setFormVals({ ...formVals, type })
+        const fields = { ...formVals, type, category_id: currentRoom.category.id }
+        setFormVals(fields)
+        form.setFieldsValue(fields)
       }
       setLoading(false)
     })()
@@ -65,7 +73,7 @@ const CreateForm = (props: Props) => {
 
   const renderContent = () => {
     if (currentStep === 1) {
-      return <ChargeRuleStep itemLayout={itemLayout} />
+      return <ChargeRuleStep type={formVals.type} itemLayout={itemLayout} />
     }
     if (currentStep === 2) {
       return <UploadStep itemLayout={itemLayout} />
@@ -109,14 +117,14 @@ const CreateForm = (props: Props) => {
 
   return (
     <Modal
-      width={600}
+      width={660}
       destroyOnClose
       title="新建规则"
       visible={modalVisible}
       onCancel={() => handleCancel()}
       footer={null}
     >
-      <Steps style={{ marginBottom: 28 }} size="small" current={currentStep}>
+      <Steps size="small" current={currentStep}>
         <Step title="填写基本信息" />
         <Step title="设置收费规则" />
         <Step title="上传入住凭证" />
@@ -125,7 +133,7 @@ const CreateForm = (props: Props) => {
         <Form
           form={form}
           layout="horizontal"
-          initialValues={room}
+          initialValues={formVals}
           className={styles.stepForm}
         >
           <div style={{ minHeight: 400 }}>

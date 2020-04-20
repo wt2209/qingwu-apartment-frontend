@@ -1,16 +1,18 @@
-import { Form, Radio, Select, Input, DatePicker, Checkbox } from "antd"
-import React, { Fragment } from "react"
+import { Form, Radio, Input, DatePicker, Checkbox } from "antd"
+import React, { Fragment, useState } from "react"
+import locale from "antd/es/date-picker/locale/zh_CN"
 
 const PersonFormItems = (props: { itemLayout: any }) => {
-
   const { itemLayout } = props
+  const [isNoEnd, handleNoEndChange] = useState(false)
+
   return (
     <Fragment>
       <Form.Item
         {...itemLayout}
         name={['person', 'dentify']}
         label="身份证号">
-        <Input />
+        <Input placeholder="请首选输入身份证号" />
       </Form.Item>
       <Form.Item
         {...itemLayout}
@@ -29,7 +31,7 @@ const PersonFormItems = (props: { itemLayout: any }) => {
         name={['person', 'gender']}
         {...itemLayout}
         label="性别">
-        <Radio.Group style={{ marginLeft: 16 }}>
+        <Radio.Group>
           <Radio value="男">男</Radio>
           <Radio value="女">女</Radio>
         </Radio.Group>
@@ -38,12 +40,12 @@ const PersonFormItems = (props: { itemLayout: any }) => {
         name={['person', 'education']}
         {...itemLayout}
         label="学历">
-
-        <Radio.Group style={{ marginLeft: 16 }}>
-          <Radio value="本科">本科</Radio>
-          <Radio value="研究生">研究生</Radio>
-          <Radio value="博士">博士</Radio>
-          <Radio value="其他">其他</Radio>
+        <Radio.Group>
+          <Radio.Button value="专科">专科</Radio.Button>
+          <Radio.Button value="本科">本科</Radio.Button>
+          <Radio.Button value="硕士">硕士</Radio.Button>
+          <Radio.Button value="博士">博士</Radio.Button>
+          <Radio.Button value="其他">其他</Radio.Button>
         </Radio.Group>
       </Form.Item>
       <Form.Item
@@ -59,28 +61,36 @@ const PersonFormItems = (props: { itemLayout: any }) => {
         <Input />
       </Form.Item>
       <Form.Item
-        name={['person', 'entered_at']}
+        name={['person', 'hired_at']}
         {...itemLayout}
         label="入职时间">
-        <DatePicker format="YYYY-MM-DD" />
+        <DatePicker locale={locale} placeholder="入职时间" format="YYYY-MM-DD" />
       </Form.Item>
       <Form.Item
         {...itemLayout}
-        name={['person', 'phone']}
-        label="入住时间">
-        <DatePicker format="YYYY-MM-DD" />
+        name={['person', 'entered_at']}
+        label="进住公寓时间">
+        <DatePicker locale={locale} placeholder="进住公寓时间" format="YYYY-MM-DD" />
       </Form.Item>
       <Form.Item
-        name={['person', "contract_start"]}
+        name={['person', "contract_date"]}
         {...itemLayout}
         label="劳动合同">
-        <DatePicker placeholder="开始日期" format="YYYY-MM-DD" />
-        <DatePicker.RangePicker format="YYYY-MM-DD" />
+        {
+          isNoEnd
+            ? <DatePicker locale={locale} placeholder="开始日期" format="YYYY-MM-DD" />
+            : <DatePicker.RangePicker locale={locale} placeholder={['开始日期', '结束日期']} format="YYYY-MM-DD" />
+        }
         <Checkbox
-          style={{ float: 'right' }}
+          checked={isNoEnd}
+          onChange={(e) => { handleNoEndChange(e.target.checked) }}
+          style={{ float: 'right', lineHeight: '32px' }}
         >
           无固定期
         </Checkbox>
+      </Form.Item>
+      <Form.Item name={['person', "remark"]} {...itemLayout} label="个人说明/备注">
+        <Input.TextArea />
       </Form.Item>
     </Fragment >
   )
