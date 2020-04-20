@@ -5,8 +5,8 @@ import UploadStep from './components/UploadStep';
 import ChargeRuleStep from './components/ChargeRuleStep';
 import { RoomListItem } from '@/pages/room/data';
 import { getRoom } from '@/pages/room/service';
-import { getAllCategories } from '@/pages/categories/service';
 import styles from './style.less';
+import { CategoryListItem } from '@/pages/categories/data';
 
 const { Step } = Steps
 
@@ -19,12 +19,12 @@ interface Props {
   modalVisible: boolean;
   onCancel: () => void;
   roomId: number;
+  categories: CategoryListItem[] | undefined;
 }
 
 const CreateForm = (props: Props) => {
-  const { modalVisible, onCancel } = props;
+  const { modalVisible, onCancel, categories } = props;
   const [currentStep, setCurrentStep] = useState(0)
-  const [categories, setCategories] = useState()
   const [room, setRoom] = useState<RoomListItem>()
   const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
@@ -37,15 +37,12 @@ const CreateForm = (props: Props) => {
   useEffect(() => {
     (async () => {
       setLoading(true)
-      const res = await Promise.all([getRoom(roomId), getAllCategories()])
-      if (res[0] && res[0].data) {
-        const currentRoom = res[0].data
+      const res = await getRoom(roomId)
+      if (res && res.data) {
+        const currentRoom = res.data
         const { type } = currentRoom?.category
         setRoom(currentRoom)
         setFormVals({ ...formVals, type })
-      }
-      if (res[1] && res[1].data) {
-        setCategories(res[1].data)
       }
       setLoading(false)
     })()

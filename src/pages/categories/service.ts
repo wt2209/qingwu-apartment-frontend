@@ -26,7 +26,13 @@ export async function removeCategory(id: number) {
     data: {
       _method: 'delete',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }
 
 export async function restoreCategory(id: number) {
@@ -35,14 +41,26 @@ export async function restoreCategory(id: number) {
     data: {
       _method: 'patch',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }
 
 export async function addCategory(data: Partial<CategoryListItem>) {
   return request('/api/categories', {
     method: 'POST',
     data,
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }
 
 export async function updateCategory(id: number, data: Partial<CategoryListItem>) {
@@ -52,5 +70,11 @@ export async function updateCategory(id: number, data: Partial<CategoryListItem>
       ...data,
       _method: 'put',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }

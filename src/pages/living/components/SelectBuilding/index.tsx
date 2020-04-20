@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import CheckableTag from 'antd/lib/tag/CheckableTag';
 import { Divider } from 'antd';
-import { queryTree } from '../../service';
 import { LivingFetchParams } from '../../data';
 
 interface Props {
   onSubmit: (params: LivingFetchParams) => void;
   params: LivingFetchParams;
+  roomTree: any;
 }
 
 const SelectBuilding = (props: Props) => {
-  const [roomTree, setRoomTree] = useState({});
-  const [areas, setAreas] = useState<Array<any>>([]);
+  const { roomTree } = props
+  const [areas, setAreas] = useState<Array<any>>(Object.keys(roomTree || {}));
   const [selectedArea, setSelectedArea] = useState('');
   const [buildings, setBuildings] = useState<Array<any>>([]);
   const [selectedBuilding, setSelectedBuilding] = useState('');
@@ -21,32 +21,30 @@ const SelectBuilding = (props: Props) => {
   const { onSubmit, params } = props
 
   useEffect(() => {
+    const allAreas = Object.keys(roomTree || {})
+    setAreas(allAreas)
+    if (allAreas.length === 1) {
+      setSelectedArea(allAreas[0])
+      setBuildings(Object.keys(roomTree[allAreas[0]]))
+    }
+  }, [roomTree])
+
+  useEffect(() => {
     if (!params.area) {
       setBuildings([])
       setUnits([])
+    } else {
+      if (!params.building) {
+        setUnits([])
+      } else {
+        setUnits(roomTree[params.area][params.building])
+      }
+      setBuildings(Object.keys(roomTree[params.area]))
     }
     setSelectedArea(params?.area || '');
     setSelectedBuilding(params?.building || '');
     setSelectedUnit(params?.unit || '');
   }, [params])
-
-  const fetchTree = async () => {
-    // setLoading(true);
-    const res = await queryTree();
-    const tree = res.data
-    // setLoading(false);
-    setRoomTree(tree);
-    const allAreas = Object.keys(tree)
-    setAreas(allAreas)
-    if (allAreas.length === 1) {
-      setSelectedArea(allAreas[0])
-      setBuildings(Object.keys(tree[allAreas[0]]))
-    }
-  }
-
-  useEffect(() => {
-    fetchTree()
-  }, [])
 
   const handleAreaChange = (area: string, checked: boolean) => {
     if (checked) {
@@ -76,7 +74,7 @@ const SelectBuilding = (props: Props) => {
     <>
       <div>
         <span style={{ marginRight: 8, display: 'inline' }}>区域：</span>
-        {areas.map((area: string) =>
+        {areas && areas.map((area: string) =>
           <CheckableTag
             key={`area-${area}`}
             style={{ fontSize: 14 }}

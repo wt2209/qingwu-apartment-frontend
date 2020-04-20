@@ -18,7 +18,6 @@ export async function queryArea(params?: AreaListParams) {
     pageSize: res.meta.per_page,
     current: res.meta.current_page
   }))
-
 }
 
 export async function removeArea(id: number) {
@@ -27,7 +26,13 @@ export async function removeArea(id: number) {
     data: {
       _method: 'delete',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }
 
 export async function restoreArea(id: number) {
@@ -36,7 +41,13 @@ export async function restoreArea(id: number) {
     data: {
       _method: 'patch',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }
 
 export async function addArea(params: AreaListParams) {
@@ -46,7 +57,13 @@ export async function addArea(params: AreaListParams) {
       ...params,
       method: 'post',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }
 
 export async function updateArea(id: number, params: AreaListParams) {
@@ -56,5 +73,11 @@ export async function updateArea(id: number, params: AreaListParams) {
       ...params,
       _method: 'put',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }

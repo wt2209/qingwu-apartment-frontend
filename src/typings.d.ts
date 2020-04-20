@@ -27,6 +27,7 @@ interface Window {
     fieldsObject: GAFieldsObject | string,
   ) => void;
   reloadAuthorized: () => void;
+  g_app: any;
 }
 
 declare let ga: Function;

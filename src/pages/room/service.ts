@@ -26,7 +26,13 @@ export async function removeRoom(id: number) {
     data: {
       _method: 'delete',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }
 
 export async function restoreRoom(id: number) {
@@ -35,14 +41,26 @@ export async function restoreRoom(id: number) {
     data: {
       _method: 'patch',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }
 
 export async function addRoom(data: Partial<RoomListItem>) {
   return request('/api/rooms', {
     method: 'POST',
     data,
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }
 
 export async function updateRoom(id: number | undefined, formVals: RoomFormValueType) {
@@ -52,5 +70,11 @@ export async function updateRoom(id: number | undefined, formVals: RoomFormValue
       ...formVals,
       _method: 'put',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    window.g_app._store.dispatch({
+      type: 'living/reset',
+    })
+    return res
+  })
 }

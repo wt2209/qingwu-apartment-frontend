@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Card, Row, Col, Button, Spin, Divider, BackTop } from 'antd';
 import { PlusOutlined, SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { connect, Dispatch } from 'dva';
 import Person from './components/Person';
 import Company from './components/Company';
 import Functional from './components/Functional';
@@ -9,39 +10,45 @@ import { LivingListItem, LivingFetchParams } from './data';
 import CreateForm from './components/CreateForm';
 import SelectBuilding from './components/SelectBuilding';
 import SearchBar from './components/SearchBar';
-import { queryLiving } from './service';
+import { ModelState } from './model';
+import { AreaListItem } from '../area/data';
+import { CategoryListItem } from '../categories/data';
 
-const Living = () => {
+interface Props {
+  areas: AreaListItem[] | undefined;
+  categories: CategoryListItem[] | undefined;
+  list: LivingListItem[];
+  params: LivingFetchParams;
+  total: number;
+  loading: boolean;
+  dispatch: Dispatch;
+  tree: any;
+}
+
+const Living = (props: Props) => {
+  const { areas, categories, tree, list, params, total, loading, dispatch } = props
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  const [loading, setLoading] = useState(false);
   const [createFormRoomId, setCreateFormRoomId] = useState(0)
-  const [params, setParams] = useState({})
-  const [page, setPage] = useState(1)
-  const [total, setTotal] = useState(0)
-  const [list, setList] = useState<LivingListItem[]>()
 
-  const fetchData = async () => {
-    setLoading(true)
-    const { data, meta } = await queryLiving({ ...params })
-    setList(data)
-    setTotal(meta ? meta.total : 0)
-    setLoading(false)
+  const fetchData = (payload: LivingFetchParams) => {
+    dispatch({ type: 'living/fetch', payload })
   }
 
-  const loadingMore = async () => {
-    setLoading(true)
-    const { data } = await queryLiving({ ...params, page })
-    setList(list?.concat(data))
-    setLoading(false)
+  const loadMore = () => {
+    dispatch({ type: 'living/appendFetch' })
   }
 
   useEffect(() => {
-    fetchData()
-  }, [params])
-
-  useEffect(() => {
-    loadingMore()
-  }, [page])
+    if (!tree) {
+      dispatch({ type: 'living/fetchTree' })
+    }
+    if (!areas) {
+      dispatch({ type: 'living/fetchAreas' })
+    }
+    if (!categories) {
+      dispatch({ type: 'living/fetchCategories' })
+    }
+  }, [])
 
   const renderContent = (room: LivingListItem) => {
     const number = Math.max(room.number, room.records.length);
@@ -110,10 +117,16 @@ const Living = () => {
   return (
     <PageHeaderWrapper title={false}>
       <Card style={{ marginBottom: 20 }}>
-        <Spin spinning={loading}>
-          <SelectBuilding onSubmit={(value: LivingFetchParams) => { setParams(value) }} params={params} />
+        <Spin spinning={loading === undefined ? false : loading}>
+          <SelectBuilding
+            roomTree={tree}
+            onSubmit={(value: LivingFetchParams) => { fetchData(value) }}
+            params={params} />
           <Divider dashed style={{ margin: '6px 0' }} />
-          <SearchBar params={params} onSubmit={(value: LivingFetchParams) => setParams(value)} />
+          <SearchBar
+            areas={areas}
+            params={params}
+            onSubmit={(value: LivingFetchParams) => { fetchData(value) }} />
         </Spin>
       </Card>
       <div style={{ display: 'flex' }}>
@@ -143,10 +156,10 @@ const Living = () => {
             ? <Row>
               <div style={{ width: '100%', textAlign: 'center', marginTop: 16 }} >
                 <Button
-                  onClick={() => setPage(() => page + 1)}
+                  onClick={loadMore}
                   type="default"
                   style={{ paddingLeft: 48, paddingRight: 48 }}
-                  loading={loading}>
+                  loading={loading === undefined ? false : loading}>
                   {loading ? '加载中...' : `还有 ${total - list.length} 项，点击继续加载`}
                 </Button>
               </div>
@@ -158,6 +171,7 @@ const Living = () => {
       <BackTop />
       {createFormRoomId
         ? <CreateForm
+          categories={categories}
           roomId={createFormRoomId}
           modalVisible={createModalVisible}
           onCancel={() => handleModalVisible(false)} />
@@ -167,4 +181,20 @@ const Living = () => {
   )
 }
 
-export default Living;
+export default connect(
+  ({ living, loading }:
+    {
+      living: ModelState,
+      loading: {
+        models: { [key: string]: boolean }
+      }
+    }) => ({
+      areas: living.areas,
+      categories: living.categories,
+      tree: living.tree,
+      list: living.list,
+      params: living.params,
+      total: living.total,
+      loading: loading.models.living
+    })
+)(Living);

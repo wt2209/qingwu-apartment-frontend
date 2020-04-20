@@ -1,35 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import { Input, Select } from 'antd'
 import { LivingFetchParams } from '../../data'
-import { getAllAreas } from '@/pages/area/service'
 import { AreaListItem } from '@/pages/area/data'
 
 interface Props {
   onSubmit: (params: LivingFetchParams) => void;
-  params: LivingFetchParams
+  params: LivingFetchParams;
+  areas: AreaListItem[] | undefined;
 }
 
 const SearchBar = (props: Props) => {
-  const { params, onSubmit } = props
+  const { params, onSubmit, areas } = props
   const [keyword, setKeyword] = useState<string>()
-  const [areas, setAreas] = useState<AreaListItem[]>()
   const [areaId, setAreaId] = useState<string | number>(0)
-
-  useEffect(() => {
-    (async () => {
-      const res = await getAllAreas()
-      if (res && res.data) {
-        setAreas(res.data)
-      }
-    })()
-  }, [])
 
   useEffect(() => {
     if (!params.keyword) {
       setKeyword('')
+    } else {
+      setKeyword(params.keyword)
     }
     if (!params.area_id) {
       setAreaId(0)
+    } else {
+      setAreaId(params.area_id)
     }
   }, [params])
 
@@ -37,9 +31,10 @@ const SearchBar = (props: Props) => {
     <div style={{ display: ' flex', alignItems: 'center' }}>
       <span style={{ marginRight: 8, display: 'inline', minWidth: 42 }}>搜索：</span>
       <Select
+        value={areaId}
         placeholder="请选择"
         style={{ minWidth: 100 }}
-        onSelect={(value: number) => setAreaId(value)}>
+        onSelect={(value: number | string) => setAreaId(value)}>
         <Select.Option value={0}>全部区域</Select.Option>
         {areas && areas.map(area => (
           <Select.Option key={area.id} value={area.id}>{area.title}</Select.Option>
