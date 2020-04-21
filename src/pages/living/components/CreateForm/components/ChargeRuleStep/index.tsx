@@ -3,6 +3,7 @@ import { Form, Select, DatePicker, Input } from "antd"
 import { ChargeRuleListItem } from "@/pages/chargeRules/data"
 import { getAllChargeRules } from "@/pages/chargeRules/service"
 import locale from "antd/es/date-picker/locale/zh_CN"
+import { dateFormater } from "../.."
 
 const ChargeRuleStep = (props: { itemLayout: any, type: string }) => {
   const [chargeRules, setChargeRules] = useState<ChargeRuleListItem[]>()
@@ -24,10 +25,10 @@ const ChargeRuleStep = (props: { itemLayout: any, type: string }) => {
         {...itemLayout}
         rules={[{ required: true, message: '必须填写' }]}
         label="入住日期">
-        <DatePicker locale={locale} placeholder="本房间入住日" format="YYYY-MM-DD" />
+        <DatePicker locale={locale} placeholder="本房间入住日" format={dateFormater} />
       </Form.Item>
       <Form.Item name="rent_date" {...itemLayout} label="租期">
-        <DatePicker.RangePicker locale={locale} placeholder={['开始日期', '结束日期']} format="YYYY-MM-DD" />
+        <DatePicker.RangePicker locale={locale} placeholder={['开始日期', '结束日期']} format={dateFormater} />
       </Form.Item>
       <Form.Item {...itemLayout} label="选择收费规则" name="charge_rule_id">
         <Select placeholder="请选择">

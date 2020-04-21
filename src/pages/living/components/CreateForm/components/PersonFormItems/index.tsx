@@ -1,6 +1,7 @@
 import { Form, Radio, Input, DatePicker, Checkbox } from "antd"
 import React, { Fragment, useState } from "react"
 import locale from "antd/es/date-picker/locale/zh_CN"
+import { dateFormater } from "../.."
 
 const PersonFormItems = (props: { itemLayout: any }) => {
   const { itemLayout } = props
@@ -64,10 +65,10 @@ const PersonFormItems = (props: { itemLayout: any }) => {
         name={['person', 'hired_at']}
         {...itemLayout}
         label="入职时间">
-        <DatePicker locale={locale} placeholder="入职时间" format="YYYY-MM-DD" />
+        <DatePicker locale={locale} placeholder="入职时间" format={dateFormater} />
       </Form.Item>
       <Form.Item
-        name={['person', "contract_date"]}
+        name={['person', 'contract_date']}
         {...itemLayout}
         label="劳动合同">
         {
