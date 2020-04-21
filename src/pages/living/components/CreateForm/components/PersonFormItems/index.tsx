@@ -40,7 +40,7 @@ const PersonFormItems = (props: { itemLayout: any }) => {
         name={['person', 'education']}
         {...itemLayout}
         label="学历">
-        <Radio.Group>
+        <Radio.Group size="small">
           <Radio.Button value="专科">专科</Radio.Button>
           <Radio.Button value="本科">本科</Radio.Button>
           <Radio.Button value="硕士">硕士</Radio.Button>
@@ -65,12 +65,6 @@ const PersonFormItems = (props: { itemLayout: any }) => {
         {...itemLayout}
         label="入职时间">
         <DatePicker locale={locale} placeholder="入职时间" format="YYYY-MM-DD" />
-      </Form.Item>
-      <Form.Item
-        {...itemLayout}
-        name={['person', 'entered_at']}
-        label="进住公寓时间">
-        <DatePicker locale={locale} placeholder="进住公寓时间" format="YYYY-MM-DD" />
       </Form.Item>
       <Form.Item
         name={['person', "contract_date"]}

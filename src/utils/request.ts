@@ -6,6 +6,7 @@ import router from 'umi/router';
 import { extend } from 'umi-request';
 import { notification } from 'antd';
 import { stringify } from 'querystring';
+import { URL_PREFIX } from '@/config';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -60,8 +61,7 @@ const errorHandler = (error: { response: Response }): Response => {
  * 配置request请求时的默认参数
  */
 const request = extend({
-  // prefix: 'http://140.143.233.128',
-  prefix: 'http://qingwu-apartment.wsl',
+  prefix: URL_PREFIX,
   errorHandler, // 默认错误处理
   credentials: 'omit', // 默认请求是否带上cookie
   headers: {

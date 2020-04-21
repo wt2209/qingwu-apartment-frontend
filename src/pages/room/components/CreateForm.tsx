@@ -26,7 +26,7 @@ const CreateForm: React.FC<CreateFormProps> = props => {
 
   return (
     <Modal
-      width={800}
+      width={640}
       destroyOnClose
       title="新增房间"
       visible={modalVisible}
