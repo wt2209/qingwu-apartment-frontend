@@ -1,5 +1,6 @@
 import React, { Fragment } from "react"
 import { Select, Form } from "antd"
+import { FormInstance } from "antd/lib/form";
 import PersonFormItems from "../PersonFormItems"
 import CompanyFormItems from "../CompanyFormItems";
 import { RoomListItem } from "@/pages/room/data";
@@ -9,16 +10,17 @@ interface Props {
   room: RoomListItem | undefined;
   categories: CategoryListItem[] | undefined;
   itemLayout: any;
+  form: FormInstance;
 }
 
 const BasicInfo = (props: Props) => {
-  const { room, categories, itemLayout } = props
+  const { room, categories, itemLayout, form } = props
 
   const filteredCategories = categories?.filter(item => item.type === room?.category.type)
   const renderContent = () => {
     switch (room?.category.type) {
       case 'person':
-        return <PersonFormItems itemLayout={itemLayout} />
+        return <PersonFormItems form={form} itemLayout={itemLayout} />
       case 'company':
         return <CompanyFormItems itemLayout={itemLayout} />
       case 'functional':

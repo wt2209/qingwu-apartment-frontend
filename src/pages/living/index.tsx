@@ -38,6 +38,11 @@ const Living = (props: Props) => {
     dispatch({ type: 'living/appendFetch' })
   }
 
+  const handleCreate = (payload: any) => {
+    dispatch({ type: 'living/create', payload })
+    handleModalVisible(false)
+  }
+
   useEffect(() => {
     if (!tree) {
       dispatch({ type: 'living/fetchTree' })
@@ -173,6 +178,7 @@ const Living = (props: Props) => {
       {
         createFormRoomId
           ? <CreateForm
+            handleCreate={handleCreate}
             categories={categories}
             roomId={createFormRoomId}
             modalVisible={createModalVisible}

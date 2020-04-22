@@ -12,6 +12,7 @@ import { CategoryListItem } from '@/pages/categories/data';
 
 
 interface Props {
+  handleCreate: (values: any) => void;
   modalVisible: boolean;
   onCancel: () => void;
   roomId: number;
@@ -34,6 +35,8 @@ interface FormVals {
     department?: string;
     hired_at?: Moment;
     contract_date?: Moment[] | Moment;
+    contract_start?: Moment;
+    no_end?: boolean;
     remark?: string;
   };
   company?: {
@@ -79,12 +82,13 @@ const formatFields = (values: FormVals) => {
     if (person?.hired_at instanceof moment) {
       result.person.hired_at = person.hired_at.format(dateFormater)
     }
-    if (Array.isArray(person?.contract_date)) {
+    if (person?.contract_start) {
+      result.person.contract_start = person?.contract_start.format(dateFormater)
+      result.person.contract_end = '无固定期'
+    }
+    if (person?.contract_date && Array.isArray(person?.contract_date)) {
       result.person.contract_start = person?.contract_date[0].format(dateFormater)
       result.person.contract_end = person?.contract_date[1].format(dateFormater)
-    } else if (person?.contract_date instanceof moment) {
-      result.person.contract_start = person?.contract_date.format(dateFormater)
-      result.person.contract_end = '无固定期'
     }
     delete result.person.contract_date
   } else if (result.type === 'company') {
@@ -100,7 +104,7 @@ const CreateForm = (props: Props) => {
   const [room, setRoom] = useState<RoomListItem>()
   const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
-  const { roomId } = props
+  const { roomId, handleCreate } = props
   const [formVals, setFormVals] = useState<FormVals>({
     room_id: roomId,
     area_id: undefined,
@@ -144,8 +148,9 @@ const CreateForm = (props: Props) => {
     setFormVals({ ...formVals, ...fields })
     if (currentStep === 2) {
       const values = formatFields({ ...formVals, ...fields })
-      console.log({ ...formVals, ...fields })
-
+      handleCreate(values)
+      form.resetFields()
+      setCurrentStep(0)
     } else {
       setCurrentStep(() => currentStep + 1)
     }
@@ -158,7 +163,7 @@ const CreateForm = (props: Props) => {
     if (currentStep === 2) {
       return <UploadStep itemLayout={itemLayout} />
     }
-    return <BasicInfoStep room={room} categories={categories} itemLayout={itemLayout} />
+    return <BasicInfoStep form={form} room={room} categories={categories} itemLayout={itemLayout} />
   }
 
   const renderFooter = () => {

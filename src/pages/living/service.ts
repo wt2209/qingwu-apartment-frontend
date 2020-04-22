@@ -12,6 +12,13 @@ export async function queryTree(): Promise<ResponseListData> {
   return request('/api/room-tree');
 }
 
+export async function createLiving(data: any) {
+  return request('/api/livings', {
+    method: 'POST',
+    data
+  })
+}
+
 export async function removeFile(path: string) {
   return request('/api/file-remove', {
     method: 'POST',

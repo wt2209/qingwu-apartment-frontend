@@ -28,21 +28,21 @@ function Person(props: { record: any; }) {
         </div>
         <div style={{ flex: 5 }}>
           <p style={{ marginBottom: 0 }}>工号:&nbsp;{person.serial}</p>
-          <p style={{ marginBottom: 0 }}>入住:&nbsp;{person.enteredAt}</p>
+          <p style={{ marginBottom: 0 }}>入住:&nbsp;{record.record_at}</p>
         </div>
       </div>
       <Divider style={{ margin: 2, backgroundColor: '#7ec4e6' }} />
       <div>
-        {person.contractStart && (
+        {person.contract_start && (
           <p style={{ marginBottom: 0 }}>
             劳动合同:&nbsp;
-            {person.contractStart}~{person.contractEnd}
+            {person.contract_start}~{person.contract_end}
           </p>
         )}
-        {record.rentStart && (
+        {record.rent_start && (
           <p style={{ marginBottom: 0 }}>
             租赁期限:&nbsp;
-            {record.rentStart}~{record.rentEnd}
+            {record.rent_start}~{record.rent_end}
           </p>
         )}
       </div>

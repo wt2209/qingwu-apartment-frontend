@@ -1,17 +1,32 @@
 import { Form, Radio, Input, DatePicker, Checkbox } from "antd"
-import React, { Fragment, useState } from "react"
+import React, { Fragment, useState, useEffect } from "react"
 import locale from "antd/es/date-picker/locale/zh_CN"
+import { FormInstance } from "antd/lib/form"
 import { dateFormater } from "../.."
 
-const PersonFormItems = (props: { itemLayout: any }) => {
-  const { itemLayout } = props
-  const [isNoEnd, handleNoEndChange] = useState(false)
+const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
+  const { itemLayout, form } = props
+  const [isNoEnd, setIsNoEnd] = useState(false)
+
+  const handleNoEndChange = (checked: boolean) => {
+    setIsNoEnd(checked)
+    if (checked) {
+      form.setFieldsValue({ person: { contract_date: undefined } })
+    } else {
+      form.setFieldsValue({ person: { contract_start: undefined } })
+    }
+  }
+  useEffect(() => {
+    if (form.getFieldValue(['person', 'contract_start'])) {
+      setIsNoEnd(true)
+    }
+  }, [])
 
   return (
     <Fragment>
       <Form.Item
         {...itemLayout}
-        name={['person', 'dentify']}
+        name={['person', 'identify']}
         label="身份证号">
         <Input placeholder="请首选输入身份证号" />
       </Form.Item>
@@ -67,18 +82,25 @@ const PersonFormItems = (props: { itemLayout: any }) => {
         label="入职时间">
         <DatePicker locale={locale} placeholder="入职时间" format={dateFormater} />
       </Form.Item>
-      <Form.Item
-        name={['person', 'contract_date']}
-        {...itemLayout}
-        label="劳动合同">
-        {
-          isNoEnd
-            ? <DatePicker locale={locale} placeholder="开始日期" format="YYYY-MM-DD" />
-            : <DatePicker.RangePicker locale={locale} placeholder={['开始日期', '结束日期']} format="YYYY-MM-DD" />
+      <Form.Item label="劳动合同" {...itemLayout}>
+        {isNoEnd ?
+          <Form.Item
+            noStyle
+            name={['person', 'contract_start']}
+          >
+            <DatePicker locale={locale} placeholder="开始日期" format="YYYY-MM-DD" />
+          </Form.Item>
+          :
+          <Form.Item
+            noStyle
+            name={['person', 'contract_date']}
+          >
+            <DatePicker.RangePicker locale={locale} placeholder={['开始日期', '结束日期']} format="YYYY-MM-DD" />
+          </Form.Item>
         }
         <Checkbox
           checked={isNoEnd}
-          onChange={(e) => { handleNoEndChange(e.target.checked) }}
+          onChange={(e) => handleNoEndChange(e.target.checked)}
           style={{ float: 'right', lineHeight: '32px' }}
         >
           无固定期

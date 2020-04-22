@@ -1,6 +1,6 @@
-import { Effect } from 'dva';
+import { Effect, EffectsCommandMap } from 'dva';
 import { Reducer } from 'redux';
-import { queryLiving, queryTree } from './service';
+import { queryLiving, queryTree, createLiving } from './service';
 import { LivingListItem, LivingFetchParams } from './data';
 import { AreaListItem } from '../area/data';
 import { CategoryListItem } from '../categories/data';
@@ -29,7 +29,7 @@ export interface ModelType {
     fetchTree: Effect;
     fetchAreas: Effect;
     fetchCategories: Effect;
-    reset: Effect;
+    create: Effect;
   };
   reducers: {
     save: Reducer<ModelState>;
@@ -37,7 +37,7 @@ export interface ModelType {
     saveTree: Reducer<Partial<ModelState>>;
     saveAreas: Reducer<Partial<ModelState>>;
     saveCategories: Reducer<Partial<ModelState>>;
-    resetState: Reducer<Partial<ModelState>>;
+    reset: Reducer<Partial<ModelState>>;
   };
 }
 
@@ -94,9 +94,13 @@ const Model: ModelType = {
         yield put({ type: 'saveCategories', payload: { categories: res.data } })
       }
     },
-    *reset(_, { put }) {
-      yield put({ type: 'resetState' })
-    }
+    *create({ payload }, { call, put, select }) {
+      const res = yield call(createLiving, payload)
+      if (res && res.message) {
+        const params = yield select(({ living }: { living: ModelState }) => living.params)
+        yield put({ type: 'fetch', payload: params })
+      }
+    },
   },
   reducers: {
     save(state, action) {
@@ -137,7 +141,7 @@ const Model: ModelType = {
         categories,
       };
     },
-    resetState() {
+    reset() {
       return {
         params: {},
         list: [],
