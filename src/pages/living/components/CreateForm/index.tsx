@@ -24,7 +24,7 @@ interface FormVals {
   area_id: number | undefined;
   type: 'person' | 'company' | 'functional' | undefined;
   category_id: number | undefined;
-  record_at: Moment;
+  record_at?: Moment;
   person?: {
     name: string;
     serial?: string;
@@ -62,7 +62,7 @@ const itemLayout = {
 export const dateFormater = 'YYYY-M-D'
 
 const formatFields = (values: FormVals) => {
-  const { person, company, rent_date, uploaded_files, ...rest } = values
+  const { person, company, rent_date, uploaded_files, ...rest } = Object.assign({}, values)
   const result: any = { ...rest }
   if (result.record_at instanceof moment) {
     result.record_at = result.record_at.format(dateFormater)
@@ -110,7 +110,7 @@ const CreateForm = (props: Props) => {
     area_id: undefined,
     type: undefined,
     category_id: undefined,
-    record_at: moment(),
+    record_at: undefined,
     person: {
       name: '',
       education: '其他',
@@ -126,10 +126,10 @@ const CreateForm = (props: Props) => {
         const { type } = currentRoom?.category
         setRoom(currentRoom)
         const fields = {
-          ...formVals,
           type,
+          room_id: currentRoom.id,
           area_id: currentRoom.area.id,
-          category_id: currentRoom.category.id
+          category_id: currentRoom.category.id,
         }
         setFormVals(fields)
         form.setFieldsValue(fields)
@@ -148,9 +148,18 @@ const CreateForm = (props: Props) => {
     setFormVals({ ...formVals, ...fields })
     if (currentStep === 2) {
       const values = formatFields({ ...formVals, ...fields })
-      handleCreate(values)
       form.resetFields()
+      const resets = {}
+      Object.keys(formVals).forEach(item => { resets[item] = undefined })
+      form.setFieldsValue({
+        ...resets,
+        type: formVals.type,
+        room_id: formVals.room_id,
+        area_id: formVals.area_id,
+        category_id: formVals.category_id,
+      })
       setCurrentStep(0)
+      handleCreate(values)
     } else {
       setCurrentStep(() => currentStep + 1)
     }

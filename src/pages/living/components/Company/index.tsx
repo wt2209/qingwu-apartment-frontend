@@ -1,9 +1,12 @@
 import React from 'react';
 import { Card, Divider, Tag } from 'antd';
+import { RecordListItem } from '@/pages/records/data';
 
-export interface CompanyState { }
+interface Props {
+  record: RecordListItem;
+}
 
-const Company = (props) => {
+const Company = (props: Props) => {
   const { record } = props;
   const { company } = record;
   return (
@@ -12,7 +15,7 @@ const Company = (props) => {
       bordered={false}
     >
       <div style={{ display: 'flex', alignItems: 'center', paddingBottom: 4 }}>
-        <div style={{ flex: 2, fontSize: 16, fontWeight: 'bold' }}>{company.companyName}</div>
+        <div style={{ flex: 2, fontSize: 16, fontWeight: 'bold' }}>{company?.company_name}</div>
         <div style={{ flex: 1, fontSize: 14, fontWeight: 'bold', textAlign: 'right' }}>
           {record.category.title}
         </div>
@@ -20,10 +23,10 @@ const Company = (props) => {
       <Divider style={{ margin: 2, backgroundColor: '#7ec4e6' }} />
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
-          <p style={{ marginBottom: 0 }}>本房间入住日：{record.recordAt}</p>
+          <p style={{ marginBottom: 0 }}>本房间入住日：{record.record_at}</p>
           <p style={{ marginBottom: 0 }}>
-            {record.rentStart ? (
-              `本房间租赁期：${record.rentStart} — ${record.rentEnd}`
+            {record.rent_start ? (
+              `本房间租赁期：${record.rent_start} — ${record.rent_end}`
             ) : (
                 <span>&nbsp;</span>
               )}
@@ -33,24 +36,27 @@ const Company = (props) => {
       <Divider style={{ margin: 2, backgroundColor: '#7ec4e6' }} />
       <div>
         <p style={{ marginBottom: 0 }}>
-          {company.manager ? (
-            `负责人：${company.manager} ${company.managerPhone}`
+          {company?.manager ? (
+            `负责人：${company.manager} ${company.manager_phone}`
           ) : (
               <span>&nbsp;</span>
             )}
         </p>
         <p style={{ marginBottom: 0 }}>
-          联系人：
-            {company.linkman} {company.linkmanPhone}
+          {company?.linkman ? `联系人：${company.linkman} ${company.linkman_phone}` : (
+            <span>&nbsp;</span>
+          )}
         </p>
       </div>
-      <Divider style={{ margin: 2, backgroundColor: '#7ec4e6' }} />
-      <div>
-        <p style={{ marginBottom: 0 }}>
-          备注：
-            {company.remark}
-        </p>
-      </div>
+      {company?.remark ?
+        <>
+          <Divider style={{ margin: 2, backgroundColor: '#7ec4e6' }} />
+          <div>
+            <p style={{ marginBottom: 0 }}>
+              备注：{company.remark}:
+            </p>
+          </div>
+        </> : null}
       <div style={{ position: 'absolute', bottom: 6 }}>
         <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
           详情
@@ -64,7 +70,7 @@ const Company = (props) => {
         <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
           修改
           </Tag>
-        {record.rentStart && (
+        {record.rent_start && (
           <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
             续签
           </Tag>

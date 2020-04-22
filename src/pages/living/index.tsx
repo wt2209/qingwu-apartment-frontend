@@ -13,6 +13,7 @@ import SearchBar from './components/SearchBar';
 import { ModelState } from './model';
 import { AreaListItem } from '../area/data';
 import { CategoryListItem } from '../categories/data';
+import { RecordListItem } from '../records/data';
 
 interface Props {
   areas: AreaListItem[] | undefined;
@@ -56,11 +57,11 @@ const Living = (props: Props) => {
   }, [])
 
   const renderContent = (room: LivingListItem) => {
-    const number = Math.max(room.number, room.records.length);
+    const number = room.category.type === 'person' ? Math.max(room.number, room.records.length) : 1;
     const xlCols = number === 1 ? 24 : 12;
     const result = [];
     for (let i = 0; i < number; i += 1) {
-      const record = room.records[i];
+      const record: RecordListItem = room.records[i];
       if (record) {
         let element
         switch (record.type) {

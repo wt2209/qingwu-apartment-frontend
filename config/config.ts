@@ -153,6 +153,12 @@ export default {
               path: '/basic',
               routes: [
                 {
+                  name: '入住记录',
+                  icon: 'smile',
+                  path: '/basic/records',
+                  component: './records',
+                },
+                {
                   name: '房间管理',
                   icon: 'smile',
                   path: '/basic/rooms',
@@ -181,6 +187,18 @@ export default {
                   icon: 'smile',
                   path: '/basic/fee-types',
                   component: './feeTypes',
+                },
+                {
+                  name: '人员明细',
+                  icon: 'smile',
+                  path: '/basic/people',
+                  component: './people',
+                },
+                {
+                  name: '公司明细',
+                  icon: 'smile',
+                  path: '/basic/companies',
+                  component: './companies',
                 },
               ],
             },

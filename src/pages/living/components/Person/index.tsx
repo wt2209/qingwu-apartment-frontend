@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card, Divider, Tag } from 'antd';
+import { RecordListItem } from '@/pages/records/data';
 
-function Person(props: { record: any; }) {
+function Person(props: { record: RecordListItem; }) {
   const { record } = props;
   const { person } = record;
   return (
@@ -65,7 +66,7 @@ function Person(props: { record: any; }) {
         <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
           修改
         </Tag>
-        {record.rentStart && (
+        {record.rent_start && (
           <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
             续签
           </Tag>
