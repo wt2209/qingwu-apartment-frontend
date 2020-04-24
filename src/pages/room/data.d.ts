@@ -1,4 +1,6 @@
 import { AreaListItem } from "../area/data";
+import { ChargeRuleListItem } from "../chargeRules/data";
+import { CategoryListItem } from "../categories/data";
 
 export interface RoomFormValueType {
   title: string | undefined;
@@ -7,6 +9,7 @@ export interface RoomFormValueType {
   number: number | undefined;
   area_id: number | undefined;
   category_id: number | undefined;
+  charge_rule_id?: nunmber;
   remark: string | undefined;
 }
 
@@ -17,7 +20,8 @@ export interface RoomListItem {
   unit: string;
   building: string;
   area?: AreaListItem;
-  category?: any;
+  category?: CategoryListItem;
+  charge_rule?: ChargeRuleListItem;
   number: number;
   remark: string | undefined;
   deleted_at?: Date | null;

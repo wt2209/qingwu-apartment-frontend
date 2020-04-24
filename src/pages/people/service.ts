@@ -15,3 +15,9 @@ export async function queryPerson(params?: TableListParams) {
     current: res.meta.current_page
   }))
 }
+
+export async function getOnePerson(params: { [key: string]: string }) {
+  return request('/api/one-person', {
+    params
+  })
+}

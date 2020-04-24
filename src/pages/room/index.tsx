@@ -12,6 +12,8 @@ import { AreaListItem } from '../area/data';
 import { CategoryListItem } from '../categories/data';
 import { getAllCategories } from '../categories/service';
 import { getAllAreas } from '../area/service';
+import { getAllChargeRules } from '../chargeRules/service';
+import { ChargeRuleListItem } from '../chargeRules/data';
 
 const handleAdd = async (fields: RoomFormValueType) => {
   const hide = message.loading('正在添加');
@@ -65,16 +67,20 @@ const RoomList: React.FC<{}> = () => {
   const [formValues, setFormValues] = useState<Partial<RoomListItem>>({});
   const [areas, setAreas] = useState<AreaListItem[]>()
   const [categories, setCategories] = useState<CategoryListItem[]>()
+  const [chargeRules, setChargeRules] = useState<ChargeRuleListItem[]>()
   const actionRef = useRef<ActionType>();
 
   useEffect(() => {
-    Promise.all([getAllAreas(), getAllCategories()])
+    Promise.all([getAllAreas(), getAllCategories(), getAllChargeRules()])
       .then(res => {
         if (res[0].data) {
           setAreas(res[0].data)
         }
         if (res[1].data) {
           setCategories(res[1].data)
+        }
+        if (res[2].data) {
+          setChargeRules(res[2].data)
         }
       })
   }, [])
@@ -120,6 +126,23 @@ const RoomList: React.FC<{}> = () => {
       title: '单元',
       dataIndex: 'unit',
       hideInSearch: true,
+    },
+    {
+      title: '默认收费规则',
+      dataIndex: 'charge_rule_id',
+      renderText: (id: number) => {
+        const rule = chargeRules?.find(r => r.id === id)
+        return rule?.title || ''
+      },
+      renderFormItem: () => {
+        return (
+          <Select placeholder="请选择">
+            {chargeRules && chargeRules?.map(rule => (
+              <Select.Option key={rule.id} value={rule.id}>{rule.title}</Select.Option>
+            ))}
+          </Select>
+        )
+      }
     },
     {
       title: '状态',
@@ -198,6 +221,7 @@ const RoomList: React.FC<{}> = () => {
       <CreateForm
         areas={areas}
         categories={categories}
+        chargeRules={chargeRules}
         onSubmit={async value => {
           const success = await handleAdd(value);
           if (success) {
@@ -215,6 +239,7 @@ const RoomList: React.FC<{}> = () => {
           <UpdateForm
             areas={areas}
             categories={categories}
+            chargeRules={chargeRules}
             onSubmit={async value => {
               const success = await handleUpdate(formValues.id, value);
               if (success) {

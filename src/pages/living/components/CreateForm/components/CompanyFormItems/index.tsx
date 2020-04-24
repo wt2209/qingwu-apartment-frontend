@@ -1,14 +1,43 @@
 import { Form, Input, AutoComplete } from "antd"
-import React, { Fragment } from "react"
+import React, { Fragment, useState, useEffect } from "react"
+import { CompanyListItem } from "@/pages/companies/data"
+import { getAllCompanies, getCompanyByName } from "@/pages/companies/service"
+import { FormInstance } from "antd/lib/form"
 
-const CompanyFormItems = (props: { itemLayout: any; }) => {
+interface Props {
+  itemLayout: any;
+  form: FormInstance;
+}
 
-  const options = [
-    { value: '青岛诚晟物业有限公司' },
-    { value: '大连太平洋有限公司' },
-  ]
+const CompanyFormItems = (props: Props) => {
+  const [companies, setCompanies] = useState<CompanyListItem[]>()
+  const { form, itemLayout } = props
 
-  const { itemLayout } = props
+  useEffect(() => {
+    (async () => {
+      const res = await getAllCompanies()
+      if (res && res.data) {
+        setCompanies(res.data)
+      }
+    })()
+  }, [])
+
+  const options = companies?.map(company => (
+    { value: company.company_name }
+  ))
+
+  const handleSelect = async (value: string) => {
+    const res = await getCompanyByName({ name: value })
+
+    if (res && res.data) {
+      form.setFieldsValue({
+        company: {
+          ...res.data
+        }
+      })
+    }
+  }
+
   return (
     <Fragment>
       <Form.Item name={['company', "company_name"]} {...itemLayout} label="公司名"
@@ -21,6 +50,7 @@ const CompanyFormItems = (props: { itemLayout: any; }) => {
           filterOption={(inputValue, option) =>
             option?.value.indexOf(inputValue) !== -1
           }
+          onSelect={(value) => handleSelect(value)}
         />
       </Form.Item>
       <Form.Item name={['company', "manager"]} {...itemLayout} label="负责人">

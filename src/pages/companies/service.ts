@@ -15,3 +15,13 @@ export async function queryCompany(params?: CompanyListParams) {
     current: res.meta.current_page
   }))
 }
+
+export async function getAllCompanies() {
+  return request('/api/all-companies');
+}
+
+export async function getCompanyByName(params: { [key: string]: string }) {
+  return request('/api/one-company', {
+    params
+  })
+}

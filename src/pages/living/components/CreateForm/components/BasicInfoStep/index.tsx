@@ -22,7 +22,7 @@ const BasicInfo = (props: Props) => {
       case 'person':
         return <PersonFormItems form={form} itemLayout={itemLayout} />
       case 'company':
-        return <CompanyFormItems itemLayout={itemLayout} />
+        return <CompanyFormItems form={form} itemLayout={itemLayout} />
       case 'functional':
         return null
       default:

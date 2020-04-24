@@ -29,6 +29,10 @@ const TableList: React.FC<{}> = () => {
       dataIndex: 'linkman_phone',
     },
     {
+      title: '在用房间数',
+      dataIndex: 'records_count',
+    },
+    {
       title: '状态',
       render: (count) => (
         count === 0 ? <Badge color='red' text='已退房' /> : <Badge color='green' text='在用' />

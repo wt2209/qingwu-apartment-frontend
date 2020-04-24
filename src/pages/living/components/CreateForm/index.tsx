@@ -130,6 +130,7 @@ const CreateForm = (props: Props) => {
           room_id: currentRoom.id,
           area_id: currentRoom.area.id,
           category_id: currentRoom.category.id,
+          charge_rule_id: currentRoom.charge_rule_id,
         }
         setFormVals(fields)
         form.setFieldsValue(fields)
@@ -157,6 +158,7 @@ const CreateForm = (props: Props) => {
         room_id: formVals.room_id,
         area_id: formVals.area_id,
         category_id: formVals.category_id,
+        charge_rule_id: formVals.charge_rule_id,
       })
       setCurrentStep(0)
       handleCreate(values)

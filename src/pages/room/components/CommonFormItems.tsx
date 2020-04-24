@@ -2,10 +2,12 @@ import React from 'react';
 import { Select, Input, InputNumber, Form } from 'antd';
 import { AreaListItem } from '@/pages/area/data';
 import { CategoryListItem } from '@/pages/categories/data';
+import { ChargeRuleListItem } from '@/pages/chargeRules/data';
 
 interface Props {
   areas: AreaListItem[] | undefined;
   categories: CategoryListItem[] | undefined;
+  chargeRules?: ChargeRuleListItem[];
 }
 
 const CommonFormItems = (props: Props) => {
@@ -70,6 +72,18 @@ const CommonFormItems = (props: Props) => {
         rules={[{ required: true, message: '请输入房间最大人数！' }]}
       >
         <InputNumber min={1} placeholder="请输入" />
+      </Form.Item>
+      <Form.Item
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="默认收费规则"
+        name="charge_rule_id"
+      >
+        <Select placeholder="请选择">
+          {props.chargeRules?.map(rule => (
+            <Select.Option key={rule.id} value={rule.id}>{rule.title}</Select.Option>
+          ))}
+        </Select>
       </Form.Item>
       <Form.Item
         labelCol={{ span: 5 }}

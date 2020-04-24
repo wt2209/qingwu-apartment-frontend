@@ -2,7 +2,9 @@ import { Form, Radio, Input, DatePicker, Checkbox } from "antd"
 import React, { Fragment, useState, useEffect } from "react"
 import locale from "antd/es/date-picker/locale/zh_CN"
 import { FormInstance } from "antd/lib/form"
+import moment from "moment"
 import { dateFormater } from "../.."
+import { getOnePerson } from "@/pages/people/service"
 
 const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
   const { itemLayout, form } = props
@@ -16,6 +18,35 @@ const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
       form.setFieldsValue({ person: { contract_start: undefined } })
     }
   }
+
+  const handleIdentifyChange = async (e: any) => {
+    const identify = e.target.value
+    if (identify.length === 18) {
+      const res = await getOnePerson({ identify })
+      if (res && res.data) {
+        const person = res.data
+        person.hired_at = moment(person.hired_at)
+        if (person.contract_start) {
+          if (person.contract_end === '无固定期') {
+            setIsNoEnd(true)
+            person.contract_start = moment(person.contract_start)
+            delete person.contract_end
+          } else {
+            setIsNoEnd(true)
+            person.contract_date = [moment(person.contract_start), moment(person.contract_end)]
+            delete person.contract_end
+            delete person.contract_start
+          }
+        }
+        form.setFieldsValue({
+          person: {
+            ...person
+          }
+        })
+      }
+    }
+  }
+
   useEffect(() => {
     if (form.getFieldValue(['person', 'contract_start'])) {
       setIsNoEnd(true)
@@ -26,6 +57,7 @@ const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
     <Fragment>
       <Form.Item
         {...itemLayout}
+        onChange={(e: any) => handleIdentifyChange(e)}
         name={['person', 'identify']}
         label="身份证号">
         <Input placeholder="请首选输入身份证号" />

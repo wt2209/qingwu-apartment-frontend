@@ -4,10 +4,12 @@ import { RoomFormValueType } from '../data';
 import CommonFormItems from './CommonFormItems';
 import { AreaListItem } from '@/pages/area/data';
 import { CategoryListItem } from '@/pages/categories/data';
+import { ChargeRuleListItem } from '@/pages/chargeRules/data';
 
 interface CreateFormProps {
   areas: AreaListItem[] | undefined;
   categories: CategoryListItem[] | undefined;
+  chargeRules?: ChargeRuleListItem[];
   modalVisible: boolean;
   onSubmit: (fieldsValue: RoomFormValueType) => void;
   onCancel: () => void;
@@ -36,7 +38,7 @@ const CreateForm: React.FC<CreateFormProps> = props => {
       onCancel={() => onCancel()}
     >
       <Form form={form}>
-        <CommonFormItems areas={props.areas} categories={props.categories} />
+        <CommonFormItems chargeRules={props.chargeRules} areas={props.areas} categories={props.categories} />
       </Form>
     </Modal >
   );

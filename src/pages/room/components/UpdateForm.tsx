@@ -5,10 +5,12 @@ import { RoomListItem, RoomFormValueType } from '../data.d';
 import CommonFormItems from './CommonFormItems';
 import { AreaListItem } from '@/pages/area/data';
 import { CategoryListItem } from '@/pages/categories/data';
+import { ChargeRuleListItem } from '@/pages/chargeRules/data';
 
 export interface UpdateFormProps {
   areas: AreaListItem[] | undefined;
   categories: CategoryListItem[] | undefined;
+  chargeRules?: ChargeRuleListItem[];
   onCancel: (flag?: boolean, formVals?: RoomFormValueType) => void;
   onSubmit: (values: RoomFormValueType) => void;
   updateModalVisible: boolean;
@@ -32,6 +34,7 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
     number: props.values.number,
     area_id: props.values.area ? props.values.area.id : undefined,
     category_id: props.values.category ? props.values.category.id : undefined,
+    charge_rule_id: props.values.charge_rule ? props?.values?.charge_rule.id : undefined,
     remark: props.values.remark,
   });
 
@@ -76,7 +79,7 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
         form={form}
         initialValues={formVals}
       >
-        <CommonFormItems areas={props.areas} categories={props.categories} />
+        <CommonFormItems chargeRules={props.chargeRules} areas={props.areas} categories={props.categories} />
       </Form>
     </Modal >
   );
