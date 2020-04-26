@@ -32,7 +32,7 @@ const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
             person.contract_start = moment(person.contract_start)
             delete person.contract_end
           } else {
-            setIsNoEnd(true)
+            setIsNoEnd(false)
             person.contract_date = [moment(person.contract_start), moment(person.contract_end)]
             delete person.contract_end
             delete person.contract_start

@@ -19,6 +19,16 @@ export async function createLiving(data: any) {
   })
 }
 
+export async function quitLiving(data: { id: number, values: any }) {
+  return request(`/api/livings/${data.id}`, {
+    method: 'POST',
+    data: {
+      ...data.values,
+      _method: 'delete',
+    }
+  })
+}
+
 export async function removeFile(path: string) {
   return request('/api/file-remove', {
     method: 'POST',

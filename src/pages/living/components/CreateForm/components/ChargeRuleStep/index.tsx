@@ -32,6 +32,7 @@ const ChargeRuleStep = (props: { itemLayout: any, type: string }) => {
       </Form.Item>
       <Form.Item {...itemLayout} label="选择收费规则" name="charge_rule_id">
         <Select placeholder="请选择">
+          <Select.Option value={0}>无</Select.Option>
           {chargeRules?.map(rule =>
             <Select.Option key={rule.id} value={rule.id}>{rule.title}</Select.Option>
           )}

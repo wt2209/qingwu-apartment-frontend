@@ -99,18 +99,17 @@ const formatFields = (values: FormVals) => {
 }
 
 const CreateForm = (props: Props) => {
-  const { modalVisible, onCancel, categories } = props;
+  const { modalVisible, onCancel, categories, roomId, handleCreate } = props;
   const [currentStep, setCurrentStep] = useState(0)
   const [room, setRoom] = useState<RoomListItem>()
   const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
-  const { roomId, handleCreate } = props
   const [formVals, setFormVals] = useState<FormVals>({
     room_id: roomId,
     area_id: undefined,
     type: undefined,
     category_id: undefined,
-    record_at: undefined,
+    record_at: moment(),
     person: {
       name: '',
       education: '其他',
@@ -215,7 +214,7 @@ const CreateForm = (props: Props) => {
     <Modal
       width={660}
       destroyOnClose
-      title="新建规则"
+      title="入住"
       visible={modalVisible}
       onCancel={() => handleCancel()}
       footer={null}
