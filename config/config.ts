@@ -142,6 +142,18 @@ export default {
               component: './living',
             },
             {
+              name: '入住',
+              path: '/livings/create/:roomId',
+              component: './living/create',
+              hideInMenu: true,
+            },
+            {
+              name: '修改',
+              path: '/livings/update/:recordId',
+              component: './living/update',
+              hideInMenu: true,
+            },
+            {
               name: '维修',
               icon: 'tool',
               path: '/repairs',

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Divider, Tag } from 'antd';
 import { RecordListItem } from '@/pages/records/data';
+import { Link } from 'umi';
 
 interface Props {
   record: RecordListItem;
@@ -53,7 +54,7 @@ const Company = (props: Props) => {
           <Divider style={{ margin: 2, backgroundColor: '#7ec4e6' }} />
           <div>
             <p style={{ marginBottom: 0 }}>
-              备注：{company.remark}:
+              {company.remark}
             </p>
           </div>
         </> : null}
@@ -67,9 +68,11 @@ const Company = (props: Props) => {
         <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
           调房
           </Tag>
-        <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-          修改
+        <Link to={`/livings/update/${record.id}`}>
+          <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
+            修改
           </Tag>
+        </Link>
         {record.rent_start && (
           <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
             续签

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Card, Row, Col, Button, Spin, Divider, BackTop } from 'antd';
 import { PlusOutlined, SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { connect, Dispatch } from 'dva';
+import { Link } from 'umi';
 import Person from './components/Person';
 import Company from './components/Company';
 import Functional from './components/Functional';
 import { LivingListItem, LivingFetchParams } from './data';
-import CreateForm from './components/CreateForm';
 import SelectBuilding from './components/SelectBuilding';
 import SearchBar from './components/SearchBar';
 import { ModelState } from './model';
@@ -28,8 +28,6 @@ interface Props {
 
 const Living = (props: Props) => {
   const { areas, categories, tree, list, params, total, loading, dispatch } = props
-  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  const [createFormRoomId, setCreateFormRoomId] = useState(0)
 
   const fetchData = (payload: LivingFetchParams) => {
     dispatch({ type: 'living/fetch', payload })
@@ -37,11 +35,6 @@ const Living = (props: Props) => {
 
   const loadMore = () => {
     dispatch({ type: 'living/appendFetch' })
-  }
-
-  const handleCreate = (payload: any) => {
-    dispatch({ type: 'living/create', payload })
-    handleModalVisible(false)
   }
 
   useEffect(() => {
@@ -88,16 +81,14 @@ const Living = (props: Props) => {
         result.push(
           <Col key={`empty${room.id}${i}`} style={{ padding: '2px' }} xs={24} lg={24} xl={xlCols} >
             <Card.Grid style={{ width: '100%', padding: 0 }}>
-              <Button
-                type="dashed"
-                style={{ border: '0', backgroundColor: '#5dade2', width: '100%', height: 225 }}
-                onClick={() => {
-                  handleModalVisible(true)
-                  setCreateFormRoomId(room.id)
-                }}
-              >
-                <PlusOutlined style={{ fontSize: 30, color: 'rgba(0,0,0,0.65)' }} />
-              </Button>
+              <Link to={`livings/create/${room.id}`}>
+                <Button
+                  type="dashed"
+                  style={{ border: '0', backgroundColor: '#5dade2', width: '100%', height: 225 }}
+                >
+                  <PlusOutlined style={{ fontSize: 30, color: 'rgba(0,0,0,0.65)' }} />
+                </Button>
+              </Link>
             </Card.Grid>
           </Col>
         );
@@ -176,16 +167,6 @@ const Living = (props: Props) => {
         </div>
       </div>
       <BackTop />
-      {
-        createFormRoomId
-          ? <CreateForm
-            handleCreate={handleCreate}
-            categories={categories}
-            roomId={createFormRoomId}
-            modalVisible={createModalVisible}
-            onCancel={() => handleModalVisible(false)} />
-          : null
-      }
     </PageHeaderWrapper >
   )
 }

@@ -67,7 +67,6 @@ function Person(props: { record: RecordListItem; }) {
             {person.identify}
           </p>
           <p style={{ marginBottom: 0 }}>
-            备注：
             {person.remark}
           </p>
         </div>
@@ -81,9 +80,11 @@ function Person(props: { record: RecordListItem; }) {
           <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
             调房
           </Tag>
-          <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-            修改
+          <Link to={`/livings/update/${record.id}`}>
+            <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
+              修改
           </Tag>
+          </Link>
           {
             record.rent_start && (
               <Tag color="#f39c12" style={{ cursor: 'pointer' }}>

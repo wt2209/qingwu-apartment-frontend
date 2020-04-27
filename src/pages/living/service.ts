@@ -19,6 +19,17 @@ export async function createLiving(data: any) {
   })
 }
 
+export async function updateLiving(data: { id: number }) {
+  const { id, ...rest } = data
+  return request(`/api/livings/${id}`, {
+    method: 'POST',
+    data: {
+      ...rest,
+      _method: 'put'
+    }
+  })
+}
+
 export async function quitLiving(data: { id: number, values: any }) {
   return request(`/api/livings/${data.id}`, {
     method: 'POST',
@@ -37,4 +48,9 @@ export async function removeFile(path: string) {
       _method: 'delete',
     }
   })
+}
+
+
+export async function getOneLiving(recordId: number) {
+  return request(`/api/livings/${recordId}`)
 }

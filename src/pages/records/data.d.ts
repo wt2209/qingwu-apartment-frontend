@@ -1,9 +1,11 @@
 import { CategoryListItem } from "../categories/data";
 import { AreaListItem } from "../area/data";
 import { CompanyListItem } from "../companies/data";
+import { RoomListItem } from "../room/data";
 
 export interface RecordListItem {
   id: number;
+  room: RoomListItem;
   area: AreaListItem;
   category: CategoryListItem;
   type: 'person' | 'company' | 'functional';
@@ -13,7 +15,6 @@ export interface RecordListItem {
   rent_start?: Date;
   rent_end?: Date;
   proof_files: Array<{ name: string, path: string }>;
-
 }
 
 export interface TableListPagination {
