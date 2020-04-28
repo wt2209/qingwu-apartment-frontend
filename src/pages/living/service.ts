@@ -30,6 +30,16 @@ export async function updateLiving(data: { id: number }) {
   })
 }
 
+export async function moveLiving(data: { id: number, values: any }) {
+  return request(`/api/livings/${data.id}`, {
+    method: 'POST',
+    data: {
+      ...data.values,
+      _method: 'patch',
+    }
+  })
+}
+
 export async function quitLiving(data: { id: number, values: any }) {
   return request(`/api/livings/${data.id}`, {
     method: 'POST',

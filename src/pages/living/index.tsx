@@ -32,7 +32,7 @@ const Living = (props: Props) => {
   const { areas, categories, tree, list, params, total, loading, dispatch } = props
   const [quitModalVisible, setQuitModalVisible] = useState<boolean>(false)
   const [moveModalVisible, setMoveModalVisible] = useState<boolean>(false)
-  const [recordId, setRecordId] = useState<number>()
+  const [record, setRecord] = useState<RecordListItem>()
 
   const fetchData = (payload: LivingFetchParams) => {
     dispatch({ type: 'living/fetch', payload })
@@ -54,9 +54,46 @@ const Living = (props: Props) => {
     }
   }, [])
 
-  const handleQuit = (id: number) => {
-    setRecordId(id)
+  const handleQuit = (value: RecordListItem) => {
+    setRecord(value)
     setQuitModalVisible(true)
+  }
+
+  const handleMove = (value: RecordListItem) => {
+    setRecord(value)
+    setMoveModalVisible(true)
+  }
+
+  const actions = (value: RecordListItem) => {
+    return [
+      <Tag key="quit" color="#dd4b39" onClick={() => handleQuit(value)} style={{ cursor: 'pointer' }}>
+        退房
+      </Tag >,
+      <Tag key="move" color="#f39c12" onClick={() => handleMove(value)} style={{ cursor: 'pointer' }}>
+        调房
+      </Tag>,
+      <Link key="detail" to={`/livings/detail/${value.id}`}>
+        <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
+          详情
+        </Tag>
+      </Link>,
+      value.type === 'company'
+        ? <Tag key="changeName" color="#f39c12" style={{ cursor: 'pointer' }}>
+          改名
+        </Tag>
+        : null,
+      value.rent_start
+        ? <Tag key="renew" color="#f39c12" style={{ cursor: 'pointer' }}>
+          续签
+        </Tag>
+        : null,
+      <Link key="edit" to={`/livings/update/${value.id}`}>
+        <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
+          修改
+        </Tag>
+      </Link>,
+
+    ]
   }
 
   const renderContent = (room: LivingListItem) => {
@@ -64,73 +101,24 @@ const Living = (props: Props) => {
     const xlCols = number === 1 ? 24 : 12;
     const result = [];
     for (let i = 0; i < number; i += 1) {
-      const record: RecordListItem = room.records[i];
-      if (record) {
+      const currentRecord: RecordListItem = room.records[i];
+      if (currentRecord) {
         let element
-        switch (record.type) {
+        switch (currentRecord.type) {
           case 'person':
-            element = <Person record={record} actions={[
-              <Link to={`/livings/detail/${record.id}`}>
-                <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
-                  详情
-                </Tag>
-              </Link>,
-              <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-                调房
-              </Tag>,
-              <Link to={`/livings/update/${record.id}`}>
-                <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-                  修改
-                </Tag>
-              </Link>,
-              record.rent_start ? (
-                <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-                  续签
-                </Tag>
-              ) : null,
-              <Tag color="#dd4b39" onClick={() => handleQuit(record.id)} style={{ cursor: 'pointer' }}>
-                退房
-              </Tag >,
-            ]} />
+            element = <Person key={record?.id} record={currentRecord} actions={actions(currentRecord)} />
             break;
           case 'company':
-            element = <Company
-              record={record}
-              actions={[
-                <Link to={`/livings/detail/${record.id}`}>
-                  <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
-                    详情
-                  </Tag>
-                </Link>,
-                <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-                  改名
-                </Tag>,
-                <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-                  调房
-                </Tag>,
-                <Link to={`/livings/update/${record.id}`}>
-                  <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-                    修改
-                  </Tag>
-                </Link>,
-                record.rent_start ? (
-                  <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-                    续签
-                  </Tag>
-                ) : null,
-                < Tag color="#dd4b39" onClick={() => handleQuit(record.id)} style={{ cursor: 'pointer' }}>
-                  退房
-              </Tag >,
-              ]} />
+            element = <Company key={record?.id} record={currentRecord} actions={actions(currentRecord)} />
             break;
           case 'functional':
-            element = <Functional record={record} />
+            element = <Functional key={record?.id} record={currentRecord} />
             break;
           default:
             element = null;
         }
         result.push(
-          <Col key={record.id} style={{ padding: '2px' }} xs={24} lg={24} xl={xlCols} >
+          <Col key={currentRecord.id} style={{ padding: '2px' }} xs={24} lg={24} xl={xlCols} >
             <Card.Grid style={{ width: '100%', padding: 0 }}>
               {element}
             </Card.Grid>
@@ -228,13 +216,13 @@ const Living = (props: Props) => {
       <QuitModal
         handleVisible={(visible: boolean) => setQuitModalVisible(visible)}
         modalVisible={quitModalVisible}
-        recordId={recordId}
+        record={record}
       />
       <MoveModal
         areas={areas}
-        handleVisible={(visible: boolean) => setQuitModalVisible(visible)}
+        handleVisible={(visible: boolean) => setMoveModalVisible(visible)}
         modalVisible={moveModalVisible}
-        recordId={recordId}
+        record={record}
       />
       <BackTop />
     </PageHeaderWrapper >

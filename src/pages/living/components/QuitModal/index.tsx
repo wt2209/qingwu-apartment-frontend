@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import Modal from 'antd/lib/modal/Modal';
 import { DatePicker, Input, Form, Button } from 'antd';
 import locale from "antd/es/date-picker/locale/zh_CN"
 import moment from 'moment';
 import { connect, Dispatch } from 'dva';
+import styles from './style.less'
+import { RecordListItem } from '@/pages/records/data';
 
 const itemLayout = {
   labelCol: { span: 6 },
@@ -14,18 +16,19 @@ interface Props {
   dispatch: Dispatch;
   handleVisible: (visible: boolean) => void;
   modalVisible: boolean;
-  recordId: number | undefined;
+  record: RecordListItem | undefined;
 }
 
 const QuitModal = (props: Props) => {
-  const { modalVisible, handleVisible, dispatch, recordId } = props
-  const [formVals] = useState({
-    id: undefined,
-    deleted_at: moment(),
-    electric_end_base: undefined,
-    water_end_base: undefined,
-  });
+  const { modalVisible, handleVisible, dispatch, record } = props
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    form.setFieldsValue({
+      area_id: record?.area_id,
+      deleted_at: moment()
+    })
+  }, [record])
 
   const handleQuit = async () => {
     const formValues = await form.validateFields();
@@ -35,7 +38,7 @@ const QuitModal = (props: Props) => {
     }
     form.resetFields()
     handleVisible(false)
-    dispatch({ type: 'living/quit', payload: { id: recordId, values } })
+    dispatch({ type: 'living/quit', payload: { id: record?.id, values } })
   }
 
   const renderFooter = () => {
@@ -59,8 +62,8 @@ const QuitModal = (props: Props) => {
     >
       <Form
         form={form}
-        initialValues={formVals}
         layout="horizontal"
+        className={styles.form}
       >
         <Form.Item
           name="deleted_at"
@@ -72,7 +75,7 @@ const QuitModal = (props: Props) => {
         <Form.Item {...itemLayout} label="退房水电底数">
           <Form.Item
             name="electric_end_base"
-            style={{ display: 'inline-block', width: 'calc(50% - 4px )' }}
+            style={{ display: 'inline-block', width: 'calc(50% - 4px )', marginBottom: 0 }}
           >
             <Input placeholder="电表底数" />
           </Form.Item>

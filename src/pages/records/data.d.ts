@@ -7,6 +7,7 @@ export interface RecordListItem {
   id: number;
   room: RoomListItem;
   area: AreaListItem;
+  area_id: number;
   category: CategoryListItem;
   type: 'person' | 'company' | 'functional';
   record_at?: Date;
