@@ -29,7 +29,7 @@ const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
         {...itemLayout}
         name={['person', 'identify']}
         label="身份证号">
-        <Input placeholder="请首选输入身份证号" />
+        <Input placeholder="请首先输入身份证号" />
       </Form.Item>
       <Form.Item
         {...itemLayout}

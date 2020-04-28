@@ -236,16 +236,24 @@ export const Repairs: FC<RepairsProps> = (props) => {
   )
 
   const extraContent = (
-    <div className={styles.extraContent} style={{ display: 'inline-block' }}>
-      <RadioGroup defaultValue="all">
+    <div className={styles.extraContent} style={{ display: 'inline-block', width: '100%' }}>
+      <RadioGroup defaultValue="all" style={{ marginRight: 12, float: 'left' }}>
         <RadioButton value="all">全部</RadioButton>
-        <RadioButton value="unreview">待审批</RadioButton>
-        <RadioButton value="reviewed">已审批</RadioButton>
-        <RadioButton value="repairing">维修中</RadioButton>
-        <RadioButton value="done">已完工</RadioButton>
+        <RadioButton value="unreview">职工公寓</RadioButton>
+        <RadioButton value="reviewed">协力公寓</RadioButton>
+        <RadioButton value="repairing">青武公寓</RadioButton>
       </RadioGroup>
-      <Search className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} />
-    </div>
+      <div style={{ float: 'right', textAlign: 'right' }} >
+        <RadioGroup defaultValue="all">
+          <RadioButton value="all">全部</RadioButton>
+          <RadioButton value="unreview">待审批</RadioButton>
+          <RadioButton value="reviewed">已审批</RadioButton>
+          <RadioButton value="repairing">维修中</RadioButton>
+          <RadioButton value="done">已完工</RadioButton>
+        </RadioGroup>
+        <Search style={{ marginLeft: 12, float: 'right' }} className={styles.extraContentSearch} placeholder="请输入" onSearch={() => ({})} />
+      </div>
+    </div >
   );
 
   const MoreBtn: React.FC<{
@@ -309,13 +317,15 @@ export const Repairs: FC<RepairsProps> = (props) => {
             </Row>
           </Card>
 
+          <Card bordered={false} style={{ marginTop: 24 }} bodyStyle={{ paddingBottom: 0 }}>
+            {extraContent}
+          </Card>
+
           <Card
             className={styles.listCard}
             bordered={false}
             title={selectAllContent}
-            style={{ marginTop: 24 }}
             bodyStyle={{ padding: '0 16px 40px 16px' }}
-            extra={extraContent}
           >
             <Button
               type="dashed"
@@ -350,7 +360,7 @@ export const Repairs: FC<RepairsProps> = (props) => {
                 >
                   <List.Item.Meta
                     avatar={<div style={{ lineHeight: '48px' }} ><Checkbox /></div>}
-                    title={item.location}
+                    title={`${item.location} （${item.area.title}）`}
                     description={item.content}
                   />
                   <ListContent data={item} />

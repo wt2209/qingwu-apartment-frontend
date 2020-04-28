@@ -1,19 +1,10 @@
-import React, { useState } from 'react';
-import { Card, Divider, Tag } from 'antd';
+import React from 'react';
+import { Card, Divider } from 'antd';
 import { RecordListItem } from '@/pages/records/data';
-import { Link } from 'umi';
-import QuitModal from './components/QuitModal';
 
-function Person(props: { record: RecordListItem; }) {
-  const { record } = props;
+function Person(props: { record: RecordListItem; actions: Array<any> }) {
+  const { record, actions } = props;
   const { person } = record;
-  const [quitModalVisible, setQuitModalVisible] = useState<boolean>(false)
-  const [recordId, setRecordId] = useState<number>()
-
-  const handleQuit = (id: number) => {
-    setRecordId(id)
-    setQuitModalVisible(true)
-  }
 
   return (
     <>
@@ -71,37 +62,9 @@ function Person(props: { record: RecordListItem; }) {
           </p>
         </div>
         <div style={{ position: 'absolute', bottom: 6 }}>
-          {/* #00a65a 绿 */}
-          <Link to={`/livings/detail/${record.id}`}>
-            <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
-              详情
-          </Tag>
-          </Link>
-          <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-            调房
-          </Tag>
-          <Link to={`/livings/update/${record.id}`}>
-            <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-              修改
-          </Tag>
-          </Link>
-          {
-            record.rent_start && (
-              <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-                续签
-              </Tag>
-            )
-          }
-          <Tag color="#dd4b39" onClick={() => handleQuit(record.id)} style={{ cursor: 'pointer' }}>
-            退房
-          </Tag>
+          {actions && actions.map(action => action)}
         </div >
       </Card >
-      <QuitModal
-        handleVisible={(visible: boolean) => setQuitModalVisible(visible)}
-        modalVisible={quitModalVisible}
-        recordId={recordId}
-      />
     </>
   );
 }

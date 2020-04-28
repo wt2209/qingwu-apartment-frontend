@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Spin, Card, DatePicker, Select, Input, Upload } from 'antd';
+import { Form, Button, Spin, Card, DatePicker, Select, Input, Upload, message } from 'antd';
 import moment from 'moment';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { LeftOutlined, InboxOutlined } from '@ant-design/icons';
@@ -81,6 +81,7 @@ const CreateLiving = (props: Props) => {
     const fields = await form.validateFields()
     fields.type = room?.category?.type
     fields.room_id = roomId
+    fields.area_id = room?.area?.id
     fields.record_at = fields.record_at ? fields.record_at.format(dateFormater) : undefined
     if (Array.isArray(fields.rent_date)) {
       fields.rent_start = fields.rent_date[0]?.format(dateFormater)
@@ -111,18 +112,30 @@ const CreateLiving = (props: Props) => {
       }
     }
     form.resetFields()
+    message.success('入住成功')
     dispatch({ type: 'living/create', payload: fields })
     router.push('/livings')
   }
 
   const renderContent = () => {
-    if (room?.category?.type === 'person') {
-      return <PersonFormItems form={form} itemLayout={itemLayout} />
+    switch (room?.category?.type) {
+      case 'person':
+        return <PersonFormItems form={form} itemLayout={itemLayout} />
+      case 'company':
+        return <CompanyFormItems form={form} itemLayout={itemLayout} />
+      case 'functional':
+        return (
+          <Form.Item
+            name="functional_title"
+            {...itemLayout}
+            rules={[{ required: true, message: '必须输入' }]}
+            label="房间用途">
+            <Input />
+          </Form.Item>
+        )
+      default:
+        return null;
     }
-    if (room?.category?.type === 'company') {
-      return <CompanyFormItems form={form} itemLayout={itemLayout} />
-    }
-    return null
   }
 
   const normFile = (e: { fileList: any; }) => {
@@ -211,6 +224,11 @@ const CreateLiving = (props: Props) => {
               </Upload.Dragger>
             </Form.Item >
             <Form.Item wrapperCol={{ span: 22 }} style={{ textAlign: 'right', marginTop: 24 }}>
+              <Link to="/livings">
+                <Button style={{ marginLeft: 12 }} type="default">
+                  返回
+                </Button>
+              </Link>
               <Button style={{ marginLeft: 12 }} type="primary" onClick={() => handleSubmit()}>
                 完成
               </Button>

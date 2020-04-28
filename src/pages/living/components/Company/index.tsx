@@ -1,14 +1,14 @@
 import React from 'react';
-import { Card, Divider, Tag } from 'antd';
+import { Card, Divider } from 'antd';
 import { RecordListItem } from '@/pages/records/data';
-import { Link } from 'umi';
 
 interface Props {
   record: RecordListItem;
+  actions: Array<any>;
 }
 
 const Company = (props: Props) => {
-  const { record } = props;
+  const { record, actions } = props;
   const { company } = record;
   return (
     <Card
@@ -59,28 +59,7 @@ const Company = (props: Props) => {
           </div>
         </> : null}
       <div style={{ position: 'absolute', bottom: 6 }}>
-        <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
-          详情
-          </Tag>
-        <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-          改名
-          </Tag>
-        <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-          调房
-          </Tag>
-        <Link to={`/livings/update/${record.id}`}>
-          <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-            修改
-          </Tag>
-        </Link>
-        {record.rent_start && (
-          <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
-            续签
-          </Tag>
-        )}
-        <Tag color="#dd4b39" style={{ cursor: 'pointer' }}>
-          退房
-          </Tag>
+        {actions && actions.map(action => action)}
       </div>
     </Card>
   );

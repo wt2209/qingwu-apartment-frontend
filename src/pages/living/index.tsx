@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Card, Row, Col, Button, Spin, Divider, BackTop } from 'antd';
+import { Card, Row, Col, Button, Spin, Divider, BackTop, Tag } from 'antd';
 import { PlusOutlined, SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { connect, Dispatch } from 'dva';
 import { Link } from 'umi';
@@ -14,6 +14,8 @@ import { ModelState } from './model';
 import { AreaListItem } from '../area/data';
 import { CategoryListItem } from '../categories/data';
 import { RecordListItem } from '../records/data';
+import QuitModal from './components/QuitModal';
+import MoveModal from './components/MoveModal';
 
 interface Props {
   areas: AreaListItem[] | undefined;
@@ -28,6 +30,9 @@ interface Props {
 
 const Living = (props: Props) => {
   const { areas, categories, tree, list, params, total, loading, dispatch } = props
+  const [quitModalVisible, setQuitModalVisible] = useState<boolean>(false)
+  const [moveModalVisible, setMoveModalVisible] = useState<boolean>(false)
+  const [recordId, setRecordId] = useState<number>()
 
   const fetchData = (payload: LivingFetchParams) => {
     dispatch({ type: 'living/fetch', payload })
@@ -49,6 +54,11 @@ const Living = (props: Props) => {
     }
   }, [])
 
+  const handleQuit = (id: number) => {
+    setRecordId(id)
+    setQuitModalVisible(true)
+  }
+
   const renderContent = (room: LivingListItem) => {
     const number = room.category.type === 'person' ? Math.max(room.number, room.records.length) : 1;
     const xlCols = number === 1 ? 24 : 12;
@@ -59,10 +69,59 @@ const Living = (props: Props) => {
         let element
         switch (record.type) {
           case 'person':
-            element = <Person record={record} />
+            element = <Person record={record} actions={[
+              <Link to={`/livings/detail/${record.id}`}>
+                <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
+                  详情
+                </Tag>
+              </Link>,
+              <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
+                调房
+              </Tag>,
+              <Link to={`/livings/update/${record.id}`}>
+                <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
+                  修改
+                </Tag>
+              </Link>,
+              record.rent_start ? (
+                <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
+                  续签
+                </Tag>
+              ) : null,
+              <Tag color="#dd4b39" onClick={() => handleQuit(record.id)} style={{ cursor: 'pointer' }}>
+                退房
+              </Tag >,
+            ]} />
             break;
           case 'company':
-            element = <Company record={record} />
+            element = <Company
+              record={record}
+              actions={[
+                <Link to={`/livings/detail/${record.id}`}>
+                  <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
+                    详情
+                  </Tag>
+                </Link>,
+                <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
+                  改名
+                </Tag>,
+                <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
+                  调房
+                </Tag>,
+                <Link to={`/livings/update/${record.id}`}>
+                  <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
+                    修改
+                  </Tag>
+                </Link>,
+                record.rent_start ? (
+                  <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
+                    续签
+                  </Tag>
+                ) : null,
+                < Tag color="#dd4b39" onClick={() => handleQuit(record.id)} style={{ cursor: 'pointer' }}>
+                  退房
+              </Tag >,
+              ]} />
             break;
           case 'functional':
             element = <Functional record={record} />
@@ -166,6 +225,17 @@ const Living = (props: Props) => {
           }
         </div>
       </div>
+      <QuitModal
+        handleVisible={(visible: boolean) => setQuitModalVisible(visible)}
+        modalVisible={quitModalVisible}
+        recordId={recordId}
+      />
+      <MoveModal
+        areas={areas}
+        handleVisible={(visible: boolean) => setQuitModalVisible(visible)}
+        modalVisible={moveModalVisible}
+        recordId={recordId}
+      />
       <BackTop />
     </PageHeaderWrapper >
   )
