@@ -22,6 +22,7 @@ export interface LivingListItem {
 export interface LivingFetchParams {
   page?: number;
   area_id?: number | string;
+  category_id?: number | string;
   area?: string;
   building?: string;
   unit?: string;

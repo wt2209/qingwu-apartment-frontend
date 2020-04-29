@@ -71,12 +71,7 @@ const Living = (props: Props) => {
       </Tag >,
       <Tag key="move" color="#f39c12" onClick={() => handleMove(value)} style={{ cursor: 'pointer' }}>
         调房
-      </Tag>,
-      <Link key="detail" to={`/livings/detail/${value.id}`}>
-        <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
-          详情
-        </Tag>
-      </Link>,
+        </Tag>,
       value.type === 'company'
         ? <Tag key="changeName" color="#f39c12" style={{ cursor: 'pointer' }}>
           改名
@@ -92,12 +87,20 @@ const Living = (props: Props) => {
           修改
         </Tag>
       </Link>,
-
+      value.type === 'functional'
+        ? null
+        : <Link key="detail" to={`/livings/detail/${value.id}`}>
+          <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
+            详情
+          </Tag>
+        </Link >,
     ]
   }
 
   const renderContent = (room: LivingListItem) => {
-    const number = room.category.type === 'person' ? Math.max(room.number, room.records.length) : 1;
+    const number = room.category.type === 'person'
+      ? Math.max(room.number, room.records.length)
+      : Math.max(1, room.records.length);
     const xlCols = number === 1 ? 24 : 12;
     const result = [];
     for (let i = 0; i < number; i += 1) {
@@ -112,7 +115,7 @@ const Living = (props: Props) => {
             element = <Company key={record?.id} record={currentRecord} actions={actions(currentRecord)} />
             break;
           case 'functional':
-            element = <Functional key={record?.id} record={currentRecord} />
+            element = <Functional key={record?.id} record={currentRecord} actions={actions(currentRecord)} />
             break;
           default:
             element = null;
@@ -213,17 +216,17 @@ const Living = (props: Props) => {
           }
         </div>
       </div>
-      <QuitModal
+      {record && <QuitModal
         handleVisible={(visible: boolean) => setQuitModalVisible(visible)}
         modalVisible={quitModalVisible}
         record={record}
-      />
-      <MoveModal
+      />}
+      {record && <MoveModal
         areas={areas}
         handleVisible={(visible: boolean) => setMoveModalVisible(visible)}
         modalVisible={moveModalVisible}
         record={record}
-      />
+      />}
       <BackTop />
     </PageHeaderWrapper >
   )

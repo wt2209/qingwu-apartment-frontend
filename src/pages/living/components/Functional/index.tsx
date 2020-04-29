@@ -1,9 +1,15 @@
-import { Card, Tag } from 'antd';
+import { Card } from 'antd';
 import React from 'react';
+import { RecordListItem } from '@/pages/records/data';
 
 
-function Functional(props) {
-  const { record } = props;
+interface Props {
+  record: RecordListItem;
+  actions: Array<any>
+}
+
+function Functional(props: Props) {
+  const { record, actions } = props;
   return (
     <Card
       bodyStyle={{
@@ -18,12 +24,10 @@ function Functional(props) {
       bordered={false}
     >
       <div style={{ flex: 1, fontSize: 26, fontWeight: 'bold', paddingBottom: 26 }}>
-        {record.category.title}
+        {record.functional_title}
       </div>
       <div style={{ position: 'absolute', bottom: 6 }}>
-        <Tag color="#dd4b39" style={{ cursor: 'pointer' }}>
-          退房
-        </Tag>
+        {actions && actions.map(action => action)}
       </div>
     </Card>
   );

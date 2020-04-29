@@ -28,7 +28,12 @@ const MoveModal = (props: Props) => {
   useEffect(() => {
     form.setFieldsValue({
       area_id: record?.area_id,
-      deleted_at: moment()
+      title: undefined,
+      deleted_at: moment(),
+      electric_start_base: undefined,
+      water_start_base: undefined,
+      electric_end_base: undefined,
+      water_end_base: undefined,
     })
   }, [record])
 
@@ -38,7 +43,6 @@ const MoveModal = (props: Props) => {
     if (values.deleted_at instanceof moment) {
       values.deleted_at = values.deleted_at.format('YYYY-MM-DD')
     }
-    form.resetFields()
     handleVisible(false)
     dispatch({ type: 'living/move', payload: { id: record?.id, values } })
   }

@@ -87,13 +87,13 @@ const RecordTableList: React.FC<{}> = () => {
       dataIndex: 'status',
       valueEnum: {
         living: { text: '在住', status: 'Success' },
-        moved: { text: '已调房', status: 'Warning' },
+        moved: { text: '已调房', status: 'Default' },
         quitted: { text: '已退房', status: 'Error' },
       },
     },
     {
       title: '调房到',
-      dataIndex: ['toRoom', 'title'],
+      dataIndex: ['to_room', 'title'],
       hideInSearch: true,
     },
   ];

@@ -13,6 +13,7 @@ export interface RecordListItem {
   record_at?: Date;
   person?: PersonListItem;
   company?: CompanyListItem;
+  functional_title: string;
   rent_start?: Date;
   rent_end?: Date;
   proof_files: Array<{ name: string, path: string }>;
