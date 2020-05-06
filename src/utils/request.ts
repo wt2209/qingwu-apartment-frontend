@@ -2,10 +2,8 @@
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
-import router from 'umi/router';
 import { extend } from 'umi-request';
 import { notification } from 'antd';
-import { stringify } from 'querystring';
 import { URL_PREFIX } from '@/config';
 
 const codeMessage = {
@@ -41,13 +39,6 @@ const errorHandler = (error: { response: Response }): Response => {
       message: `请求错误 ${status}: ${url}`,
       description: errorText,
     });
-
-    if (response.status === 401) {
-      const queryString = stringify({
-        redirect: window.location.href,
-      });
-      router.replace(`/user/login?${queryString}`);
-    }
   } else if (!response) {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',

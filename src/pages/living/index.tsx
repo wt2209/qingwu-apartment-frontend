@@ -16,6 +16,7 @@ import { CategoryListItem } from '../categories/data';
 import { RecordListItem } from '../records/data';
 import QuitModal from './components/QuitModal';
 import MoveModal from './components/MoveModal';
+import RenewModal from './components/Renew';
 
 interface Props {
   areas: AreaListItem[] | undefined;
@@ -32,6 +33,7 @@ const Living = (props: Props) => {
   const { areas, categories, tree, list, params, total, loading, dispatch } = props
   const [quitModalVisible, setQuitModalVisible] = useState<boolean>(false)
   const [moveModalVisible, setMoveModalVisible] = useState<boolean>(false)
+  const [renewModalVisible, setRenewModalVisible] = useState<boolean>(false)
   const [record, setRecord] = useState<RecordListItem>()
 
   const fetchData = (payload: LivingFetchParams) => {
@@ -54,22 +56,29 @@ const Living = (props: Props) => {
     }
   }, [])
 
-  const handleQuit = (value: RecordListItem) => {
+  const handleOption = (type: string, value: RecordListItem) => {
     setRecord(value)
-    setQuitModalVisible(true)
-  }
-
-  const handleMove = (value: RecordListItem) => {
-    setRecord(value)
-    setMoveModalVisible(true)
+    switch (type) {
+      case 'move':
+        setMoveModalVisible(true)
+        break
+      case 'quit':
+        setQuitModalVisible(true)
+        break
+      case 'renew':
+        setRenewModalVisible(true)
+        break
+      default:
+        break
+    }
   }
 
   const actions = (value: RecordListItem) => {
     return [
-      <Tag key="quit" color="#dd4b39" onClick={() => handleQuit(value)} style={{ cursor: 'pointer' }}>
+      <Tag key="quit" color="#dd4b39" onClick={() => handleOption('quit', value)} style={{ cursor: 'pointer' }}>
         退房
       </Tag >,
-      <Tag key="move" color="#f39c12" onClick={() => handleMove(value)} style={{ cursor: 'pointer' }}>
+      <Tag key="move" color="#f39c12" onClick={() => handleOption('move', value)} style={{ cursor: 'pointer' }}>
         调房
         </Tag>,
       value.type === 'company'
@@ -78,7 +87,10 @@ const Living = (props: Props) => {
         </Tag>
         : null,
       value.rent_start
-        ? <Tag key="renew" color="#f39c12" style={{ cursor: 'pointer' }}>
+        ? <Tag key="renew"
+          onClick={() => handleOption('renew', value)}
+          color="#f39c12"
+          style={{ cursor: 'pointer' }}>
           续签
         </Tag>
         : null,
@@ -225,6 +237,11 @@ const Living = (props: Props) => {
         areas={areas}
         handleVisible={(visible: boolean) => setMoveModalVisible(visible)}
         modalVisible={moveModalVisible}
+        record={record}
+      />}
+      {record && <RenewModal
+        handleVisible={(visible: boolean) => setRenewModalVisible(visible)}
+        modalVisible={renewModalVisible}
         record={record}
       />}
       <BackTop />
