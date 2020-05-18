@@ -143,7 +143,7 @@ const Living = (props: Props) => {
         result.push(
           <Col key={`empty${room.id}${i}`} style={{ padding: '2px' }} xs={24} lg={24} xl={xlCols} >
             <Card.Grid style={{ width: '100%', padding: 0 }}>
-              <Link to={`livings/create/${room.id}`}>
+              <Link to={`/livings/create/${room.id}`}>
                 <Button
                   type="dashed"
                   style={{ border: '0', backgroundColor: '#5dade2', width: '100%', height: 225 }}

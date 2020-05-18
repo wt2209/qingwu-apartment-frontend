@@ -6,7 +6,6 @@ import { LeftOutlined, InboxOutlined } from '@ant-design/icons';
 import { Link, router } from 'umi';
 import { connect, Dispatch } from 'dva';
 import locale from "antd/es/date-picker/locale/zh_CN"
-import { UploadFile } from 'antd/lib/upload/interface';
 import styles from './style.less';
 import { CategoryListItem } from '@/pages/categories/data';
 import { getAllCategories } from '@/pages/categories/service';
@@ -75,8 +74,14 @@ const UpdateLiving = (props: Props) => {
           }
         }
         if (values.proof_files) {
-          values.uploaded_files = values.proof_files.map((item: UploadFile, index: number) => {
-            return { uid: item.uid || index + 1, size: item.size || 0, name: item.name, url: item.url }
+          values.uploaded_files = values.proof_files.map((item: any, index: number) => {
+            return {
+              uid: item.uid || index + 1,
+              size: item.size || 0,
+              name: item.name,
+              path: item.path,
+              url: item.url
+            }
           })
         }
         form.setFieldsValue(values)
@@ -105,7 +110,7 @@ const UpdateLiving = (props: Props) => {
         uid: file.uid,
         size: file.size,
         name: file.name,
-        url: file.response?.path,
+        path: file.path || file.response?.path,
       }))
       delete fields.uploaded_files
     }
@@ -221,9 +226,9 @@ const UpdateLiving = (props: Props) => {
                 name="file"
                 listType='picture'
                 multiple
-                onRemove={(file) => {
-                  if (file.url) {
-                    removeFile(file.url)
+                onRemove={(file: any) => {
+                  if (file.path) {
+                    removeFile(file.path)
                   }
                 }}
                 headers={{

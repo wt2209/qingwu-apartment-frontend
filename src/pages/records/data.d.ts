@@ -1,3 +1,4 @@
+import { UploadFile } from "antd/lib/upload/interface";
 import { CategoryListItem } from "../categories/data";
 import { AreaListItem } from "../area/data";
 import { CompanyListItem } from "../companies/data";
@@ -6,6 +7,7 @@ import { RoomListItem } from "../room/data";
 export interface RecordListItem {
   id: number;
   room: RoomListItem;
+  to_room?: RoomListItem;
   area: AreaListItem;
   area_id: number;
   category: CategoryListItem;
@@ -16,7 +18,7 @@ export interface RecordListItem {
   functional_title: string;
   rent_start?: Date;
   rent_end?: Date;
-  proof_files: Array<{ name: string, path: string }>;
+  proof_files: UploadFile<any>[];
 }
 
 export interface TableListPagination {

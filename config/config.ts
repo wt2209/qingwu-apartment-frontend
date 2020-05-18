@@ -154,6 +154,12 @@ export default {
               hideInMenu: true,
             },
             {
+              name: '详情',
+              path: '/livings/detail/:recordId',
+              component: './living/detail',
+              hideInMenu: true,
+            },
+            {
               name: '维修',
               icon: 'tool',
               path: '/repairs',

@@ -70,7 +70,10 @@ export async function removeFile(path: string) {
   })
 }
 
-
 export async function getOneLiving(recordId: number) {
   return request(`/api/livings/${recordId}`)
+}
+
+export async function getMoveList(personId: number) {
+  return request(`/api/livings/moves/${personId}`)
 }

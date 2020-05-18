@@ -93,7 +93,7 @@ const CreateLiving = (props: Props) => {
         uid: file.uid,
         size: file.size,
         name: file.name,
-        url: file.response?.path,
+        path: file.response?.path,
       }))
       delete fields.uploaded_files
     }
