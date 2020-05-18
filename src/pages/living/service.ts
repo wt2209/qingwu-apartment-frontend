@@ -50,6 +50,16 @@ export async function renewLiving(data: { id: number, values: any }) {
   })
 }
 
+export async function renameCompany(data: { companyId: number, values: any }) {
+  return request(`/api/livings/rename/${data.companyId}`, {
+    method: 'POST',
+    data: {
+      ...data.values,
+      _method: 'patch',
+    }
+  })
+}
+
 export async function quitLiving(data: { id: number, values: any }) {
   return request(`/api/livings/${data.id}`, {
     method: 'POST',
@@ -76,6 +86,10 @@ export async function getOneLiving(recordId: number) {
 
 export async function getMoveList(personId: number) {
   return request(`/api/livings/moves/${personId}`)
+}
+
+export async function getRenameList(companyId: number) {
+  return request(`/api/livings/renames/${companyId}`)
 }
 
 export async function getRenewList(recordId: number) {

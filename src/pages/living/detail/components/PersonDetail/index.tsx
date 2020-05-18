@@ -12,19 +12,12 @@ interface Props {
 
 const moveListColumns = [
   {
-    title: '姓名',
-    key: 'name',
-    render: (_: any, row: RecordListItem) => row.person.name
-  },
-  {
     title: '原房间号',
-    key: 'title',
-    render: (_: any, row: RecordListItem) => row.room.title
+    dataIndex: ['room', 'title'],
   },
   {
     title: '调整到房间',
-    key: 'to_title',
-    render: (_: any, row: RecordListItem) => row?.to_room?.title
+    dataIndex: ['to_room', 'title'],
   },
   {
     title: '调房日期',

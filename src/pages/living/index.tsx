@@ -16,7 +16,8 @@ import { CategoryListItem } from '../basic/categories/data';
 import { RecordListItem } from '../basic/records/data';
 import QuitModal from './components/QuitModal';
 import MoveModal from './components/MoveModal';
-import RenewModal from './components/Renew';
+import RenewModal from './components/RenewModal';
+import RenameModal from './components/RenameModal';
 
 interface Props {
   areas: AreaListItem[] | undefined;
@@ -34,6 +35,7 @@ const Living = (props: Props) => {
   const [quitModalVisible, setQuitModalVisible] = useState<boolean>(false)
   const [moveModalVisible, setMoveModalVisible] = useState<boolean>(false)
   const [renewModalVisible, setRenewModalVisible] = useState<boolean>(false)
+  const [renameModalVisible, setRenameModalVisible] = useState<boolean>(false)
   const [record, setRecord] = useState<RecordListItem>()
 
   const fetchData = (payload: LivingFetchParams) => {
@@ -68,6 +70,9 @@ const Living = (props: Props) => {
       case 'renew':
         setRenewModalVisible(true)
         break
+      case 'rename':
+        setRenameModalVisible(true)
+        break
       default:
         break
     }
@@ -82,7 +87,10 @@ const Living = (props: Props) => {
         调房
         </Tag>,
       value.type === 'company'
-        ? <Tag key="changeName" color="#f39c12" style={{ cursor: 'pointer' }}>
+        ? <Tag key="rename"
+          onClick={() => handleOption('rename', value)}
+          color="#f39c12"
+          style={{ cursor: 'pointer' }}>
           改名
         </Tag>
         : null,
@@ -242,6 +250,11 @@ const Living = (props: Props) => {
       {record && <RenewModal
         handleVisible={(visible: boolean) => setRenewModalVisible(visible)}
         modalVisible={renewModalVisible}
+        record={record}
+      />}
+      {record && <RenameModal
+        handleVisible={(visible: boolean) => setRenameModalVisible(visible)}
+        modalVisible={renameModalVisible}
         record={record}
       />}
       <BackTop />

@@ -224,6 +224,12 @@ export default {
                   path: '/basic/renews',
                   component: './basic/renews',
                 },
+                {
+                  name: '公司改名',
+                  icon: 'smile',
+                  path: '/basic/renames',
+                  component: './basic/renames',
+                },
               ],
             },
             {

@@ -1,6 +1,6 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
-import { queryLiving, queryTree, createLiving, quitLiving, updateLiving, moveLiving, renewLiving } from './service';
+import { queryLiving, queryTree, createLiving, quitLiving, updateLiving, moveLiving, renewLiving, renameCompany } from './service';
 import { LivingListItem, LivingFetchParams } from './data';
 import { AreaListItem } from '../basic/areas/data';
 import { CategoryListItem } from '../basic/categories/data';
@@ -34,6 +34,7 @@ export interface ModelType {
     move: Effect;
     quit: Effect;
     renew: Effect;
+    rename: Effect;
   };
   reducers: {
     save: Reducer<ModelState>;
@@ -128,6 +129,13 @@ const Model: ModelType = {
     },
     *renew({ payload }, { call, put, select }) {
       const res = yield call(renewLiving, payload)
+      if (res && res.message) {
+        const params = yield select(({ living }: { living: ModelState }) => living.params)
+        yield put({ type: 'fetch', payload: params })
+      }
+    },
+    *rename({ payload }, { call, put, select }) {
+      const res = yield call(renameCompany, payload)
       if (res && res.message) {
         const params = yield select(({ living }: { living: ModelState }) => living.params)
         yield put({ type: 'fetch', payload: params })
