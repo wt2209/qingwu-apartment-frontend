@@ -4,6 +4,7 @@ import { Descriptions, Divider, Table } from 'antd'
 import styles from '../../style.less'
 import { getMoveList } from '@/pages/living/service'
 import ProofFiles from '../ProofFiles'
+import RenewList from '../RenewList'
 
 interface Props {
   record: RecordListItem | undefined
@@ -81,6 +82,8 @@ const PersonDetail = (props: Props) => {
             rowKey="id"
           />
         </>) : null}
+
+      <RenewList recordId={record!.id} />
     </>
   )
 }

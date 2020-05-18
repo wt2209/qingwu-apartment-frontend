@@ -77,3 +77,7 @@ export async function getOneLiving(recordId: number) {
 export async function getMoveList(personId: number) {
   return request(`/api/livings/moves/${personId}`)
 }
+
+export async function getRenewList(recordId: number) {
+  return request(`/api/livings/renews/${recordId}`)
+}

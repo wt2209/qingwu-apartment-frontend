@@ -3,6 +3,7 @@ import { RecordListItem } from '@/pages/basic/records/data'
 import { Descriptions, Divider, Table } from 'antd'
 import styles from '../../style.less'
 import ProofFiles from '../ProofFiles'
+import RenewList from '../RenewList'
 
 interface Props {
   record: RecordListItem | undefined
@@ -33,6 +34,8 @@ const CompanyDetail = (props: Props) => {
         // columns={goodsColumns}
         rowKey="id"
       />
+
+      <RenewList recordId={record!.id} />
     </>
   )
 }
