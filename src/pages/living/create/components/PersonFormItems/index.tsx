@@ -4,7 +4,7 @@ import locale from "antd/es/date-picker/locale/zh_CN"
 import { FormInstance } from "antd/lib/form"
 import moment from "moment"
 import { dateFormater } from "../.."
-import { getOnePerson } from "@/pages/people/service"
+import { getOnePerson } from "@/pages/basic/people/service"
 
 const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
   const { itemLayout, form } = props

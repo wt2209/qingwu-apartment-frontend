@@ -1,7 +1,7 @@
 import { Form, Input, AutoComplete } from "antd"
 import React, { Fragment, useState, useEffect } from "react"
-import { CompanyListItem } from "@/pages/companies/data"
-import { getAllCompanies, getCompanyByName } from "@/pages/companies/service"
+import { CompanyListItem } from "@/pages/basic/companies/data"
+import { getAllCompanies, getCompanyByName } from "@/pages/basic/companies/service"
 import { FormInstance } from "antd/lib/form"
 
 interface Props {

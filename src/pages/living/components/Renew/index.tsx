@@ -4,7 +4,7 @@ import { connect, Dispatch } from 'dva'
 import { DatePicker, Button, Form } from 'antd'
 import locale from "antd/es/date-picker/locale/zh_CN"
 import moment from 'moment'
-import { RecordListItem } from '@/pages/records/data'
+import { RecordListItem } from '@/pages/basic/records/data'
 import styles from './style.less'
 
 const itemLayout = {

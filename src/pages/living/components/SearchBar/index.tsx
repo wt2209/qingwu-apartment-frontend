@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Input, Select, Row, Col } from 'antd'
 import { LivingFetchParams } from '../../data'
-import { AreaListItem } from '@/pages/area/data'
+import { AreaListItem } from '@/pages/basic/areas/data'
 
 interface Props {
   onSubmit: (params: LivingFetchParams) => void;

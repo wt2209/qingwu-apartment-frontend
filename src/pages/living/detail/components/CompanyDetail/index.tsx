@@ -1,5 +1,5 @@
 import React from 'react'
-import { RecordListItem } from '@/pages/records/data'
+import { RecordListItem } from '@/pages/basic/records/data'
 import { Descriptions, Divider, Table } from 'antd'
 import styles from '../../style.less'
 import ProofFiles from '../ProofFiles'

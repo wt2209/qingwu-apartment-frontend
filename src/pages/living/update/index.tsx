@@ -7,12 +7,12 @@ import { Link, router } from 'umi';
 import { connect, Dispatch } from 'dva';
 import locale from "antd/es/date-picker/locale/zh_CN"
 import styles from './style.less';
-import { CategoryListItem } from '@/pages/categories/data';
-import { getAllCategories } from '@/pages/categories/service';
+import { CategoryListItem } from '@/pages/basic/categories/data';
+import { getAllCategories } from '@/pages/basic/categories/service';
 import { getOneLiving } from '../service';
-import { RecordListItem } from '@/pages/records/data';
-import { getAllChargeRules } from '@/pages/chargeRules/service';
-import { ChargeRuleListItem } from '@/pages/chargeRules/data';
+import { RecordListItem } from '@/pages/basic/records/data';
+import { getAllChargeRules } from '@/pages/basic/chargeRules/service';
+import { ChargeRuleListItem } from '@/pages/basic/chargeRules/data';
 import { FILE_UPLOAD_URL } from '@/config';
 import { removeFile } from '@/pages/living/service';
 import PersonFormItems from '../create/components/PersonFormItems';

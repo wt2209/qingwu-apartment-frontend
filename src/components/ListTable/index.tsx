@@ -3,7 +3,7 @@ import Table from 'antd/lib/table';
 import { SearchItems, ResponseListData } from '@/global.d';
 import TableSearchBar from '../TableSearchBar';
 import { Card, Alert } from 'antd';
-import { RoomListParams } from '@/pages/room/data';
+import { RoomListParams } from '@/pages/basic/rooms/data';
 import 'antd/es/table/style/index.less';
 
 interface ListTableProps<T> {

@@ -1,6 +1,6 @@
-import { AreaListItem } from "../area/data";
-import { CategoryListItem } from "../categories/data";
-import { RecordListItem } from "../records/data";
+import { AreaListItem } from "../basic/areas/data";
+import { CategoryListItem } from "../basic/categories/data";
+import { RecordListItem } from "../basic/records/data";
 
 // 已房间为主题，计算出来的 “居住情况”
 export interface LivingListItem {

@@ -4,9 +4,9 @@ import { DatePicker, Input, Form, Button, Select } from 'antd';
 import locale from "antd/es/date-picker/locale/zh_CN"
 import moment from 'moment';
 import { connect, Dispatch } from 'dva';
-import { AreaListItem } from '@/pages/area/data';
+import { AreaListItem } from '@/pages/basic/areas/data';
 import styles from './style.less'
-import { RecordListItem } from '@/pages/records/data';
+import { RecordListItem } from '@/pages/basic/records/data';
 
 const itemLayout = {
   labelCol: { span: 6 },

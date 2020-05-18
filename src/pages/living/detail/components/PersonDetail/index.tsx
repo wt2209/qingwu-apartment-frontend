@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { RecordListItem } from '@/pages/records/data'
+import { RecordListItem } from '@/pages/basic/records/data'
 import { Descriptions, Divider, Table } from 'antd'
 import styles from '../../style.less'
 import { getMoveList } from '@/pages/living/service'

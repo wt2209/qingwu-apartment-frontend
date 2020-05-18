@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Divider } from 'antd';
-import { RecordListItem } from '@/pages/records/data';
+import { RecordListItem } from '@/pages/basic/records/data';
 
 function Person(props: { record: RecordListItem; actions: Array<any> }) {
   const { record, actions } = props;

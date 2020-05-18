@@ -2,10 +2,10 @@ import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { queryLiving, queryTree, createLiving, quitLiving, updateLiving, moveLiving, renewLiving } from './service';
 import { LivingListItem, LivingFetchParams } from './data';
-import { AreaListItem } from '../area/data';
-import { CategoryListItem } from '../categories/data';
-import { getAllAreas } from '../area/service';
-import { getAllCategories } from '../categories/service';
+import { AreaListItem } from '../basic/areas/data';
+import { CategoryListItem } from '../basic/categories/data';
+import { getAllAreas } from '../basic/areas/service';
+import { getAllCategories } from '../basic/categories/service';
 
 export interface ModelState {
   params: LivingFetchParams;

@@ -1,6 +1,6 @@
 import { Card } from 'antd';
 import React from 'react';
-import { RecordListItem } from '@/pages/records/data';
+import { RecordListItem } from '@/pages/basic/records/data';
 
 
 interface Props {

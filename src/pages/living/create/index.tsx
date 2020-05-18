@@ -7,14 +7,14 @@ import { Link, router } from 'umi';
 import { connect, Dispatch } from 'dva';
 import locale from "antd/es/date-picker/locale/zh_CN"
 import styles from './style.less';
-import { CategoryListItem } from '@/pages/categories/data';
-import { RoomListItem } from '@/pages/room/data';
-import { getRoom } from '@/pages/room/service';
-import { getAllCategories } from '@/pages/categories/service';
+import { CategoryListItem } from '@/pages/basic/categories/data';
+import { RoomListItem } from '@/pages/basic/rooms/data';
+import { getRoom } from '@/pages/basic/rooms/service';
+import { getAllCategories } from '@/pages/basic/categories/service';
 import { removeFile } from '../service';
 import { FILE_UPLOAD_URL } from '@/config';
-import { ChargeRuleListItem } from '@/pages/chargeRules/data';
-import { getAllChargeRules } from '@/pages/chargeRules/service';
+import { ChargeRuleListItem } from '@/pages/basic/chargeRules/data';
+import { getAllChargeRules } from '@/pages/basic/chargeRules/service';
 import PersonFormItems from './components/PersonFormItems';
 import CompanyFormItems from './components/CompanyFormItems';
 

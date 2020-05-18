@@ -1,7 +1,7 @@
 import { Card, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { RecordListItem } from '@/pages/records/data';
+import { RecordListItem } from '@/pages/basic/records/data';
 import { Link } from 'umi';
 import { LeftOutlined } from '@ant-design/icons';
 import CompanyDetail from './components/CompanyDetail';
