@@ -218,6 +218,12 @@ export default {
                   path: '/basic/companies',
                   component: './companies',
                 },
+                {
+                  name: '续签记录',
+                  icon: 'smile',
+                  path: '/basic/renews',
+                  component: './renews',
+                },
               ],
             },
             {
