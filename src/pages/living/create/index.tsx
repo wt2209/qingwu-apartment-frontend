@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Spin, Card, DatePicker, Select, Input, Upload, message } from 'antd';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { LeftOutlined, InboxOutlined } from '@ant-design/icons';
 import { Link, router } from 'umi';
@@ -35,6 +35,7 @@ const CreateLiving = (props: Props) => {
   const { roomId } = match.params
   const [chargeRules, setChargeRules] = useState<ChargeRuleListItem[]>()
   const [categories, setCategories] = useState<CategoryListItem[]>()
+  const [billCreatedTo, setBillCreatedTo] = useState<Moment>()
   const [room, setRoom] = useState<RoomListItem>()
   const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
@@ -76,6 +77,25 @@ const CreateLiving = (props: Props) => {
       setLoading(false)
     })()
   }, [roomId])
+
+  const handleChargeRuleChange = (value: number) => {
+    if (value > 0) {
+      const chargeRule = chargeRules!.find(item => item.id === value)
+      const recordAt: Moment = form.getFieldValue('record_at')
+      const rentDate: Array<Moment> = form.getFieldValue('rent_date')
+      let bill_created_to
+      if (Array.isArray(rentDate) && rentDate[0] instanceof moment) {
+        bill_created_to = rentDate[0].clone().subtract(1, 'days').add(chargeRule?.period, 'months')
+      } else if (recordAt instanceof moment) {
+        bill_created_to = recordAt.clone().subtract(1, 'days').add(chargeRule?.period, 'months')
+      }
+      setBillCreatedTo(bill_created_to)
+      form.setFieldsValue({ bill_created_to })
+    } else {
+      setBillCreatedTo(undefined)
+      form.setFieldsValue({ bill_created_to: undefined })
+    }
+  }
 
   const handleSubmit = async () => {
     const fields = await form.validateFields()
@@ -180,13 +200,21 @@ const CreateLiving = (props: Props) => {
               <DatePicker.RangePicker locale={locale} placeholder={['开始日期', '结束日期']} format={dateFormater} />
             </Form.Item>
             <Form.Item {...itemLayout} label="选择收费规则" name="charge_rule_id">
-              <Select placeholder="请选择">
+              <Select placeholder="请选择" onChange={(value: number) => handleChargeRuleChange(value)}>
                 <Select.Option value={0}>无</Select.Option>
                 {chargeRules?.map(rule =>
                   <Select.Option key={rule.id} value={rule.id}>{rule.title}</Select.Option>
                 )}
               </Select>
             </Form.Item>
+            {
+              billCreatedTo
+                ? <Form.Item {...itemLayout} label="已交费至" name="bill_created_to">
+                  <DatePicker />
+                </Form.Item>
+                : null
+            }
+
             <Form.Item {...itemLayout} label="入住水电底数">
               <Form.Item
                 name="electric_start_base"

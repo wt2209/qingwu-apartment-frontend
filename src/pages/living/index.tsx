@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Card, Row, Col, Button, Spin, Divider, BackTop, Tag } from 'antd';
-import { PlusOutlined, SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { connect, Dispatch } from 'dva';
 import { Link } from 'umi';
 import Person from './components/Person';
@@ -80,17 +80,23 @@ const Living = (props: Props) => {
 
   const actions = (value: RecordListItem) => {
     return [
-      <Tag key="quit" color="#dd4b39" onClick={() => handleOption('quit', value)} style={{ cursor: 'pointer' }}>
+      <Tag key="quit"
+        color="#dd4b39"
+        onClick={() => handleOption('quit', value)}
+        style={{ cursor: 'pointer', marginRight: 6 }}>
         退房
       </Tag >,
-      <Tag key="move" color="#f39c12" onClick={() => handleOption('move', value)} style={{ cursor: 'pointer' }}>
+      <Tag key="move"
+        color="#f39c12"
+        onClick={() => handleOption('move', value)}
+        style={{ cursor: 'pointer', marginRight: 6 }}>
         调房
         </Tag>,
       value.type === 'company'
         ? <Tag key="rename"
           onClick={() => handleOption('rename', value)}
           color="#f39c12"
-          style={{ cursor: 'pointer' }}>
+          style={{ cursor: 'pointer', marginRight: 6 }}>
           改名
         </Tag>
         : null,
@@ -98,19 +104,19 @@ const Living = (props: Props) => {
         ? <Tag key="renew"
           onClick={() => handleOption('renew', value)}
           color="#f39c12"
-          style={{ cursor: 'pointer' }}>
+          style={{ cursor: 'pointer', marginRight: 6 }}>
           续签
         </Tag>
         : null,
       <Link key="edit" to={`/livings/update/${value.id}`}>
-        <Tag color="#f39c12" style={{ cursor: 'pointer' }}>
+        <Tag color="#f39c12" style={{ cursor: 'pointer', marginRight: 6 }}>
           修改
         </Tag>
       </Link>,
       value.type === 'functional'
         ? null
         : <Link key="detail" to={`/livings/detail/${value.id}`}>
-          <Tag color="#00a65a" style={{ cursor: 'pointer' }}>
+          <Tag color="#00a65a" style={{ cursor: 'pointer', marginRight: 6 }}>
             详情
           </Tag>
         </Link >,
@@ -199,27 +205,27 @@ const Living = (props: Props) => {
       </Card>
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
-          <Row gutter={24}>
-            {list?.map(room => (
-              <Col md={12} sm={24} key={room.id} style={{ width: '100%' }}>
-                <Card
-                  style={{ marginBottom: 24 }}
-                  headStyle={{ padding: '0 12px' }}
-                  bodyStyle={{ padding: '2px' }}
-                  title={renderLivingTitle(room)}
-                  actions={[
-                    <SettingOutlined />,
-                    <EditOutlined />,
-                    <EllipsisOutlined />,
-                  ]}
-                >
-                  <Row>
-                    {renderContent(room)}
-                  </Row>
-                </Card>
-              </Col>
-            ))}
-          </Row>
+          <Spin spinning={loading}>
+            <Row gutter={24}>
+              {list?.map(room => (
+                <Col md={12} sm={24} key={room.id} style={{ width: '100%' }}>
+                  <Card
+                    style={{ marginBottom: 24 }}
+                    headStyle={{ padding: '0 12px' }}
+                    bodyStyle={{ padding: '2px' }}
+                    title={renderLivingTitle(room)}
+                    actions={[
+                      <SettingOutlined />,
+                    ]}
+                  >
+                    <Row>
+                      {renderContent(room)}
+                    </Row>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </Spin>
           {list && list?.length < total
             ? <Row>
               <div style={{ width: '100%', textAlign: 'center', marginTop: 16 }} >

@@ -139,7 +139,7 @@ const TableList: React.FC<{}> = () => {
                     actionRef.current.reload()
                   }
                 }}>禁用</a>
-                <Divider type="vertical" style={{ margin: 0 }} />
+                <Divider type="vertical" />
                 <a onClick={() => {
                   handleUpdateModalVisible(true);
                   setStepFormValues({

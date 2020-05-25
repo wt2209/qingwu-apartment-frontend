@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, DownOutlined, DownloadOutlined } from '@ant-design/icons';
 import { Button, Divider, message, Select, Badge } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -59,6 +59,8 @@ const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
+  const [exportParams, setExportParams] = useState({})
+
   const actionRef = useRef<ActionType>();
 
   const columns: ProColumns<AreaListItem>[] = [
@@ -119,7 +121,7 @@ const TableList: React.FC<{}> = () => {
                     actionRef.current.reload()
                   }
                 }}>禁用</a>
-                <Divider type="vertical" style={{ margin: 0 }} />
+                <Divider type="vertical" />
                 <a onClick={() => {
                   handleUpdateModalVisible(true);
                   setStepFormValues(record);
@@ -143,7 +145,11 @@ const TableList: React.FC<{}> = () => {
           <Button type="primary" onClick={() => handleModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
+          <Button type="default" onClick={() => handleModalVisible(true)}>
+            <DownloadOutlined /> 导出
+          </Button>,
         ]}
+        beforeSearchSubmit={(params) => { setExportParams(params); return params }}
         request={params => queryArea(params)}
         columns={columns}
         rowSelection={{}}

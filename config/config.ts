@@ -105,13 +105,7 @@ export default {
           routes: [
             {
               path: '/',
-              redirect: '/welcome',
-            },
-            {
-              path: '/welcome',
-              name: 'welcome',
-              icon: 'smile',
-              component: './Welcome',
+              redirect: '/livings',
             },
             {
               path: '/admin',
@@ -128,12 +122,6 @@ export default {
                   authority: ['admin'],
                 },
               ],
-            },
-            {
-              name: 'list.table-list',
-              icon: 'table',
-              path: '/list',
-              component: './ListTableList',
             },
             {
               name: '居住',
@@ -158,6 +146,12 @@ export default {
               path: '/livings/detail/:recordId',
               component: './living/detail',
               hideInMenu: true,
+            },
+            {
+              name: '费用',
+              icon: 'payCircle',
+              path: '/bills',
+              component: './bills',
             },
             {
               name: '维修',
@@ -231,6 +225,18 @@ export default {
                   component: './basic/renames',
                 },
               ],
+            },
+            {
+              path: '/welcome',
+              name: 'welcome',
+              icon: 'smile',
+              component: './Welcome',
+            },
+            {
+              name: 'list.table-list',
+              icon: 'table',
+              path: '/list',
+              component: './ListTableList',
             },
             {
               component: './404',
