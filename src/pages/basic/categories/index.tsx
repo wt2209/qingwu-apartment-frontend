@@ -83,9 +83,9 @@ const TableList: React.FC<{}> = () => {
       render: (_, row) => (
         row.deleted_at ? <Badge color='red' text='已停用' /> : <Badge color='green' text='在用' />
       ),
-      renderFormItem: () => {
+      renderFormItem: (item, { value, onChange }) => {
         return (
-          <Select>
+          <Select value={value} onChange={onChange} >
             <Select.Option value="all">全部</Select.Option >
             <Select.Option value="using">在用</Select.Option>
             <Select.Option value="deleted">已停用</Select.Option>

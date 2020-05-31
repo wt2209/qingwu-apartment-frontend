@@ -90,9 +90,9 @@ const RoomList: React.FC<{}> = () => {
       title: '所属区域',
       dataIndex: 'areas[]',
       render: (_, row) => (row.area && row.area.title) ? row.area.title : '',
-      renderFormItem: () => {
+      renderFormItem: (item, { value, onChange }) => {
         return (
-          <Select mode="multiple" placeholder="请选择">
+          <Select value={value} onChange={onChange} mode="multiple" placeholder="请选择">
             {areas && areas.map(area => (
               <Select.Option key={area.id} value={area.id}>{area.title}</Select.Option>
             ))}
@@ -104,9 +104,9 @@ const RoomList: React.FC<{}> = () => {
       title: '类型',
       dataIndex: 'categories[]',
       render: (_, row) => (row.category && row.category.title) ? row.category.title : '',
-      renderFormItem: () => {
+      renderFormItem: (item, { value, onChange }) => {
         return (
-          <Select mode="multiple" placeholder="请选择">
+          <Select mode="multiple" value={value} onChange={onChange} placeholder="请选择">
             {categories && categories.map(category => (
               <Select.Option key={category.id} value={category.id}>{category.title}</Select.Option>
             ))}
@@ -134,9 +134,9 @@ const RoomList: React.FC<{}> = () => {
         const rule = chargeRules?.find(r => r.id === id)
         return rule?.title || ''
       },
-      renderFormItem: () => {
+      renderFormItem: (item, { value, onChange }) => {
         return (
-          <Select placeholder="请选择">
+          <Select value={value} onChange={onChange} placeholder="请选择">
             {chargeRules && chargeRules?.map(rule => (
               <Select.Option key={rule.id} value={rule.id}>{rule.title}</Select.Option>
             ))}
@@ -150,9 +150,9 @@ const RoomList: React.FC<{}> = () => {
       render: (_, row) => (
         row.deleted_at ? <Badge color='red' text='已停用' /> : <Badge color='green' text='在用' />
       ),
-      renderFormItem: () => {
+      renderFormItem: (item, { value, onChange }) => {
         return (
-          <Select>
+          <Select value={value} onChange={onChange}>
             <Select.Option value="all">全部</Select.Option>
             <Select.Option value="using">在用</Select.Option>
             <Select.Option value="deleted">已停用</Select.Option>

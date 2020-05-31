@@ -1,4 +1,4 @@
-import { PlusOutlined, DownOutlined, DownloadOutlined } from '@ant-design/icons';
+import { PlusOutlined, DownloadOutlined } from '@ant-design/icons';
 import { Button, Divider, message, Select, Badge } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -59,7 +59,7 @@ const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
-  const [exportParams, setExportParams] = useState({})
+  const [, setExportParams] = useState({})
 
   const actionRef = useRef<ActionType>();
 
@@ -80,9 +80,9 @@ const TableList: React.FC<{}> = () => {
       render: (_, row) => (
         row.deleted_at ? <Badge color='red' text='已停用' /> : <Badge color='green' text='在用' />
       ),
-      renderFormItem: () => {
+      renderFormItem: (item, { value, onChange }) => {
         return (
-          <Select>
+          <Select value={value} onChange={onChange} >
             <Select.Option value="all">全部</Select.Option >
             <Select.Option value="using">在用</Select.Option>
             <Select.Option value="deleted">已停用</Select.Option>

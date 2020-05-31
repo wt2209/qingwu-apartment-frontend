@@ -43,9 +43,9 @@ const RecordTableList: React.FC<{}> = () => {
       title: '所属区域',
       dataIndex: 'area_id',
       render: (_, row) => (row.area && row.area.title) ? row.area.title : '',
-      renderFormItem: () => {
+      renderFormItem: (item, { value, onChange }) => {
         return (
-          <Select mode="multiple" placeholder="请选择">
+          <Select value={value} onChange={onChange} mode="multiple" placeholder="请选择">
             {areas && areas.map(area => (
               <Select.Option key={area.id} value={area.id}>{area.title}</Select.Option>
             ))}
@@ -57,9 +57,9 @@ const RecordTableList: React.FC<{}> = () => {
       title: '类型',
       dataIndex: 'category_id',
       render: (_, row) => (row.category && row.category.title) ? row.category.title : '',
-      renderFormItem: () => {
+      renderFormItem: (item, { value, onChange }) => {
         return (
-          <Select mode="multiple" placeholder="请选择">
+          <Select value={value} onChange={onChange} mode="multiple" placeholder="请选择">
             {categories && categories.map(category => (
               <Select.Option key={category.id} value={category.id}>{category.title}</Select.Option>
             ))}
