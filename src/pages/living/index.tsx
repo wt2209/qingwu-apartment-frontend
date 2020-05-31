@@ -18,6 +18,7 @@ import QuitModal from './components/QuitModal';
 import MoveModal from './components/MoveModal';
 import RenewModal from './components/RenewModal';
 import RenameModal from './components/RenameModal';
+import RoomEditModal from './components/RoomEditModal';
 
 interface Props {
   areas: AreaListItem[] | undefined;
@@ -36,7 +37,9 @@ const Living = (props: Props) => {
   const [moveModalVisible, setMoveModalVisible] = useState<boolean>(false)
   const [renewModalVisible, setRenewModalVisible] = useState<boolean>(false)
   const [renameModalVisible, setRenameModalVisible] = useState<boolean>(false)
+  const [roomEditModalVisible, setRoomEditModalVisible] = useState<boolean>(false)
   const [record, setRecord] = useState<RecordListItem>()
+  const [roomId, setRoomId] = useState<number>(0)
 
   const fetchData = (payload: LivingFetchParams) => {
     dispatch({ type: 'living/fetch', payload })
@@ -215,7 +218,7 @@ const Living = (props: Props) => {
                     bodyStyle={{ padding: '2px' }}
                     title={renderLivingTitle(room)}
                     actions={[
-                      <SettingOutlined />,
+                      <SettingOutlined onClick={() => { setRoomId(room.id); setRoomEditModalVisible(true) }} />,
                     ]}
                   >
                     <Row>
@@ -242,27 +245,42 @@ const Living = (props: Props) => {
           }
         </div>
       </div>
-      {record && <QuitModal
-        handleVisible={(visible: boolean) => setQuitModalVisible(visible)}
-        modalVisible={quitModalVisible}
-        record={record}
-      />}
-      {record && <MoveModal
-        areas={areas}
-        handleVisible={(visible: boolean) => setMoveModalVisible(visible)}
-        modalVisible={moveModalVisible}
-        record={record}
-      />}
-      {record && <RenewModal
-        handleVisible={(visible: boolean) => setRenewModalVisible(visible)}
-        modalVisible={renewModalVisible}
-        record={record}
-      />}
-      {record && <RenameModal
-        handleVisible={(visible: boolean) => setRenameModalVisible(visible)}
-        modalVisible={renameModalVisible}
-        record={record}
-      />}
+      {
+        record && <QuitModal
+          handleVisible={(visible: boolean) => setQuitModalVisible(visible)}
+          modalVisible={quitModalVisible}
+          record={record}
+        />
+      }
+      {
+        record && <MoveModal
+          areas={areas}
+          handleVisible={(visible: boolean) => setMoveModalVisible(visible)}
+          modalVisible={moveModalVisible}
+          record={record}
+        />
+      }
+      {
+        record && <RenewModal
+          handleVisible={(visible: boolean) => setRenewModalVisible(visible)}
+          modalVisible={renewModalVisible}
+          record={record}
+        />
+      }
+      {
+        record && <RenameModal
+          handleVisible={(visible: boolean) => setRenameModalVisible(visible)}
+          modalVisible={renameModalVisible}
+          record={record}
+        />
+      }
+      {
+        roomId > 0 && <RoomEditModal
+          roomId={roomId}
+          modalVisible={roomEditModalVisible}
+          handleVisible={(visible: boolean) => setRoomEditModalVisible(visible)}
+        />
+      }
       <BackTop />
     </PageHeaderWrapper >
   )

@@ -95,3 +95,13 @@ export async function getRenameList(companyId: number) {
 export async function getRenewList(recordId: number) {
   return request(`/api/livings/renews/${recordId}`)
 }
+
+export async function updateRoom(data: { id: number, values: any }) {
+  return request(`/api/rooms/${data.id}`, {
+    method: 'POST',
+    data: {
+      ...data.values,
+      _method: 'put',
+    }
+  })
+}

@@ -2,7 +2,7 @@ import { AreaListItem } from "../basic/areas/data";
 import { CategoryListItem } from "../basic/categories/data";
 import { RecordListItem } from "../basic/records/data";
 
-// 已房间为主题，计算出来的 “居住情况”
+// 以房间为主题，计算出来的 “居住情况”
 export interface LivingListItem {
   id: number;
   area_id: number;
