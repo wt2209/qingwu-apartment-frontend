@@ -5,7 +5,7 @@
 import { extend } from 'umi-request';
 import { notification } from 'antd';
 import { URL_PREFIX } from '@/config';
-import { router } from 'umi'
+import { history } from 'umi'
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -41,7 +41,7 @@ const errorHandler = (error: { response: Response }): Response => {
       description: errorText,
     });
     if (response.status === 401) {
-      router.push('/user/login')
+      history.push('/user/login')
     }
   } else if (!response) {
     notification.error({

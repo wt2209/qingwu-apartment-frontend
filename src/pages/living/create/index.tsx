@@ -3,8 +3,7 @@ import { Form, Button, Spin, Card, DatePicker, Select, Input, Upload, message } 
 import moment, { Moment } from 'moment';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { LeftOutlined, InboxOutlined } from '@ant-design/icons';
-import { Link, router } from 'umi';
-import { connect, Dispatch } from 'dva';
+import { Link, history, connect, Dispatch } from 'umi';
 import locale from "antd/es/date-picker/locale/zh_CN"
 import styles from './style.less';
 import { CategoryListItem } from '@/pages/basic/categories/data';
@@ -134,7 +133,7 @@ const CreateLiving = (props: Props) => {
     form.resetFields()
     message.success('入住成功')
     dispatch({ type: 'living/create', payload: fields })
-    router.push('/livings')
+    history.push('/livings')
   }
 
   const renderContent = () => {

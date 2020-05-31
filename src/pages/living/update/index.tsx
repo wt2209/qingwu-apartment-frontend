@@ -3,8 +3,7 @@ import { Form, Button, Spin, Card, DatePicker, Select, Input, Upload, message } 
 import moment from 'moment';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { LeftOutlined, InboxOutlined } from '@ant-design/icons';
-import { Link, router } from 'umi';
-import { connect, Dispatch } from 'dva';
+import { Link, history, connect, Dispatch } from 'umi';
 import locale from "antd/es/date-picker/locale/zh_CN"
 import styles from './style.less';
 import { CategoryListItem } from '@/pages/basic/categories/data';
@@ -134,7 +133,7 @@ const UpdateLiving = (props: Props) => {
     message.success('修改成功')
     // console.log(fields)
     dispatch({ type: 'living/update', payload: fields })
-    router.push('/livings')
+    history.push('/livings')
   }
 
   const renderContent = () => {
