@@ -8,7 +8,13 @@ export async function getAllChargeRules() {
 export async function queryChargeRule(params?: TableListParams) {
   return request('/api/charge-rules', {
     params,
-  });
+  }).then(res => ({
+    data: res.data,
+    total: res.meta.total,
+    success: true,
+    pageSize: res.meta.per_page,
+    current: res.meta.current_page
+  }))
 }
 
 export async function removeChargeRule(id: number) {

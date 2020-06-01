@@ -1,19 +1,22 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, DownloadOutlined } from '@ant-design/icons';
 import { Button, Divider, message, Badge, Select } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import moment from 'moment';
+
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import { RoomListItem, RoomFormValueType } from './data';
-import { queryRoom, updateRoom, addRoom, removeRoom, restoreRoom } from './service';
+import { queryRoom, queryExportRoom, updateRoom, addRoom, removeRoom, restoreRoom } from './service';
 import { AreaListItem } from '../areas/data';
 import { CategoryListItem } from '../categories/data';
 import { getAllCategories } from '../categories/service';
 import { getAllAreas } from '../areas/service';
 import { getAllChargeRules } from '../chargeRules/service';
 import { ChargeRuleListItem } from '../chargeRules/data';
+import { ExportRender } from '@/global.d';
+import { exportXlsx } from '@/utils/exportXlsx';
 
 const handleAdd = async (fields: RoomFormValueType) => {
   const hide = message.loading('正在添加');
@@ -68,6 +71,7 @@ const RoomList: React.FC<{}> = () => {
   const [areas, setAreas] = useState<AreaListItem[]>()
   const [categories, setCategories] = useState<CategoryListItem[]>()
   const [chargeRules, setChargeRules] = useState<ChargeRuleListItem[]>()
+  const [exportParams, setExportParams] = useState({})
   const actionRef = useRef<ActionType>();
 
   useEffect(() => {
@@ -85,11 +89,12 @@ const RoomList: React.FC<{}> = () => {
       })
   }, [])
 
-  const columns: ProColumns<RoomListItem>[] = [
+  const columns: (ExportRender & ProColumns<RoomListItem>)[] = [
     {
       title: '所属区域',
       dataIndex: 'areas[]',
-      render: (_, row) => (row.area && row.area.title) ? row.area.title : '',
+      exportRender: row => row?.area?.title,
+      renderText: (_text, row) => row?.area?.title,
       renderFormItem: (item, { value, onChange }) => {
         return (
           <Select value={value} onChange={onChange} mode="multiple" placeholder="请选择">
@@ -103,7 +108,8 @@ const RoomList: React.FC<{}> = () => {
     {
       title: '类型',
       dataIndex: 'categories[]',
-      render: (_, row) => (row.category && row.category.title) ? row.category.title : '',
+      exportRender: row => row?.category?.title,
+      renderText: (_text, row) => row?.category?.title,
       renderFormItem: (item, { value, onChange }) => {
         return (
           <Select mode="multiple" value={value} onChange={onChange} placeholder="请选择">
@@ -130,9 +136,13 @@ const RoomList: React.FC<{}> = () => {
     {
       title: '默认收费规则',
       dataIndex: 'charge_rule_id',
+      exportRender: row => {
+        const rule = chargeRules?.find(r => r.id === row.charge_rule_id)
+        return rule?.title || ''
+      },
       renderText: (id: number) => {
         const rule = chargeRules?.find(r => r.id === id)
-        return rule?.title || ''
+        return rule?.title
       },
       renderFormItem: (item, { value, onChange }) => {
         return (
@@ -147,6 +157,7 @@ const RoomList: React.FC<{}> = () => {
     {
       title: '状态',
       dataIndex: 'status',
+      exportRender: row => row.deleted_at ? '已停用' : '在用',
       render: (_, row) => (
         row.deleted_at ? <Badge color='red' text='已停用' /> : <Badge color='green' text='在用' />
       ),
@@ -209,10 +220,16 @@ const RoomList: React.FC<{}> = () => {
         form={{ initialValues: { status: 'all' } }}
         rowKey="id"
         toolBarRender={() => [
-          <Button type="primary" onClick={() => handleModalVisible(true)}>
+          <Button type="default" onClick={() => handleModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
+          <Button
+            type="primary"
+            onClick={() => exportXlsx(exportParams, columns, queryExportRoom, '续签记录表')}>
+            <DownloadOutlined /> 导出
+          </Button>,
         ]}
+        beforeSearchSubmit={(params) => { setExportParams(params); return params }}
         request={params => queryRoom(params)}
         columns={columns}
         rowSelection={{}}

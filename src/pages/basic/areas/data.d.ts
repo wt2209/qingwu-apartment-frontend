@@ -26,4 +26,5 @@ export interface AreaListParams {
   id?: number;
   pageSize?: number;
   current?: number;
+  export?: number;
 }

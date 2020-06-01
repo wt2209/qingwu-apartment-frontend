@@ -1,12 +1,14 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, DownloadOutlined } from '@ant-design/icons';
 import { Button, Divider, message, Tag, Badge, Select } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { queryFeeType, restoreFeeType, removeFeeType, updateFeeType, addFeeType } from './service';
+import { queryFeeType, restoreFeeType, removeFeeType, updateFeeType, addFeeType, queryExportFeeType } from './service';
 import { FeeTypeListItem } from './data';
+import { exportXlsx } from '@/utils/exportXlsx';
+import { ExportRender } from '@/global.d';
 
 const handleAdd = async (fields: FormValueType) => {
   const hide = message.loading('正在添加');
@@ -59,8 +61,10 @@ const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
+  const [exportParams, setExportParams] = useState({})
+
   const actionRef = useRef<ActionType>();
-  const columns: ProColumns<FeeTypeListItem>[] = [
+  const columns: (ExportRender & ProColumns<FeeTypeListItem>)[] = [
     {
       title: '费用名称',
       dataIndex: 'title',
@@ -69,12 +73,14 @@ const TableList: React.FC<{}> = () => {
     {
       title: '每日滞纳金率',
       dataIndex: 'rate',
+      exportRender: row => parseFloat(row.rate),
       renderText: (rate) => `${parseFloat(rate)}%`,
       hideInSearch: true,
     },
     {
       title: '是否上交',
       dataIndex: 'turn_in',
+      exportRender: row => row.turn_in ? '上交' : '自留',
       render: (turnIn) => (
         <Tag color={turnIn ? 'success' : 'warning'} >{turnIn ? '上交' : '自留'}</Tag>
       ),
@@ -93,6 +99,7 @@ const TableList: React.FC<{}> = () => {
     {
       title: '状态',
       dataIndex: 'status',
+      exportRender: row => row.deleted_at ? '已停用' : '在用',
       render: (_, row) => (
         row.deleted_at ? <Badge color='red' text='已停用' /> : <Badge color='green' text='在用' />
       ),
@@ -120,7 +127,6 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: '操作',
-      dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => (
         <>
@@ -163,11 +169,17 @@ const TableList: React.FC<{}> = () => {
         rowKey="id"
         form={{ initialValues: { status: 'all' } }}
         toolBarRender={() => [
-          <Button icon={<PlusOutlined />} type="primary" onClick={() => handleModalVisible(true)}>
+          <Button icon={<PlusOutlined />} type="default" onClick={() => handleModalVisible(true)}>
             新建
+          </Button>,
+          <Button
+            type="primary"
+            onClick={() => exportXlsx(exportParams, columns, queryExportFeeType, '费用类型明细表')}>
+            <DownloadOutlined /> 导出
           </Button>,
         ]}
         request={params => queryFeeType(params)}
+        beforeSearchSubmit={(params) => { setExportParams(params); return params }}
         columns={columns}
         rowSelection={{}}
       />

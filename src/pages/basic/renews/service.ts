@@ -15,3 +15,12 @@ export async function queryRenew(params?: TableListParams) {
     current: res.meta.current_page
   }))
 }
+
+export async function queryExportRenew(params?: TableListParams) {
+  return request('/api/renews', {
+    params: {
+      ...params,
+      page: params && params.current,
+    },
+  })
+}

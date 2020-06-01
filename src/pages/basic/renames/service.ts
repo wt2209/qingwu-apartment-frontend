@@ -15,3 +15,12 @@ export async function queryRename(params?: TableListParams) {
     current: res.meta.current_page
   }))
 }
+
+export async function queryExportRename(params?: TableListParams) {
+  return request('/api/renames', {
+    params: {
+      ...params,
+      page: params && params.current,
+    },
+  })
+}

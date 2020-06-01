@@ -1,5 +1,6 @@
 import request from '@/utils/request';
 import { TableListParams, CategoryListItem } from './data';
+import { getDvaApp } from 'umi';
 
 export async function getAllCategories() {
   return request('/api/all-categories');
@@ -20,6 +21,15 @@ export async function queryCategory(params?: TableListParams) {
   }))
 }
 
+export async function queryExportCategory(params?: TableListParams) {
+  return request('/api/categories', {
+    params: {
+      ...params,
+      page: params && params.current,
+    },
+  })
+}
+
 export async function removeCategory(id: number) {
   return request(`/api/categories/${id}`, {
     method: 'POST',
@@ -28,7 +38,7 @@ export async function removeCategory(id: number) {
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    window.g_app._store.dispatch({
+    getDvaApp()._store.dispatch({
       type: 'living/reset',
     })
     return res
@@ -43,7 +53,7 @@ export async function restoreCategory(id: number) {
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    window.g_app._store.dispatch({
+    getDvaApp()._store.dispatch({
       type: 'living/reset',
     })
     return res
@@ -56,7 +66,7 @@ export async function addCategory(data: Partial<CategoryListItem>) {
     data,
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    window.g_app._store.dispatch({
+    getDvaApp()._store.dispatch({
       type: 'living/reset',
     })
     return res
@@ -72,7 +82,7 @@ export async function updateCategory(id: number, data: Partial<CategoryListItem>
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    window.g_app._store.dispatch({
+    getDvaApp()._store.dispatch({
       type: 'living/reset',
     })
     return res

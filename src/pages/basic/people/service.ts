@@ -16,6 +16,15 @@ export async function queryPerson(params?: TableListParams) {
   }))
 }
 
+export async function queryExportPerson(params?: TableListParams) {
+  return request('/api/people', {
+    params: {
+      ...params,
+      page: params && params.current,
+    },
+  })
+}
+
 export async function getOnePerson(params: { [key: string]: string }) {
   return request('/api/one-person', {
     params

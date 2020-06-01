@@ -15,6 +15,14 @@ export async function queryCompany(params?: CompanyListParams) {
     current: res.meta.current_page
   }))
 }
+export async function queryExportCompany(params?: CompanyListParams) {
+  return request('/api/companies', {
+    params: {
+      ...params,
+      page: params && params.current,
+    },
+  })
+}
 
 export async function getAllCompanies() {
   return request('/api/all-companies');

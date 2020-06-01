@@ -1,13 +1,18 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
-import { Badge } from 'antd';
+import { Badge, Button } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 import { CompanyListItem } from './data';
-import { queryCompany } from './service';
+import { queryCompany, queryExportCompany } from './service';
+import { exportXlsx } from '@/utils/exportXlsx';
+import { ExportRender } from '@/global.d';
 
 const TableList: React.FC<{}> = () => {
+  const [exportParams, setExportParams] = useState({})
+
   const actionRef = useRef<ActionType>();
-  const columns: ProColumns<CompanyListItem>[] = [
+  const columns: (ExportRender & ProColumns<CompanyListItem>)[] = [
     {
       title: '公司名称',
       dataIndex: 'company_name',
@@ -34,8 +39,10 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: '状态',
-      render: (count) => (
-        count === 0 ? <Badge color='red' text='已退房' /> : <Badge color='green' text='在用' />
+      dataIndex: 'records_count',
+      exportRender: row => row.records_count > 0 ? '在住' : '已退房',
+      renderText: (count) => (
+        count === 0 ? <Badge color='red' text='已退房' /> : <Badge color='green' text='在住' />
       ),
       hideInSearch: true,
     },
@@ -58,7 +65,15 @@ const TableList: React.FC<{}> = () => {
         headerTitle="公司明细"
         actionRef={actionRef}
         rowKey="id"
+        toolBarRender={() => [
+          <Button
+            type="primary"
+            onClick={() => exportXlsx(exportParams, columns, queryExportCompany, '公司明细表')}>
+            <DownloadOutlined /> 导出
+          </Button>,
+        ]}
         request={params => queryCompany(params)}
+        beforeSearchSubmit={(params) => { setExportParams(params); return params }}
         columns={columns}
         rowSelection={{}}
       />

@@ -1,13 +1,15 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, DownloadOutlined } from '@ant-design/icons';
 import { Button, Divider, message, Badge, Select } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { queryCategory, restoreCategory, removeCategory, addCategory, updateCategory } from './service';
+import { queryCategory, restoreCategory, removeCategory, addCategory, updateCategory, queryExportCategory } from './service';
 import { typeMapper } from './mapper';
 import { CategoryListItem } from './data';
+import { exportXlsx } from '@/utils/exportXlsx';
+import { ExportRender } from '@/global.d';
 
 const handleAdd = async (fields: FormValueType) => {
   const hide = message.loading('正在添加');
@@ -60,8 +62,10 @@ const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [formValues, setFormValues] = useState({});
+  const [exportParams, setExportParams] = useState({})
+
   const actionRef = useRef<ActionType>();
-  const columns: ProColumns<CategoryListItem>[] = [
+  const columns: (ExportRender & ProColumns<CategoryListItem>)[] = [
     {
       title: '名称',
       dataIndex: 'title',
@@ -71,6 +75,7 @@ const TableList: React.FC<{}> = () => {
       title: '类别',
       dataIndex: 'type',
       valueEnum: typeMapper,
+      exportRender: row => (typeMapper[row.type])
     },
     {
       title: '水电收费',
@@ -82,6 +87,9 @@ const TableList: React.FC<{}> = () => {
       dataIndex: 'status',
       render: (_, row) => (
         row.deleted_at ? <Badge color='red' text='已停用' /> : <Badge color='green' text='在用' />
+      ),
+      exportRender: row => (
+        row.deleted_at ? '已停用' : '在用'
       ),
       renderFormItem: (item, { value, onChange }) => {
         return (
@@ -147,11 +155,17 @@ const TableList: React.FC<{}> = () => {
         form={{ initialValues: { status: 'all' } }}
         rowKey="id"
         toolBarRender={() => [
-          <Button icon={<PlusOutlined />} type="primary" onClick={() => handleModalVisible(true)}>
+          <Button icon={<PlusOutlined />} type="default" onClick={() => handleModalVisible(true)}>
             新建
+          </Button>,
+          <Button
+            type="primary"
+            onClick={() => exportXlsx(exportParams, columns, queryExportCategory, '类型明细表')}>
+            <DownloadOutlined /> 导出
           </Button>,
         ]}
         request={(params) => queryCategory(params)}
+        beforeSearchSubmit={(params) => { setExportParams(params); return params }}
         columns={columns}
         rowSelection={{}}
       />

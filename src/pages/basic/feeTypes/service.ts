@@ -19,6 +19,12 @@ export async function queryFeeType(params?: TableListParams) {
   );
 }
 
+export async function queryExportFeeType(params?: TableListParams) {
+  return request('/api/fee-types', {
+    params,
+  })
+}
+
 export async function removeFeeType(id: number) {
   return request(`/api/fee-types/${id}`, {
     method: 'POST',

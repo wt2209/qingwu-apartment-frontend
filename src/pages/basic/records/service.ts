@@ -15,3 +15,12 @@ export async function queryRecord(params?: TableListParams) {
     current: res.meta.current_page
   }))
 }
+
+export async function queryExportRecord(params?: TableListParams) {
+  return request('/api/records', {
+    params: {
+      ...params,
+      page: params && params.current,
+    },
+  })
+}

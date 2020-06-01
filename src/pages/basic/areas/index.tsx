@@ -6,7 +6,9 @@ import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { AreaListItem } from './data';
-import { queryArea, updateArea, addArea, restoreArea, removeArea } from './service';
+import { queryArea, updateArea, addArea, restoreArea, removeArea, queryExportArea } from './service';
+import { exportXlsx } from '@/utils/exportXlsx';
+import { ExportRender } from '@/global.d';
 
 const handleAdd = async (fields: FormValueType) => {
   const hide = message.loading('正在添加');
@@ -59,11 +61,11 @@ const TableList: React.FC<{}> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
-  const [, setExportParams] = useState({})
+  const [exportParams, setExportParams] = useState({})
 
   const actionRef = useRef<ActionType>();
 
-  const columns: ProColumns<AreaListItem>[] = [
+  const columns: (ExportRender & ProColumns<AreaListItem>)[] = [
     {
       title: '区域',
       dataIndex: 'title',
@@ -80,13 +82,16 @@ const TableList: React.FC<{}> = () => {
       render: (_, row) => (
         row.deleted_at ? <Badge color='red' text='已停用' /> : <Badge color='green' text='在用' />
       ),
-      renderFormItem: (item, { value, onChange }) => {
+      exportRender: (row) => (
+        row.deleted_at ? '已停用' : '在用'
+      ),
+      renderFormItem: (_item, { value, onChange }) => {
         return (
           <Select value={value} onChange={onChange} >
             <Select.Option value="all">全部</Select.Option >
             <Select.Option value="using">在用</Select.Option>
             <Select.Option value="deleted">已停用</Select.Option>
-          </Select >
+          </Select>
         )
       },
     },
@@ -142,10 +147,12 @@ const TableList: React.FC<{}> = () => {
         rowKey="id"
         form={{ initialValues: { status: 'all' } }}
         toolBarRender={() => [
-          <Button type="primary" onClick={() => handleModalVisible(true)}>
+          <Button type="default" onClick={() => handleModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
-          <Button type="default" onClick={() => handleModalVisible(true)}>
+          <Button
+            type="primary"
+            onClick={() => exportXlsx(exportParams, columns, queryExportArea, '区域明细表')}>
             <DownloadOutlined /> 导出
           </Button>,
         ]}

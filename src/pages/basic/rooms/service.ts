@@ -1,5 +1,6 @@
 import request from '@/utils/request';
 import { RoomListParams, RoomFormValueType, RoomListItem } from './data';
+import { getDvaApp } from 'umi'
 
 export async function queryRoom(params?: RoomListParams) {
   return request('/api/rooms', {
@@ -16,6 +17,15 @@ export async function queryRoom(params?: RoomListParams) {
   }))
 }
 
+export async function queryExportRoom(params?: RoomListParams) {
+  return request('/api/rooms', {
+    params: {
+      ...params,
+      page: params && params.current,
+    },
+  })
+}
+
 export async function getRoom(id: number) {
   return request(`/api/rooms/${id}`)
 }
@@ -28,7 +38,7 @@ export async function removeRoom(id: number) {
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    window.g_app._store.dispatch({
+    getDvaApp()._store.dispatch({
       type: 'living/reset',
     })
     return res
@@ -43,7 +53,7 @@ export async function restoreRoom(id: number) {
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    window.g_app._store.dispatch({
+    getDvaApp()._store.dispatch({
       type: 'living/reset',
     })
     return res
@@ -56,7 +66,7 @@ export async function addRoom(data: Partial<RoomListItem>) {
     data,
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    window.g_app._store.dispatch({
+    getDvaApp()._store.dispatch({
       type: 'living/reset',
     })
     return res
@@ -72,7 +82,7 @@ export async function updateRoom(id: number | undefined, formVals: RoomFormValue
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    window.g_app._store.dispatch({
+    getDvaApp()._store.dispatch({
       type: 'living/reset',
     })
     return res

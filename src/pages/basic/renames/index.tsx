@@ -1,20 +1,22 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
-import { queryRename } from './service';
+import { DownloadOutlined } from '@ant-design/icons';
+import { exportXlsx } from '@/utils/exportXlsx';
+import { Button } from 'antd';
+import { queryRename, queryExportRename } from './service';
+import { ExportRender } from '@/global.d';
 
 const RenameTableList: React.FC<{}> = () => {
+  const [exportParams, setExportParams] = useState({})
   const actionRef = useRef<ActionType>();
-  const columns: ProColumns<any>[] = [
+
+  const columns: (ExportRender & ProColumns<any>)[] = [
     {
       title: '公司名称',
       dataIndex: 'company_name',
-      hideInTable: true,
-    },
-    {
-      title: '现公司名称',
-      dataIndex: ['company', 'company_name'],
-      hideInSearch: true,
+      exportRender: row => row?.company?.company_name,
+      renderText: (_text, row) => row?.company?.company_name,
     },
     {
       title: '由',
@@ -40,10 +42,17 @@ const RenameTableList: React.FC<{}> = () => {
         headerTitle="公司改名"
         actionRef={actionRef}
         rowKey="id"
+        toolBarRender={() => [
+          <Button
+            type="primary"
+            onClick={() => exportXlsx(exportParams, columns, queryExportRename, '公司改名表')}>
+            <DownloadOutlined /> 导出
+          </Button>,
+        ]}
+        beforeSearchSubmit={(params) => { setExportParams(params); return params }}
         request={params => queryRename(params)}
         columns={columns}
         rowSelection={{}}
-        beforeSearchSubmit={(params) => { console.log(params); return params }}
       />
     </PageHeaderWrapper>
   );

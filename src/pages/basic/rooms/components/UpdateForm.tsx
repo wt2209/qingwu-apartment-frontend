@@ -46,7 +46,6 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
     updateModalVisible,
   } = props;
 
-
   const handleNext = async () => {
     const fieldsValue = await form.validateFields();
     const result = { ...formVals, ...fieldsValue }

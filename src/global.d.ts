@@ -9,7 +9,6 @@ export interface SearchItems {
   }
 }
 
-
 export interface ResponseListData {
   data: any
   meta: {
@@ -17,4 +16,8 @@ export interface ResponseListData {
     current_page: number;
     per_page: number;
   }
+}
+
+export interface ExportRender {
+  exportRender?: (row: T) => string | number
 }

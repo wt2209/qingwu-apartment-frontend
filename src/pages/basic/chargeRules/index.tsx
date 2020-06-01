@@ -169,7 +169,7 @@ const TableList: React.FC<{}> = () => {
         rowKey="id"
         form={{ initialValues: { status: 'all' } }}
         toolBarRender={() => [
-          <Button icon={<PlusOutlined />} type="primary" onClick={() => handleModalVisible(true)}>
+          <Button icon={<PlusOutlined />} type="default" onClick={() => handleModalVisible(true)}>
             新建
           </Button>,
         ]}
