@@ -226,10 +226,6 @@ const BillList: React.FC<{}> = () => {
         headerTitle="费用明细"
         actionRef={actionRef}
         rowKey="id"
-        search={{
-          collapsed: false,
-          collapseRender: undefined,
-        }}
         toolBarRender={(action, { selectedRows }) => [
           selectedRows && selectedRows.length > 0 && (
             <Dropdown

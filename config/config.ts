@@ -109,6 +109,12 @@ export default defineConfig({
               component: './repair',
             },
             {
+              name: '统计',
+              icon: 'tool',
+              path: '/statistics',
+              component: './statistics',
+            },
+            {
               name: '基础结构',
               icon: 'apartment',
               path: '/basic',
