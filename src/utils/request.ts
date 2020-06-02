@@ -6,6 +6,7 @@ import { extend } from 'umi-request';
 import { notification } from 'antd';
 import { URL_PREFIX } from '@/config';
 import { history } from 'umi'
+import NProgress from 'nprogress'
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -66,6 +67,8 @@ const request = extend({
 
 request.interceptors.request.use((url, options) => {
   const { headers, ...rest } = options
+  NProgress.remove()
+  NProgress.start()
   return (
     {
       url,
@@ -79,5 +82,10 @@ request.interceptors.request.use((url, options) => {
     }
   );
 });
+
+request.interceptors.response.use((response) => {
+  NProgress.done()
+  return response
+})
 
 export default request;
