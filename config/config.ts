@@ -110,7 +110,7 @@ export default defineConfig({
             },
             {
               name: '统计',
-              icon: 'tool',
+              icon: 'barChart',
               path: '/statistics',
               component: './statistics',
             },

@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Card, Row, Col, Button, Spin, Divider, BackTop, Tag } from 'antd';
 import { PlusOutlined, SettingOutlined } from '@ant-design/icons';
-import { connect, Dispatch } from 'dva';
-import { Link } from 'umi';
+import { connect, Dispatch, Link } from 'umi';
 import Person from './components/Person';
 import Company from './components/Company';
 import Functional from './components/Functional';
@@ -208,27 +207,25 @@ const Living = (props: Props) => {
       </Card>
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1 }}>
-          <Spin spinning={loading}>
-            <Row gutter={24}>
-              {list?.map(room => (
-                <Col md={12} sm={24} key={room.id} style={{ width: '100%' }}>
-                  <Card
-                    style={{ marginBottom: 24 }}
-                    headStyle={{ padding: '0 12px' }}
-                    bodyStyle={{ padding: '2px' }}
-                    title={renderLivingTitle(room)}
-                    actions={[
-                      <SettingOutlined onClick={() => { setRoomId(room.id); setRoomEditModalVisible(true) }} />,
-                    ]}
-                  >
-                    <Row>
-                      {renderContent(room)}
-                    </Row>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          </Spin>
+          <Row gutter={24}>
+            {list?.map(room => (
+              <Col md={12} sm={24} key={room.id} style={{ width: '100%' }}>
+                <Card
+                  style={{ marginBottom: 24 }}
+                  headStyle={{ padding: '0 12px' }}
+                  bodyStyle={{ padding: '2px' }}
+                  title={renderLivingTitle(room)}
+                  actions={[
+                    <SettingOutlined onClick={() => { setRoomId(room.id); setRoomEditModalVisible(true) }} />,
+                  ]}
+                >
+                  <Row>
+                    {renderContent(room)}
+                  </Row>
+                </Card>
+              </Col>
+            ))}
+          </Row>
           {list && list?.length < total
             ? <Row>
               <div style={{ width: '100%', textAlign: 'center', marginTop: 16 }} >

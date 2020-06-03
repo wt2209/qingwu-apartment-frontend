@@ -1,11 +1,11 @@
 export interface LivingStatisticsList {
   area: string,
-  type: 'person' | 'company' | 'functional',
   category: string,
   rooms_all_count: number,
   rooms_used_count: number,
   rooms_empty_count: number,
-  people_count: number,
+  people_count: number | string,
+  companies_count: number | string,
 }
 
 export interface BillStatisticsList {

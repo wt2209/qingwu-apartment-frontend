@@ -1,5 +1,4 @@
-import { Effect } from 'dva';
-import { Reducer } from 'redux';
+import { Effect, Reducer } from 'umi';
 import { queryLiving, queryTree, createLiving, quitLiving, updateLiving, moveLiving, renewLiving, renameCompany, updateRoom } from './service';
 import { LivingListItem, LivingFetchParams } from './data';
 import { AreaListItem } from '../basic/areas/data';

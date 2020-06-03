@@ -6,7 +6,7 @@ import LivingStatistic from './components/LivingStatistic'
 
 const Statistics = () => {
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
       <Card>
         <Tabs>
           <Tabs.TabPane
