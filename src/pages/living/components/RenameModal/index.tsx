@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import Modal from 'antd/lib/modal/Modal'
-import { connect, Dispatch } from 'dva'
+import { connect, Dispatch } from 'umi'
 import { DatePicker, Button, Form, Input } from 'antd'
 import locale from "antd/es/date-picker/locale/zh_CN"
 import moment from 'moment'

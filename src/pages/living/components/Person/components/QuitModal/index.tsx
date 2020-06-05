@@ -3,7 +3,7 @@ import Modal from 'antd/lib/modal/Modal';
 import { DatePicker, Input, Form, Button } from 'antd';
 import locale from "antd/es/date-picker/locale/zh_CN"
 import moment from 'moment';
-import { connect, Dispatch } from 'dva';
+import { connect, Dispatch } from 'umi';
 
 const itemLayout = {
   labelCol: { span: 6 },

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Form, Button, DatePicker, Input, Modal, Radio, Select, Steps } from 'antd';
 
 import { BillListItem } from '../data.d';
+import { AreaListItem } from '@/pages/basic/areas/data';
+import { FeeTypeListItem } from '@/pages/basic/feeTypes/data';
 
 export interface FormValueType extends Partial<BillListItem> {
   target?: string;
@@ -16,6 +18,8 @@ export interface UpdateFormProps {
   onSubmit: (values: FormValueType) => void;
   updateModalVisible: boolean;
   values: Partial<BillListItem>;
+  areas: AreaListItem[] | undefined;
+  feeTypes: FeeTypeListItem[] | undefined;
 }
 const FormItem = Form.Item;
 const { Step } = Steps;

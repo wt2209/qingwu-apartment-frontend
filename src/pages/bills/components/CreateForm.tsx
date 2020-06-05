@@ -1,18 +1,21 @@
 import React from 'react';
-import { Form, Input, Modal } from 'antd';
-
-const FormItem = Form.Item;
+import { Form, Modal } from 'antd';
+import CommonFormItems from './CommonFormItems';
+import { AreaListItem } from '@/pages/basic/areas/data';
+import { FeeTypeListItem } from '@/pages/basic/feeTypes/data';
 
 interface CreateFormProps {
   modalVisible: boolean;
   onSubmit: (fieldsValue: any) => void;
   onCancel: () => void;
+  areas: AreaListItem[] | undefined;
+  feeTypes: FeeTypeListItem[] | undefined;
 }
 
 const CreateForm: React.FC<CreateFormProps> = props => {
   const [form] = Form.useForm();
 
-  const { modalVisible, onSubmit: handleAdd, onCancel } = props;
+  const { modalVisible, onSubmit: handleAdd, onCancel, areas, feeTypes } = props;
   const okHandle = async () => {
     const fieldsValue = await form.validateFields();
     form.resetFields();
@@ -27,15 +30,7 @@ const CreateForm: React.FC<CreateFormProps> = props => {
       onCancel={() => onCancel()}
     >
       <Form form={form}>
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="描述"
-          name="desc"
-          rules={[{ required: true, message: '请输入至少五个字符的规则描述！', min: 5 }]}
-        >
-          <Input placeholder="请输入" />
-        </FormItem>
+        <CommonFormItems areas={areas} feeTypes={feeTypes} />
       </Form>
     </Modal>
   );

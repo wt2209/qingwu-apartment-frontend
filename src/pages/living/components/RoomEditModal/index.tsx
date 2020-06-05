@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Modal from 'antd/lib/modal/Modal'
 import { Input, Form, Button, Spin, Select, InputNumber } from 'antd'
-import { Dispatch, connect } from 'dva'
+import { Dispatch, connect } from 'umi'
 import styles from './style.less'
 import { getRoom } from '@/pages/basic/rooms/service'
 import { AreaListItem } from '@/pages/basic/areas/data'

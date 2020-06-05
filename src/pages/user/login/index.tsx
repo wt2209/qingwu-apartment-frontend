@@ -1,7 +1,7 @@
 import { Alert, Checkbox } from 'antd';
 import React, { useState } from 'react';
-import { Dispatch, AnyAction } from 'redux';
-import { connect } from 'dva';
+import { Dispatch, connect } from 'umi';
+
 import { StateType } from '@/models/login';
 import { LoginParamsType } from '@/services/login';
 import { ConnectState } from '@/models/connect';
@@ -11,7 +11,7 @@ import styles from './style.less';
 
 const { Tab, UserName, Password, Submit } = LoginFrom;
 interface LoginProps {
-  dispatch: Dispatch<AnyAction>;
+  dispatch: Dispatch;
   userLogin: StateType;
   submitting?: boolean;
 }

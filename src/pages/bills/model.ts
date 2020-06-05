@@ -1,5 +1,4 @@
-import { Effect } from 'dva';
-import { Reducer } from 'redux';
+import { Effect, Reducer } from 'umi';
 import { BillListParams, BillListItem } from './data';
 import { queryBill, updateBill, addBill } from './service';
 

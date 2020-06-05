@@ -16,6 +16,22 @@ export async function queryBill(params?: BillListParams) {
   }));
 }
 
+export async function queryExportBill(params?: BillListParams) {
+  return request('/api/bills', {
+    params: {
+      ...params,
+      page: params && params.current,
+    },
+  })
+}
+
+export async function generateBill(data: { date: string; export: boolean }) {
+  return request('/api/bills/generate', {
+    method: 'POST',
+    data
+  })
+}
+
 export async function removeBill(params: { id: number[] }) {
   return request('/api/rule', {
     method: 'POST',
