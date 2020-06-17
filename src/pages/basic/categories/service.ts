@@ -38,8 +38,12 @@ export async function removeCategory(id: number) {
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    getDvaApp()._store.dispatch({
+    const store = getDvaApp()._store
+    store.dispatch({
       type: 'living/reset',
+    })
+    store.dispatch({
+      type: 'category/reset',
     })
     return res
   })
@@ -53,8 +57,12 @@ export async function restoreCategory(id: number) {
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    getDvaApp()._store.dispatch({
+    const store = getDvaApp()._store
+    store.dispatch({
       type: 'living/reset',
+    })
+    store.dispatch({
+      type: 'category/reset',
     })
     return res
   })
@@ -66,8 +74,12 @@ export async function addCategory(data: Partial<CategoryListItem>) {
     data,
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    getDvaApp()._store.dispatch({
+    const store = getDvaApp()._store
+    store.dispatch({
       type: 'living/reset',
+    })
+    store.dispatch({
+      type: 'category/reset',
     })
     return res
   })
@@ -82,8 +94,12 @@ export async function updateCategory(id: number, data: Partial<CategoryListItem>
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    getDvaApp()._store.dispatch({
+    const store = getDvaApp()._store
+    store.dispatch({
       type: 'living/reset',
+    })
+    store.dispatch({
+      type: 'category/reset',
     })
     return res
   })

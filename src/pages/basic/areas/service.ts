@@ -38,8 +38,12 @@ export async function removeArea(id: number) {
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    getDvaApp()._store.dispatch({
+    const store = getDvaApp()._store
+    store.dispatch({
       type: 'living/reset',
+    })
+    store.dispatch({
+      type: 'area/reset',
     })
     return res
   })
@@ -53,8 +57,12 @@ export async function restoreArea(id: number) {
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    getDvaApp()._store.dispatch({
+    const store = getDvaApp()._store
+    store.dispatch({
       type: 'living/reset',
+    })
+    store.dispatch({
+      type: 'area/reset',
     })
     return res
   })
@@ -69,8 +77,12 @@ export async function addArea(params: AreaListParams) {
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    getDvaApp()._store.dispatch({
+    const store = getDvaApp()._store
+    store.dispatch({
       type: 'living/reset',
+    })
+    store.dispatch({
+      type: 'area/reset',
     })
     return res
   })
@@ -85,8 +97,12 @@ export async function updateArea(id: number, params: AreaListParams) {
     },
   }).then(res => {
     // eslint-disable-next-line no-underscore-dangle
-    window.g_app._store.dispatch({
+    const store = getDvaApp()._store
+    store.dispatch({
       type: 'living/reset',
+    })
+    store.dispatch({
+      type: 'area/reset',
     })
     return res
   })

@@ -115,7 +115,7 @@ export default defineConfig({
               component: './statistics',
             },
             {
-              name: '基础结构',
+              name: '基础信息',
               icon: 'apartment',
               path: '/basic',
               routes: [

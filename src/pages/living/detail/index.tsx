@@ -39,7 +39,7 @@ const Detail = (props: Props) => {
   }
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title="详情">
       <Spin spinning={loading}>
         <Card bordered={false} title={<Link to='/livings'><LeftOutlined /> 返回</Link>}>
           {renderContent()}

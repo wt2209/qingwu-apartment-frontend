@@ -19,5 +19,6 @@ export interface ResponseListData {
 }
 
 export interface ExportRender {
-  exportRender?: (row: T) => string | number
+  exportRender?: (row: T) => string | number;
+  hideInExport?: boolean;
 }

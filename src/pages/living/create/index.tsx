@@ -34,7 +34,6 @@ const CreateLiving = (props: Props) => {
   const { roomId } = match.params
   const [chargeRules, setChargeRules] = useState<ChargeRuleListItem[]>()
   const [categories, setCategories] = useState<CategoryListItem[]>()
-  const [billCreatedTo, setBillCreatedTo] = useState<Moment>()
   const [room, setRoom] = useState<RoomListItem>()
   const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
@@ -53,26 +52,26 @@ const CreateLiving = (props: Props) => {
   useEffect(() => {
     (async () => {
       setLoading(true)
-      const res = await Promise.all([getAllCategories(), getRoom(roomId), getAllChargeRules()])
-      if (res[0] && res[0].data) {
-        setCategories(res[0].data)
+      const [
+        { data: allCategories },
+        { data: currentRoom },
+        { data: allChargeRules }
+      ] = await Promise.all([getAllCategories(), getRoom(roomId), getAllChargeRules()])
+
+      setCategories(allCategories)
+
+      const { type } = currentRoom?.category
+      setRoom(currentRoom)
+      const fields = {
+        type,
+        room_id: currentRoom.id,
+        area_id: currentRoom.area.id,
+        category_id: currentRoom.category.id,
+        charge_rule_id: currentRoom.charge_rule_id,
       }
-      if (res[1] && res[1].data) {
-        const currentRoom = res[1].data
-        const { type } = currentRoom?.category
-        setRoom(currentRoom)
-        const fields = {
-          type,
-          room_id: currentRoom.id,
-          area_id: currentRoom.area.id,
-          category_id: currentRoom.category.id,
-          charge_rule_id: currentRoom.charge_rule_id,
-        }
-        form.setFieldsValue(fields)
-      }
-      if (res[2] && res[2].data) {
-        setChargeRules(res[2].data.filter((item: ChargeRuleListItem) => item.type === res[1].data?.category?.type))
-      }
+      form.setFieldsValue(fields)
+
+      setChargeRules(allChargeRules.filter((item: ChargeRuleListItem) => item.type === currentRoom?.category?.type))
       setLoading(false)
     })()
   }, [roomId])
@@ -82,17 +81,15 @@ const CreateLiving = (props: Props) => {
       const chargeRule = chargeRules!.find(item => item.id === value)
       const recordAt: Moment = form.getFieldValue('record_at')
       const rentDate: Array<Moment> = form.getFieldValue('rent_date')
-      let bill_created_to
+      let charged_to
       if (Array.isArray(rentDate) && rentDate[0] instanceof moment) {
-        bill_created_to = rentDate[0].clone().subtract(1, 'days').add(chargeRule?.period, 'months')
+        charged_to = rentDate[0].clone().subtract(1, 'days').add(chargeRule?.period, 'months')
       } else if (recordAt instanceof moment) {
-        bill_created_to = recordAt.clone().subtract(1, 'days').add(chargeRule?.period, 'months')
+        charged_to = recordAt.clone().subtract(1, 'days').add(chargeRule?.period, 'months')
       }
-      setBillCreatedTo(bill_created_to)
-      form.setFieldsValue({ bill_created_to })
+      form.setFieldsValue({ charged_to })
     } else {
-      setBillCreatedTo(undefined)
-      form.setFieldsValue({ bill_created_to: undefined })
+      form.setFieldsValue({ charged_to: undefined })
     }
   }
 
@@ -206,14 +203,9 @@ const CreateLiving = (props: Props) => {
                 )}
               </Select>
             </Form.Item>
-            {
-              billCreatedTo
-                ? <Form.Item {...itemLayout} label="已交费至" name="bill_created_to">
-                  <DatePicker />
-                </Form.Item>
-                : null
-            }
-
+            <Form.Item {...itemLayout} label="已交费至" name="charged_to">
+              <DatePicker placeholder="已交费至" />
+            </Form.Item>
             <Form.Item {...itemLayout} label="入住水电底数">
               <Form.Item
                 name="electric_start_base"

@@ -2,82 +2,96 @@ import { Effect, Reducer } from 'umi';
 import { BillListParams, BillListItem } from './data';
 import { queryBill, updateBill, addBill } from './service';
 
-export interface ModelState {
+export interface BillModelState {
   params: BillListParams;
-  list: BillListItem[];
-  total: number;
+  list: BillListItem[] | undefined;
+  pagination: {
+    total: number;
+    current: number;
+    pageSize: number;
+  }
 }
 
-export interface ModelType {
+export interface BillModelType {
   namespace: 'bill';
-  state: ModelState;
+  state: BillModelState;
   effects: {
     fetch: Effect;
     create: Effect;
     update: Effect;
   };
   reducers: {
-    save: Reducer<ModelState>;
-    reset: Reducer<Partial<ModelState>>;
+    save: Reducer<BillModelState>;
+    reset: Reducer<Partial<BillModelState>>;
   };
 }
 
-const Model: ModelType = {
+const BillModel: BillModelType = {
   namespace: 'bill',
   state: {
     params: {},
-    list: [],
-    total: 0,
+    list: undefined,
+    pagination: {
+      total: 0,
+      current: 1,
+      pageSize: 20,
+    }
   },
   effects: {
     *fetch({ payload }, { put, call }) {
       const params = { current: 1, pageSize: 20, ...payload }
-      const { data, meta } = yield call(queryBill);
+      const { data, meta } = yield call(queryBill, params);
       yield put({
         type: 'save',
         payload: {
           list: data,
           params,
-          total: meta?.total || 0,
+          pagination: {
+            total: meta?.total || 0,
+            current: meta?.current_page || 1,
+            pageSize: meta?.per_page || 20,
+          }
         }
       });
     },
     *create({ payload }, { call, put, select }) {
       const res = yield call(addBill, payload)
       if (res && res.message) {
-        const params = yield select(({ living }: { living: ModelState }) => living.params)
+        const params = yield select(({ bill }: { bill: BillModelState }) => bill.params)
         yield put({ type: 'fetch', payload: params })
       }
     },
     *update({ payload }, { call, put, select }) {
       const res = yield call(updateBill, payload)
       if (res && res.message) {
-        const params = yield select(({ living }: { living: ModelState }) => living.params)
+        const params = yield select(({ bill }: { bill: BillModelState }) => bill.params)
         yield put({ type: 'fetch', payload: params })
       }
     },
   },
   reducers: {
     save(state, action) {
-      const { list, params } = action.payload;
+      const { list, params, pagination } = action.payload;
       return {
         ...state,
         ...action.payload,
         params: params || {}, // 需要重置params
         list,
+        pagination,
       };
     },
     reset() {
       return {
         params: {},
-        list: [],
-        total: 0,
-        tree: undefined,
-        areas: undefined,
-        categories: undefined,
+        list: undefined,
+        pagination: {
+          total: 0,
+          current: 1,
+          pageSize: 20,
+        }
       }
     }
   },
 };
 
-export default Model;
+export default BillModel;

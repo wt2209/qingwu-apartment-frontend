@@ -1,20 +1,36 @@
-import { DownOutlined, PlusOutlined, DownloadOutlined, ProfileOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message, Tag, Select, Badge, DatePicker } from 'antd';
-import React, { useState, useRef, useEffect } from 'react';
+import { DownOutlined, PlusOutlined, DownloadOutlined, ProfileOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Menu, message, Tag, Select, Badge, DatePicker } from 'antd';
+import React, { useState, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
+import ProTable, { ProColumns } from '@ant-design/pro-table';
+import { connect, AreaModelState, CategoryModelState, BillModelState, Dispatch, FeeTypeModelState } from 'umi';
+import { Moment } from 'moment';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { BillListItem } from './data.d';
-import { addBill, updateBill, removeBill, queryBill, queryExportBill, generateBill } from './service';
+import { BillListItem, BillListParams } from './data.d';
+import { addBill, updateBill, removeBill, generateBill, queryBill } from './service';
 import { FeeTypeListItem } from '../basic/feeTypes/data';
 import { AreaListItem } from '../basic/areas/data';
-import { getAllFeeTypes } from '../basic/feeTypes/service';
-import { getAllAreas } from '../basic/areas/service';
-import { exportXlsx } from '@/utils/exportXlsx';
+import { exportXlsx, saveXlsx } from '@/utils/exportXlsx';
 import { ExportRender } from '@/global.d';
 import GenerateBill from './components/GenerateBill';
+import { CategoryListItem } from '../basic/categories/data';
+import ImportBill from './components/ImportBill';
 
+interface Props {
+  list: BillListItem[] | undefined;
+  params: BillListParams;
+  pagination: {
+    total: number;
+    current: number;
+    pageSize: number;
+  };
+  areas: AreaListItem[] | undefined;
+  category: CategoryListItem[] | undefined;
+  feeTypes: FeeTypeListItem[] | undefined;
+  loading: boolean;
+  dispatch: Dispatch;
+}
 
 /**
  * 添加节点
@@ -62,7 +78,7 @@ const handleRemove = async (selectedRows: BillListItem[]) => {
   if (!selectedRows) return true;
   try {
     await removeBill({
-      id: selectedRows.map(row => row.id),
+      ids: selectedRows.map(row => row.id),
     });
     hide();
     message.success('删除成功，即将刷新');
@@ -74,40 +90,43 @@ const handleRemove = async (selectedRows: BillListItem[]) => {
   }
 };
 
-const BillList: React.FC<{}> = () => {
-  const [areas, setAreas] = useState<AreaListItem[]>()
-  const [feeTypes, setFeeTypes] = useState<FeeTypeListItem[]>()
+const BillList: React.FC<Props> = (props: Props) => {
+  const { list, dispatch, areas, feeTypes, loading, params, pagination } = props
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [generateModalVisible, handleGenerateModalVisible] = useState<boolean>(false);
+  const [importModalVisible, handleImportModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
-  const [exportParams, setExportParams] = useState({})
-  const actionRef = useRef<ActionType>();
 
-  const handleGenerateBill = async (values: { date: string; export: boolean }) => {
-    const res = await generateBill(values)
-    if (res?.data) {
-      console.log(res.data)
+  const fetchData = (p: any) => {
+    const values = p
+    if (values['charged_at[]']) {
+      values['charged_at[]'] = values['charged_at[]'].map((c: Moment) => c.format('YYYY-MM-DD'))
     }
+    dispatch({ type: 'bill/fetch', payload: values })
+  }
+
+  const reloadData = () => {
+    dispatch({ type: 'bill/fetch', payload: params })
   }
 
   useEffect(() => {
-    (async () => {
-      const [res1, res2] = await Promise.all([getAllAreas(), getAllFeeTypes()])
-      if (res1?.data) {
-        setAreas(res1.data)
-      }
-      if (res2?.data) {
-        setFeeTypes(res2.data)
-      }
-    })()
+    if (!feeTypes || feeTypes.length === 0) {
+      dispatch({ type: 'feeType/fetch' })
+    }
+    if (!areas || areas.length === 0) {
+      dispatch({ type: 'area/fetch' })
+    }
+    if (list === undefined) {
+      fetchData({})
+    }
   }, [])
 
   const columns: (ExportRender & ProColumns<BillListItem>)[] = [
     {
       title: '缴/退费',
       dataIndex: 'is_refund',
-      render: value => value ? '<span style="color:red">退费</span>' : null,
+      render: value => (value ? <span style={{ color: 'red' }}>退费</span> : null),
       renderFormItem: (record, { value, onChange }) => {
         return (
           <Select placeholder="请选择" value={value} onChange={onChange}>
@@ -120,8 +139,9 @@ const BillList: React.FC<{}> = () => {
     },
     {
       title: '所属区域',
-      dataIndex: ['area', 'title'],
+      dataIndex: 'area_id',
       order: 10,
+      render: (value, { area }) => area.title,
       exportRender: row => row?.area.title,
       renderFormItem: (record, { value, onChange }) => (
         <Select placeholder="请选择" value={value} onChange={onChange}>
@@ -137,7 +157,7 @@ const BillList: React.FC<{}> = () => {
       order: 9,
     },
     {
-      title: '住户姓名',
+      title: '姓名/公司',
       dataIndex: 'name',
       order: 8,
     },
@@ -148,7 +168,7 @@ const BillList: React.FC<{}> = () => {
       renderFormItem: (record, { value, onChange }) => {
         return (
           <Select placeholder="请选择" mode="multiple" value={value} onChange={onChange}>
-            {feeTypes?.map(type => (
+            {feeTypes?.map((type: FeeTypeListItem) => (
               <Select.Option key={type.id} value={type.title}>{type.title}</Select.Option>
             ))}
           </Select>
@@ -159,6 +179,8 @@ const BillList: React.FC<{}> = () => {
       title: '金额',
       dataIndex: 'money',
       valueType: 'money',
+      labelAlign: 'left',
+      align: 'right',
       hideInSearch: true,
     },
     {
@@ -167,30 +189,59 @@ const BillList: React.FC<{}> = () => {
       hideInSearch: true,
     },
     {
+      title: '缴费时间',
+      dataIndex: 'charged_at[]',
+      render: (value, { charged_at }) => (charged_at || <Badge color="red" text="未缴费" />),
+      renderFormItem: (record, { value, onChange }) => {
+        return <DatePicker.RangePicker picker="date" value={value} onChange={onChange} />
+      }
+    },
+    {
       title: '是否上交',
       dataIndex: 'turn_in',
+      hideInTable: true,
       render: (value, record) => (
-        <span>
-          {record.turn_in ? <Tag color="green">上交</Tag> : <Tag color="red">自留</Tag>}
-          {record.late_rate ? <Tag color="red">有滞纳金</Tag> : null}
-        </span>
+        <>
+          <span>
+            {record.turn_in ? <Tag color="green">上交财务</Tag> : <Tag color="red">物业自留</Tag>}
+          </span>
+        </>
       ),
-      exportRender: row => row.turn_in ? '上交' : '自留',
+      exportRender: row => row.turn_in ? '上交财务' : '物业自留',
       renderFormItem: (record, { value, onChange }) => {
         return (
           <Select placeholder="请选择" value={value} onChange={onChange}>
-            <Select.Option value="1">上交</Select.Option>
-            <Select.Option value="0">自留</Select.Option>
+            <Select.Option value="1">上交财务</Select.Option>
+            <Select.Option value="0">物业自留</Select.Option>
           </Select >
         )
       },
     },
     {
+      title: '滞纳金率/基数',
+      dataIndex: 'rate',
+      hideInExport: true,
+      hideInForm: true,
+      render: (value, record) => (
+        <>
+          <span>
+            {
+              record?.late_rate && record.late_rate > 0
+                ? <Tag color="warning">
+                  {parseFloat(record.late_rate as unknown as string)}%
+                  {record.late_base ? ` / ${record?.late_base}` : null}
+                </Tag>
+                : null
+            }
+          </span>
+        </>
+      )
+    },
+    {
       title: '缴费状态',
       dataIndex: 'status',
-      render: (text, record) => {
-        return record.charged_at ? <Badge color="green" text="已缴费" /> : <Badge color="red" text="未缴费" />
-      },
+      hideInTable: true,
+      exportRender: (record) => record.charged_at ? '已缴费' : '未缴费',
       renderFormItem: (record, { value, onChange }) => {
         return (
           <Select placeholder="请选择" value={value} onChange={onChange}>
@@ -201,21 +252,12 @@ const BillList: React.FC<{}> = () => {
       },
     },
     {
-      title: '缴费时间',
-      dataIndex: 'charged_at',
-      valueType: 'date',
-      renderFormItem: (record, { value, onChange }) => (
-        <DatePicker.RangePicker picker="date" value={value} onChange={onChange} />
-      )
-    },
-    {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
+      hideInExport: true,
       render: (_, record) => (
         <>
-          <a href="">缴费</a>
-          <Divider type="vertical" />
           <a
             onClick={() => {
               handleUpdateModalVisible(true);
@@ -224,64 +266,82 @@ const BillList: React.FC<{}> = () => {
           >
             修改
           </a>
-          <Divider type="vertical" />
-          <a href="">删除</a>
         </>
       ),
     },
   ];
 
+  const handlePageChange = (current: number | undefined, pageSize: number | undefined) => {
+    dispatch({ type: 'bill/fetch', payload: { ...params, current, pageSize } })
+  }
+
+  const renderToolBar = (_: any, rows: { selectedRows?: BillListItem[] }) => {
+    const { selectedRows } = rows
+    return [
+      <Button icon={<PlusOutlined />} type="default" onClick={() => handleModalVisible(true)}>
+        新建
+      </Button>,
+      <Button icon={<ProfileOutlined />} type="default" onClick={() => handleGenerateModalVisible(true)}>
+        生成
+      </Button>,
+      <Button icon={<UploadOutlined />} type="default" onClick={() => handleImportModalVisible(true)}>
+        导入
+      </Button>,
+      <Button
+        type="primary"
+        onClick={() => exportXlsx(params, columns, queryBill, '费用明细表')}>
+        <DownloadOutlined /> 导出
+      </Button>,
+      selectedRows && selectedRows.length > 0 && (
+        <Dropdown
+          overlay={
+            <Menu
+              onClick={async e => {
+                if (e.key === 'remove') {
+                  await handleRemove(selectedRows);
+                  reloadData()
+                }
+              }}
+              selectedKeys={[]}
+            >
+              <Menu.Item key="charge">批量缴费</Menu.Item>
+              <Menu.Item key="remove">批量删除</Menu.Item>
+            </Menu>
+          }
+        >
+          <Button>
+            批量操作 <DownOutlined />
+          </Button>
+        </Dropdown>
+      ),
+    ]
+  }
+
+  const renderAlertText = ({ selectedRows }: { selectedRows: BillListItem[] }) => {
+    const sum = selectedRows.reduce((pre, item) => pre + parseFloat(item.money as any), 0.0)
+    return (
+      <div>
+        已选择 <a style={{ fontWeight: 600 }}>{selectedRows.length}</a> 项 &nbsp;&nbsp;
+        <span>
+          费用共计 {sum.toFixed(2)} 元
+        </span>
+      </div >
+    )
+  }
+
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
       <ProTable<BillListItem>
         headerTitle="费用明细"
-        actionRef={actionRef}
+        options={false}
+        loading={loading}
+        dataSource={list}
         rowKey="id"
-        toolBarRender={(action, { selectedRows }) => [
-          <Button icon={<PlusOutlined />} type="default" onClick={() => handleModalVisible(true)}>
-            新建
-          </Button>,
-          <Button icon={<ProfileOutlined />} type="default" onClick={() => handleGenerateModalVisible(true)}>
-            生成
-          </Button>,
-          <Button
-            type="primary"
-            onClick={() => exportXlsx(exportParams, columns, queryExportBill, '费用明细表')}>
-            <DownloadOutlined /> 导出
-          </Button>,
-          selectedRows && selectedRows.length > 0 && (
-            <Dropdown
-              overlay={
-                <Menu
-                  onClick={async e => {
-                    if (e.key === 'remove') {
-                      await handleRemove(selectedRows);
-                      action.reload();
-                    }
-                  }}
-                  selectedKeys={[]}
-                >
-                  <Menu.Item key="charge">批量缴费</Menu.Item>
-                  <Menu.Item key="remove">批量删除</Menu.Item>
-                </Menu>
-              }
-            >
-              <Button>
-                批量操作 <DownOutlined />
-              </Button>
-            </Dropdown>
-          ),
-        ]}
-        tableAlertRender={({ selectedRowKeys, selectedRows }) => (
-          <div>
-            已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-            <span>
-              费用共计 {selectedRows.reduce((pre, item) => pre + item.money, 0)} 元
-            </span>
-          </div>
-        )}
-        beforeSearchSubmit={(params) => { setExportParams(params); return params }}
-        request={(params) => queryBill(params)}
+        form={{ initialValues: params }}
+        toolBarRender={renderToolBar}
+        tableAlertRender={renderAlertText}
+        pagination={{ ...pagination, onChange: handlePageChange, onShowSizeChange: handlePageChange }}
+        beforeSearchSubmit={(p) => { fetchData(p); return p; }}
         columns={columns}
         rowSelection={{}}
       />
@@ -292,9 +352,7 @@ const BillList: React.FC<{}> = () => {
           const success = await handleAdd(value);
           if (success) {
             handleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
+            reloadData()
           }
         }}
         onCancel={() => handleModalVisible(false)}
@@ -309,9 +367,7 @@ const BillList: React.FC<{}> = () => {
             if (success) {
               handleModalVisible(false);
               setStepFormValues({});
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
+              reloadData()
             }
           }}
           onCancel={() => {
@@ -323,12 +379,48 @@ const BillList: React.FC<{}> = () => {
         />
       ) : null}
       <GenerateBill
-        onOk={handleGenerateBill}
+        onOk={async (values) => {
+          const res = await generateBill(values)
+          message.success('费用生成成功')
+          handleGenerateModalVisible(false);
+          reloadData()
+          if (res?.data && res.data.length > 0) {
+            const data = res.data.map((item: any) => {
+              const bill = item
+              bill.area = areas?.find(area => area.id === bill.area_id)
+              return bill
+            })
+            saveXlsx(data, columns, '生成的费用')
+          }
+        }}
         onCancel={() => handleGenerateModalVisible(false)}
         modalVisible={generateModalVisible}
+      />
+      <ImportBill
+        onOk={() => { }}
+        onCancel={() => handleImportModalVisible(false)}
+        modalVisible={importModalVisible}
       />
     </PageHeaderWrapper>
   );
 };
 
-export default BillList;
+export default connect(
+  ({ bill, area, feeType, loading }:
+    {
+      bill: BillModelState,
+      area: AreaModelState,
+      category: CategoryModelState,
+      feeType: FeeTypeModelState,
+      loading: {
+        models: { [key: string]: boolean }
+      }
+    }) => ({
+      list: bill.list,
+      params: bill.params,
+      pagination: bill.pagination,
+      areas: area.list,
+      feeTypes: feeType.list,
+      loading: loading.models.bill,
+    })
+)(BillList);

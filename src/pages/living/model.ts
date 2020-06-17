@@ -1,10 +1,6 @@
 import { Effect, Reducer } from 'umi';
 import { queryLiving, queryTree, createLiving, quitLiving, updateLiving, moveLiving, renewLiving, renameCompany, updateRoom } from './service';
 import { LivingListItem, LivingFetchParams } from './data';
-import { AreaListItem } from '../basic/areas/data';
-import { CategoryListItem } from '../basic/categories/data';
-import { getAllAreas } from '../basic/areas/service';
-import { getAllCategories } from '../basic/categories/service';
 
 export interface ModelState {
   params: LivingFetchParams;
@@ -15,8 +11,6 @@ export interface ModelState {
       [building: string]: string[]
     }
   } | undefined;
-  areas: AreaListItem[] | undefined;
-  categories: CategoryListItem[] | undefined;
 }
 
 export interface ModelType {
@@ -26,8 +20,6 @@ export interface ModelType {
     fetch: Effect;
     appendFetch: Effect;
     fetchTree: Effect;
-    fetchAreas: Effect;
-    fetchCategories: Effect;
     create: Effect;
     update: Effect;
     move: Effect;
@@ -40,8 +32,6 @@ export interface ModelType {
     save: Reducer<ModelState>;
     append: Reducer<Partial<ModelState>>;
     saveTree: Reducer<Partial<ModelState>>;
-    saveAreas: Reducer<Partial<ModelState>>;
-    saveCategories: Reducer<Partial<ModelState>>;
     reset: Reducer<Partial<ModelState>>;
   };
 }
@@ -53,8 +43,6 @@ const Model: ModelType = {
     list: [],
     total: 0,
     tree: undefined,
-    areas: undefined,
-    categories: undefined,
   },
   effects: {
     *fetch({ payload }, { put, call }) {
@@ -85,18 +73,6 @@ const Model: ModelType = {
       const res = yield call(queryTree)
       if (res && res.data) {
         yield put({ type: 'saveTree', payload: { tree: res.data } })
-      }
-    },
-    *fetchAreas(_, { put, call }) {
-      const res = yield call(getAllAreas)
-      if (res && res.data) {
-        yield put({ type: 'saveAreas', payload: { areas: res.data } })
-      }
-    },
-    *fetchCategories(_, { put, call }) {
-      const res = yield call(getAllCategories)
-      if (res && res.data) {
-        yield put({ type: 'saveCategories', payload: { categories: res.data } })
       }
     },
     *create({ payload }, { call, put, select }) {
@@ -174,28 +150,12 @@ const Model: ModelType = {
         tree,
       };
     },
-    saveAreas(state, action) {
-      const { areas } = action.payload;
-      return {
-        ...state,
-        areas,
-      };
-    },
-    saveCategories(state, action) {
-      const { categories } = action.payload;
-      return {
-        ...state,
-        categories,
-      };
-    },
     reset() {
       return {
         params: {},
         list: [],
         total: 0,
         tree: undefined,
-        areas: undefined,
-        categories: undefined,
       }
     }
   },

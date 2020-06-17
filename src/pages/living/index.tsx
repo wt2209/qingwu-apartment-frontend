@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Card, Row, Col, Button, Spin, Divider, BackTop, Tag } from 'antd';
 import { PlusOutlined, SettingOutlined } from '@ant-design/icons';
-import { connect, Dispatch, Link } from 'umi';
+import { connect, Dispatch, Link, CategoryModelState } from 'umi';
 import Person from './components/Person';
 import Company from './components/Company';
 import Functional from './components/Functional';
@@ -18,6 +18,7 @@ import MoveModal from './components/MoveModal';
 import RenewModal from './components/RenewModal';
 import RenameModal from './components/RenameModal';
 import RoomEditModal from './components/RoomEditModal';
+import { AreaModelState } from '../../models/area';
 
 interface Props {
   areas: AreaListItem[] | undefined;
@@ -53,10 +54,10 @@ const Living = (props: Props) => {
       dispatch({ type: 'living/fetchTree' })
     }
     if (!areas) {
-      dispatch({ type: 'living/fetchAreas' })
+      dispatch({ type: 'area/fetch' })
     }
     if (!categories) {
-      dispatch({ type: 'living/fetchCategories' })
+      dispatch({ type: 'category/fetch' })
     }
   }, [])
 
@@ -201,6 +202,7 @@ const Living = (props: Props) => {
           <Divider dashed style={{ margin: '6px 0' }} />
           <SearchBar
             areas={areas}
+            categories={categories}
             params={params}
             onSubmit={(value: LivingFetchParams) => { fetchData(value) }} />
         </Spin>
@@ -209,7 +211,7 @@ const Living = (props: Props) => {
         <div style={{ flex: 1 }}>
           <Row gutter={24}>
             {list?.map(room => (
-              <Col md={12} sm={24} key={room.id} style={{ width: '100%' }}>
+              <Col md={room.category.type === 'person' ? 12 : 6} sm={24} key={room.id} style={{ width: '100%' }}>
                 <Card
                   style={{ marginBottom: 24 }}
                   headStyle={{ padding: '0 12px' }}
@@ -284,15 +286,17 @@ const Living = (props: Props) => {
 }
 
 export default connect(
-  ({ living, loading }:
+  ({ living, area, category, loading }:
     {
       living: ModelState,
+      area: AreaModelState,
+      category: CategoryModelState,
       loading: {
         models: { [key: string]: boolean }
       }
     }) => ({
-      areas: living.areas,
-      categories: living.categories,
+      areas: area.list,
+      categories: category.list,
       tree: living.tree,
       list: living.list,
       params: living.params,

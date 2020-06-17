@@ -57,6 +57,7 @@ const PersonDetail = (props: Props) => {
         <Descriptions.Item label="本房间入住日期">{record?.record_at}</Descriptions.Item>
         <Descriptions.Item label="租期期限">{`${record?.rent_start}~${record?.rent_end}`}</Descriptions.Item>
         <Descriptions.Item label="首次入住公寓时间">{record?.person?.created_at}</Descriptions.Item>
+        <Descriptions.Item label="费用已生成至">{record?.charged_to}</Descriptions.Item>
         <Descriptions.Item label="备注">{record?.person?.remark}</Descriptions.Item>
       </Descriptions>
 

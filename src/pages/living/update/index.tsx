@@ -51,6 +51,9 @@ const UpdateLiving = (props: Props) => {
         setRecord(currentRecord)
         const values: any = Object.assign({}, currentRecord)
         values.record_at = moment(values.record_at)
+        if (values.charged_to) {
+          values.charged_to = moment(values.charged_to)
+        }
         if (values.rent_start) {
           values.rent_date = [
             moment(values.rent_start),
@@ -99,6 +102,7 @@ const UpdateLiving = (props: Props) => {
     fields.area_id = record?.area.id
     fields.room_id = record?.room.id
     fields.record_at = fields.record_at ? fields.record_at.format(dateFormater) : undefined
+    fields.charged_to = fields.charged_to ? fields.charged_to.format(dateFormater) : undefined
     if (Array.isArray(fields.rent_date)) {
       fields.rent_start = fields.rent_date[0]?.format(dateFormater)
       fields.rent_end = fields.rent_date[1]?.format(dateFormater)
@@ -204,6 +208,9 @@ const UpdateLiving = (props: Props) => {
                   <Select.Option key={rule.id} value={rule.id}>{rule.title}</Select.Option>
                 )}
               </Select>
+            </Form.Item>
+            <Form.Item {...itemLayout} label="已交费至" name="charged_to">
+              <DatePicker placeholder="已交费至" />
             </Form.Item>
             <Form.Item {...itemLayout} label="入住水电底数">
               <Form.Item

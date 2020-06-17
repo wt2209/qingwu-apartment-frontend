@@ -18,6 +18,7 @@ export interface RecordListItem {
   functional_title: string;
   rent_start?: Date;
   rent_end?: Date;
+  charged_to?: Date; // 费用已生成至
   proof_files: UploadFile<any>[];
 }
 
