@@ -1,13 +1,13 @@
-import { DownOutlined, PlusOutlined, DownloadOutlined, ProfileOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Menu, message, Tag, Select, Badge, DatePicker } from 'antd';
+import { PlusOutlined, DownloadOutlined, ProfileOutlined, UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Modal, Button, message, Tag, Select, Badge, DatePicker } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns } from '@ant-design/pro-table';
 import { connect, AreaModelState, CategoryModelState, BillModelState, Dispatch, FeeTypeModelState } from 'umi';
 import { Moment } from 'moment';
 import CreateForm from './components/CreateForm';
-import UpdateForm, { FormValueType } from './components/UpdateForm';
-import { BillListItem, BillListParams } from './data.d';
+import UpdateForm from './components/UpdateForm';
+import { BillListItem, BillListParams, BillFormValueType } from './data.d';
 import { addBill, updateBill, removeBill, generateBill, queryBill } from './service';
 import { FeeTypeListItem } from '../basic/feeTypes/data';
 import { AreaListItem } from '../basic/areas/data';
@@ -16,6 +16,7 @@ import { ExportRender } from '@/global.d';
 import GenerateBill from './components/GenerateBill';
 import { CategoryListItem } from '../basic/categories/data';
 import ImportBill from './components/ImportBill';
+import ChargeBill from './components/ChargeBill';
 
 interface Props {
   list: BillListItem[] | undefined;
@@ -33,31 +34,13 @@ interface Props {
 }
 
 /**
- * 添加节点
- * @param fields
- */
-const handleAdd = async (fields: FormValueType) => {
-  const hide = message.loading('正在添加');
-  try {
-    await addBill(fields);
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-
-/**
  * 更新节点
  * @param fields
  */
-const handleUpdate = async (fields: FormValueType) => {
+const handleUpdate = async (id: string, fields: BillFormValueType) => {
   const hide = message.loading('正在配置');
   try {
-    await updateBill(fields);
+    await updateBill(id, fields);
     hide();
 
     message.success('配置成功');
@@ -73,7 +56,7 @@ const handleUpdate = async (fields: FormValueType) => {
  *  删除节点
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: BillListItem[]) => {
+const handleRemove = async (selectedRows: BillListItem[] | undefined) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
@@ -90,23 +73,34 @@ const handleRemove = async (selectedRows: BillListItem[]) => {
   }
 };
 
+export const chargeWays: string[] = ['现金']
+
 const BillList: React.FC<Props> = (props: Props) => {
   const { list, dispatch, areas, feeTypes, loading, params, pagination } = props
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [generateModalVisible, handleGenerateModalVisible] = useState<boolean>(false);
   const [importModalVisible, handleImportModalVisible] = useState<boolean>(false);
-  const [stepFormValues, setStepFormValues] = useState({});
+  const [chargeModalVisible, handleChargeModalVisible] = useState<boolean>(false);
+  // 手动控制selectedRows
+  const [selectedRows, setSelectedRows] = useState<BillListItem[]>([])
+
+  // 要修改的单条费用
+  const [bill, setBill] = useState<BillListItem>();
+  // 要缴费的多条费用
+  const [chargeBills, setChargeBills] = useState<BillListItem[]>()
 
   const fetchData = (p: any) => {
     const values = p
     if (values['charged_at[]']) {
       values['charged_at[]'] = values['charged_at[]'].map((c: Moment) => c.format('YYYY-MM-DD'))
     }
+    setSelectedRows([])
     dispatch({ type: 'bill/fetch', payload: values })
   }
 
   const reloadData = () => {
+    setSelectedRows([])
     dispatch({ type: 'bill/fetch', payload: params })
   }
 
@@ -121,6 +115,21 @@ const BillList: React.FC<Props> = (props: Props) => {
       fetchData({})
     }
   }, [])
+
+  const handleAdd = async (fields: BillFormValueType) => {
+    const hide = message.loading('正在添加');
+    try {
+      await addBill(fields);
+      hide();
+      reloadData()
+      message.success('添加成功');
+      return true;
+    } catch (error) {
+      hide();
+      message.error('添加失败请重试！');
+      return false;
+    }
+  };
 
   const columns: (ExportRender & ProColumns<BillListItem>)[] = [
     {
@@ -197,6 +206,17 @@ const BillList: React.FC<Props> = (props: Props) => {
       }
     },
     {
+      title: '缴费方式',
+      dataIndex: 'charge_way',
+      renderFormItem: (record, { value, onChange }) => (
+        <Select placeholder="请选择" value={value} onChange={onChange}>
+          {chargeWays.map(way => (
+            <Select.Option key={way} value={way}>{way}</Select.Option>
+          ))}
+        </Select >
+      )
+    },
+    {
       title: '是否上交',
       dataIndex: 'turn_in',
       hideInTable: true,
@@ -218,10 +238,11 @@ const BillList: React.FC<Props> = (props: Props) => {
       },
     },
     {
-      title: '滞纳金率/基数',
+      title: '滞纳金率|基数|日期',
       dataIndex: 'rate',
       hideInExport: true,
       hideInForm: true,
+      hideInSearch: true,
       render: (value, record) => (
         <>
           <span>
@@ -229,7 +250,8 @@ const BillList: React.FC<Props> = (props: Props) => {
               record?.late_rate && record.late_rate > 0
                 ? <Tag color="warning">
                   {parseFloat(record.late_rate as unknown as string)}%
-                  {record.late_base ? ` / ${record?.late_base}` : null}
+                  {record.late_base ? ` | ${record?.late_base}` : null}
+                  {record.late_date ? ` | ${record?.late_date}` : null}
                 </Tag>
                 : null
             }
@@ -261,7 +283,7 @@ const BillList: React.FC<Props> = (props: Props) => {
           <a
             onClick={() => {
               handleUpdateModalVisible(true);
-              setStepFormValues(record);
+              setBill(record);
             }}
           >
             修改
@@ -275,8 +297,7 @@ const BillList: React.FC<Props> = (props: Props) => {
     dispatch({ type: 'bill/fetch', payload: { ...params, current, pageSize } })
   }
 
-  const renderToolBar = (_: any, rows: { selectedRows?: BillListItem[] }) => {
-    const { selectedRows } = rows
+  const renderToolBar = () => {
     return [
       <Button icon={<PlusOutlined />} type="default" onClick={() => handleModalVisible(true)}>
         新建
@@ -290,40 +311,46 @@ const BillList: React.FC<Props> = (props: Props) => {
       <Button
         type="primary"
         onClick={() => exportXlsx(params, columns, queryBill, '费用明细表')}>
-        <DownloadOutlined /> 导出
+        <DownloadOutlined />导出
       </Button>,
-      selectedRows && selectedRows.length > 0 && (
-        <Dropdown
-          overlay={
-            <Menu
-              onClick={async e => {
-                if (e.key === 'remove') {
-                  await handleRemove(selectedRows);
-                  reloadData()
-                }
-              }}
-              selectedKeys={[]}
-            >
-              <Menu.Item key="charge">批量缴费</Menu.Item>
-              <Menu.Item key="remove">批量删除</Menu.Item>
-            </Menu>
-          }
-        >
-          <Button>
-            批量操作 <DownOutlined />
-          </Button>
-        </Dropdown>
-      ),
+      <Button
+        disabled={!selectedRows?.length}
+        onClick={() => {
+          const maps = {}
+          selectedRows!.forEach(row => {
+            maps[row.id] = row
+          });
+          setChargeBills(Object.values(maps))
+          handleChargeModalVisible(true)
+        }}
+      >
+        批量缴费
+        </Button>,
+      <Button
+        disabled={!selectedRows?.length}
+        onClick={() => Modal.confirm({
+          title: '删除后将不能恢复, 确认删除吗?',
+          icon: <ExclamationCircleOutlined />,
+          onOk() {
+            (async () => {
+              await handleRemove(selectedRows);
+              reloadData()
+            })()
+          },
+        })}
+      >
+        批量删除
+      </Button >,
     ]
   }
 
-  const renderAlertText = ({ selectedRows }: { selectedRows: BillListItem[] }) => {
-    const sum = selectedRows.reduce((pre, item) => pre + parseFloat(item.money as any), 0.0)
+  const renderAlertText = () => {
+    const sum = selectedRows?.reduce((pre, item) => pre + parseFloat(item.money as any), 0.0)
     return (
       <div>
-        已选择 <a style={{ fontWeight: 600 }}>{selectedRows.length}</a> 项 &nbsp;&nbsp;
+        已选择 <a style={{ fontWeight: 600 }}>{selectedRows?.length}</a> 项 &nbsp;&nbsp;
         <span>
-          费用共计 {sum.toFixed(2)} 元
+          费用共计 {sum?.toFixed(2)} 元
         </span>
       </div >
     )
@@ -343,7 +370,12 @@ const BillList: React.FC<Props> = (props: Props) => {
         pagination={{ ...pagination, onChange: handlePageChange, onShowSizeChange: handlePageChange }}
         beforeSearchSubmit={(p) => { fetchData(p); return p; }}
         columns={columns}
-        rowSelection={{}}
+        rowSelection={{
+          // 由于protable 的内部实现问题与我的预期不符,此处手动控制selectedRows
+          onChange: (values, records) => {
+            setSelectedRows(records)
+          }
+        }}
       />
       <CreateForm
         areas={areas}
@@ -358,24 +390,24 @@ const BillList: React.FC<Props> = (props: Props) => {
         onCancel={() => handleModalVisible(false)}
         modalVisible={createModalVisible}
       />
-      {stepFormValues && Object.keys(stepFormValues).length ? (
+      {bill ? (
         <UpdateForm
           areas={areas}
           feeTypes={feeTypes}
-          onSubmit={async value => {
-            const success = await handleUpdate(value);
+          onSubmit={async (id, values) => {
+            const success = await handleUpdate(id, values);
             if (success) {
               handleModalVisible(false);
-              setStepFormValues({});
+              setBill(undefined);
               reloadData()
             }
           }}
           onCancel={() => {
             handleUpdateModalVisible(false);
-            setStepFormValues({});
+            setBill(undefined);
           }}
           updateModalVisible={updateModalVisible}
-          values={stepFormValues}
+          bill={bill}
         />
       ) : null}
       <GenerateBill
@@ -386,9 +418,9 @@ const BillList: React.FC<Props> = (props: Props) => {
           reloadData()
           if (res?.data && res.data.length > 0) {
             const data = res.data.map((item: any) => {
-              const bill = item
-              bill.area = areas?.find(area => area.id === bill.area_id)
-              return bill
+              const currentBill = item
+              currentBill.area = areas?.find(area => area.id === currentBill.area_id)
+              return currentBill
             })
             saveXlsx(data, columns, '生成的费用')
           }
@@ -401,6 +433,16 @@ const BillList: React.FC<Props> = (props: Props) => {
         onCancel={() => handleImportModalVisible(false)}
         modalVisible={importModalVisible}
       />
+      {
+        chargeBills && chargeBills.length > 0
+          ? <ChargeBill
+            bills={chargeBills}
+            onCancel={() => handleChargeModalVisible(false)}
+            onOk={() => { }}
+            modalVisible={chargeModalVisible}
+          />
+          : null
+      }
     </PageHeaderWrapper>
   );
 };

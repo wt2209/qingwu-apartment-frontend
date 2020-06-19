@@ -17,7 +17,7 @@ export async function generateBill(data: { date: string; export: boolean, save: 
   })
 }
 
-export async function removeBill(params: { ids: number[] }) {
+export async function removeBill(params: { ids: string[] }) {
   return request('/api/bills', {
     method: 'POST',
     data: {
@@ -27,22 +27,19 @@ export async function removeBill(params: { ids: number[] }) {
   });
 }
 
-export async function addBill(params: BillListParams) {
+export async function addBill(data: BillListParams) {
   return request('/api/bills', {
     method: 'POST',
-    data: {
-      ...params,
-      method: 'post',
-    },
+    data,
   });
 }
 
-export async function updateBill(params: BillListParams) {
-  return request('/api/bills', {
+export async function updateBill(id: string, params: BillListParams) {
+  return request(`/api/bills/${id}`, {
     method: 'POST',
     data: {
       ...params,
-      method: 'update',
+      _method: 'put',
     },
   });
 }

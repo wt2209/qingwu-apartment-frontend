@@ -1,7 +1,8 @@
 import { AreaListItem } from "../basic/areas/data";
 
 export interface BillListItem {
-  id: number;
+  bill: any;
+  id: string; // uuid
   area: AreaListItem;
   type: 'person' | 'company' | 'other';
   way: 'before' | 'after';
@@ -15,20 +16,23 @@ export interface BillListItem {
   late_rate: number | undefined;
   late_date: Date | undefined;
   charged_at: Date | undefined;
+  should_charge_at: Date | undefined;
   is_refund: boolean;
   created_at: Date;
   updated_at: Date;
 }
 
-export interface TableListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
-
-export interface TableListData {
-  list: BillListItem[];
-  pagination: Partial<TableListPagination>;
+export interface BillFormValueType {
+  type: 'person' | 'company' | 'other';
+  area_id: number;
+  location: string;
+  name: string;
+  title: string;
+  money: number;
+  description: string;
+  late_date: string;
+  late_rate: number;
+  late_base: number;
 }
 
 export interface BillListParams {
