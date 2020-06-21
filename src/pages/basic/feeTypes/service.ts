@@ -1,4 +1,5 @@
 import request from '@/utils/request';
+import { getDvaApp } from 'umi';
 import { TableListParams, FeeTypeListItem } from './data';
 
 export async function getAllFeeTypes() {
@@ -31,7 +32,17 @@ export async function removeFeeType(id: number) {
     data: {
       _method: 'delete',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    const store = getDvaApp()._store
+    store.dispatch({
+      type: 'living/reset',
+    })
+    store.dispatch({
+      type: 'category/reset',
+    })
+    return res
+  })
 }
 
 export async function restoreFeeType(id: number) {
@@ -40,14 +51,28 @@ export async function restoreFeeType(id: number) {
     data: {
       _method: 'patch',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    const store = getDvaApp()._store
+    store.dispatch({
+      type: 'feeType/reset',
+    })
+    return res
+  })
 }
 
 export async function addFeeType(data: Partial<FeeTypeListItem>) {
   return request('/api/fee-types', {
     method: 'POST',
     data,
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    const store = getDvaApp()._store
+    store.dispatch({
+      type: 'feeType/reset',
+    })
+    return res
+  })
 }
 
 export async function updateFeeType(id: number, data: Partial<FeeTypeListItem>) {
@@ -57,5 +82,12 @@ export async function updateFeeType(id: number, data: Partial<FeeTypeListItem>) 
       ...data,
       _method: 'put',
     },
-  });
+  }).then(res => {
+    // eslint-disable-next-line no-underscore-dangle
+    const store = getDvaApp()._store
+    store.dispatch({
+      type: 'feeType/reset',
+    })
+    return res
+  })
 }

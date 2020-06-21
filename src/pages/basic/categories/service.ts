@@ -1,6 +1,6 @@
 import request from '@/utils/request';
-import { TableListParams, CategoryListItem } from './data';
 import { getDvaApp } from 'umi';
+import { TableListParams, CategoryListItem } from './data';
 
 export async function getAllCategories() {
   return request('/api/all-categories');

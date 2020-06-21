@@ -43,3 +43,14 @@ export async function updateBill(id: string, params: BillListParams) {
     },
   });
 }
+
+export async function chargeBill(ids: string[], lates: any[] | undefined, charge_date: string | undefined) {
+  return request('/api/bills/charge', {
+    method: 'POST',
+    data: {
+      ids,
+      lates,
+      charge_date,
+    }
+  })
+}

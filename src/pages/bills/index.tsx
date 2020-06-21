@@ -3,18 +3,17 @@ import { Modal, Button, message, Tag, Select, Badge, DatePicker } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns } from '@ant-design/pro-table';
-import { connect, AreaModelState, CategoryModelState, BillModelState, Dispatch, FeeTypeModelState } from 'umi';
+import { connect, AreaModelState, BillModelState, Dispatch, FeeTypeModelState } from 'umi';
 import { Moment } from 'moment';
+import { exportXlsx, saveXlsx } from '@/utils/exportXlsx';
+import { ExportRender } from '@/global.d';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import { BillListItem, BillListParams, BillFormValueType } from './data.d';
-import { addBill, updateBill, removeBill, generateBill, queryBill } from './service';
+import { addBill, updateBill, removeBill, generateBill, queryBill, chargeBill } from './service';
 import { FeeTypeListItem } from '../basic/feeTypes/data';
 import { AreaListItem } from '../basic/areas/data';
-import { exportXlsx, saveXlsx } from '@/utils/exportXlsx';
-import { ExportRender } from '@/global.d';
 import GenerateBill from './components/GenerateBill';
-import { CategoryListItem } from '../basic/categories/data';
 import ImportBill from './components/ImportBill';
 import ChargeBill from './components/ChargeBill';
 
@@ -27,16 +26,25 @@ interface Props {
     pageSize: number;
   };
   areas: AreaListItem[] | undefined;
-  category: CategoryListItem[] | undefined;
   feeTypes: FeeTypeListItem[] | undefined;
   loading: boolean;
   dispatch: Dispatch;
 }
 
-/**
- * 更新节点
- * @param fields
- */
+const handleAdd = async (fields: BillFormValueType) => {
+  const hide = message.loading('正在添加');
+  try {
+    await addBill(fields);
+    hide();
+    message.success('添加成功');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('添加失败请重试！');
+    return false;
+  }
+};
+
 const handleUpdate = async (id: string, fields: BillFormValueType) => {
   const hide = message.loading('正在配置');
   try {
@@ -52,10 +60,6 @@ const handleUpdate = async (id: string, fields: BillFormValueType) => {
   }
 };
 
-/**
- *  删除节点
- * @param selectedRows
- */
 const handleRemove = async (selectedRows: BillListItem[] | undefined) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
@@ -115,21 +119,6 @@ const BillList: React.FC<Props> = (props: Props) => {
       fetchData({})
     }
   }, [])
-
-  const handleAdd = async (fields: BillFormValueType) => {
-    const hide = message.loading('正在添加');
-    try {
-      await addBill(fields);
-      hide();
-      reloadData()
-      message.success('添加成功');
-      return true;
-    } catch (error) {
-      hide();
-      message.error('添加失败请重试！');
-      return false;
-    }
-  };
 
   const columns: (ExportRender & ProColumns<BillListItem>)[] = [
     {
@@ -297,6 +286,26 @@ const BillList: React.FC<Props> = (props: Props) => {
     dispatch({ type: 'bill/fetch', payload: { ...params, current, pageSize } })
   }
 
+  /**
+ * @param ids 需要缴费的bill主键
+ * @param lates 根据需要缴费的bills生成的滞纳金，需要插入到数据库
+ */
+  const handleCharge = async (ids: string[], lates: any[] | undefined, chargeDate: string | undefined) => {
+    const hide = message.loading('正在缴费');
+    try {
+      await chargeBill(ids, lates, chargeDate)
+      handleChargeModalVisible(false)
+      reloadData()
+      hide();
+      message.success('缴费成功，即将刷新');
+      return true;
+    } catch (error) {
+      hide();
+      message.error('删除失败，请重试');
+      return false;
+    }
+  }
+
   const renderToolBar = () => {
     return [
       <Button icon={<PlusOutlined />} type="default" onClick={() => handleModalVisible(true)}>
@@ -437,8 +446,9 @@ const BillList: React.FC<Props> = (props: Props) => {
         chargeBills && chargeBills.length > 0
           ? <ChargeBill
             bills={chargeBills}
+            feeTypes={feeTypes}
             onCancel={() => handleChargeModalVisible(false)}
-            onOk={() => { }}
+            onOk={handleCharge}
             modalVisible={chargeModalVisible}
           />
           : null
@@ -452,7 +462,6 @@ export default connect(
     {
       bill: BillModelState,
       area: AreaModelState,
-      category: CategoryModelState,
       feeType: FeeTypeModelState,
       loading: {
         models: { [key: string]: boolean }

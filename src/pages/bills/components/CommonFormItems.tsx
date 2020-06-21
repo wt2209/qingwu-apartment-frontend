@@ -89,7 +89,7 @@ const CommonFormItems = (props: Props) => {
         label="金额"
         name="money"
       >
-        <InputNumber precision={2} placeholder="请输入" />
+        <InputNumber min={0} precision={2} placeholder="请输入" />
       </FormItem>
       <FormItem
         {...itemLayout}
@@ -101,10 +101,10 @@ const CommonFormItems = (props: Props) => {
       <FormItem {...itemLayout} style={{ marginBottom: 0 }} label="滞纳金">
         <Input.Group compact style={{ display: 'flex' }}>
           <FormItem name="late_rate">
-            <InputNumber placeholder="滞纳金率" precision={2} step={0.1} formatter={value => value ? `${value}%` : ''} />
+            <InputNumber placeholder="滞纳金率" precision={2} step={0.1} min={0} formatter={value => value ? `${value}%` : ''} />
           </FormItem>
           <FormItem name="late_base">
-            <InputNumber style={{ width: 100 }} placeholder="基数" precision={2} step={1} />
+            <InputNumber style={{ width: 100 }} placeholder="基数" precision={2} step={1} min={0} />
           </FormItem>
           <FormItem name="late_date">
             <DatePicker placeholder="开始收取日期" />
@@ -113,9 +113,9 @@ const CommonFormItems = (props: Props) => {
       </FormItem>
       <FormItem
         {...itemLayout}
-        label="最晚缴费时间"
+        label="应缴费日期"
         name="should_charge_at"
-        extra="应于此日期前缴费, 否则将产生滞纳金"
+        extra="用于计算月度应缴费用。"
       >
         <DatePicker placeholder="缴费时间" />
       </FormItem>

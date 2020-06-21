@@ -1,9 +1,9 @@
 import React from 'react';
 import { Form, Modal } from 'antd';
 import moment from 'moment';
-import CommonFormItems from './CommonFormItems';
 import { AreaListItem } from '@/pages/basic/areas/data';
 import { FeeTypeListItem } from '@/pages/basic/feeTypes/data';
+import CommonFormItems from './CommonFormItems';
 import styles from './style.less';
 
 interface CreateFormProps {
