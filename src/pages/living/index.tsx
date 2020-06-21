@@ -163,7 +163,7 @@ const Living = (props: Props) => {
               <Link to={`/livings/create/${room.id}`}>
                 <Button
                   type="dashed"
-                  style={{ border: '0', backgroundColor: '#5dade2', width: '100%', height: 225 }}
+                  style={{ border: '0', backgroundColor: '#5dade2', width: '100%', height: 247 }}
                 >
                   <PlusOutlined style={{ fontSize: 30, color: 'rgba(0,0,0,0.65)' }} />
                 </Button>

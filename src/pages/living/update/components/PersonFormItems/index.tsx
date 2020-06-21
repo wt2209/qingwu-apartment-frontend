@@ -3,6 +3,7 @@ import React, { Fragment, useState, useEffect } from "react"
 import locale from "antd/es/date-picker/locale/zh_CN"
 import { FormInstance } from "antd/lib/form"
 import { dateFormater } from "../.."
+import { educationOptions } from "@/pages/living/mapper"
 
 const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
   const { itemLayout, form } = props
@@ -58,11 +59,9 @@ const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
         {...itemLayout}
         label="学历">
         <Radio.Group size="small">
-          <Radio.Button value="专科">专科</Radio.Button>
-          <Radio.Button value="本科">本科</Radio.Button>
-          <Radio.Button value="硕士">硕士</Radio.Button>
-          <Radio.Button value="博士">博士</Radio.Button>
-          <Radio.Button value="其他">其他</Radio.Button>
+          {educationOptions.map(e => (
+            <Radio.Button key={e} value={e}>{e}</Radio.Button>
+          ))}
         </Radio.Group>
       </Form.Item>
       <Form.Item

@@ -63,7 +63,7 @@ const UpdateLiving = (props: Props) => {
         delete values.rent_start
         delete values.rent_end
         if (values.person) {
-          values.person.hired_at = moment(values.person.hired_at)
+          values.person.hired_at = values.person.hired_at ? moment(values.person.hired_at) : null
           if (values.person.contract_start) {
             if (values.person.contract_end === '无固定期') {
               values.person.contract_start = moment(values.person.contract_start)

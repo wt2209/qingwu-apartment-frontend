@@ -9,14 +9,14 @@ function Person(props: { record: RecordListItem; actions: Array<any> }) {
   return (
     <>
       <Card
-        bodyStyle={{ padding: 8, backgroundColor: '#5dade2', minHeight: 226, position: 'relative' }}
+        bodyStyle={{ padding: 8, backgroundColor: '#5dade2', minHeight: 248, position: 'relative' }}
         bordered={false}
       >
         <div style={{ display: 'flex', alignItems: 'center', paddingBottom: 4 }}>
           <div style={{ flex: 2, fontWeight: 'bold' }}>
             <span style={{ fontSize: 16 }}>{person.name}</span>
             <span style={{ fontSize: 14 }}>
-              （{person.gender} {person.education ? `，${person.education}` : null}）
+              （{person.gender}{person.education && person.education !== '未知' ? `，${person.education}` : null}）
             </span>
           </div>
           <div style={{ flex: 1, fontSize: 14, fontWeight: 'bold', textAlign: 'right' }}>
@@ -56,6 +56,10 @@ function Person(props: { record: RecordListItem; actions: Array<any> }) {
           <p style={{ marginBottom: 0 }}>
             身份证：
             {person.identify}
+          </p>
+          <p style={{ marginBottom: 0 }}>
+            退休日期(参考)：
+            {`${person.identify.slice(6, 10) * 1 + (person.gender === '男' ? 60 : 50)}-${person.identify.slice(10, 12)}-${person.identify.slice(12, 14)}`}
           </p>
           <p style={{ marginBottom: 0 }}>
             {person.remark}

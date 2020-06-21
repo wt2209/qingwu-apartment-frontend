@@ -41,7 +41,7 @@ const CreateLiving = (props: Props) => {
     room_id: roomId,
     record_at: moment(),
     person: {
-      education: '其他'
+      education: '未知'
     }
   }
 

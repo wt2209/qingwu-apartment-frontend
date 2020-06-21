@@ -5,6 +5,7 @@ import { FormInstance } from "antd/lib/form"
 import moment from "moment"
 import { dateFormater } from "../.."
 import { getOnePerson } from "@/pages/basic/people/service"
+import { educationOptions } from "@/pages/living/mapper"
 
 const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
   const { itemLayout, form } = props
@@ -25,7 +26,7 @@ const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
       const res = await getOnePerson({ identify })
       if (res && res.data) {
         const person = res.data
-        person.hired_at = moment(person.hired_at)
+        person.hired_at = person.hired_at ? moment(person.hired_at) : null
         if (person.contract_start) {
           if (person.contract_end === '无固定期') {
             setIsNoEnd(true)
@@ -89,11 +90,9 @@ const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
         {...itemLayout}
         label="学历">
         <Radio.Group size="small">
-          <Radio.Button value="专科">专科</Radio.Button>
-          <Radio.Button value="本科">本科</Radio.Button>
-          <Radio.Button value="硕士">硕士</Radio.Button>
-          <Radio.Button value="博士">博士</Radio.Button>
-          <Radio.Button value="其他">其他</Radio.Button>
+          {educationOptions.map(e => (
+            <Radio.Button key={e} value={e}>{e}</Radio.Button>
+          ))}
         </Radio.Group>
       </Form.Item>
       <Form.Item
