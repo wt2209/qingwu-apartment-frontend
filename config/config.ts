@@ -3,17 +3,18 @@ import { defineConfig, utils } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import webpackPlugin from './plugin.config';
-
-const { winPath } = utils;
-
-// preview.pro.ant.design only do not use in your production ;
+const { winPath } = utils; // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
-const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV, GA_KEY } = process.env;
 
+const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV, GA_KEY } = process.env;
 export default defineConfig({
   hash: true,
   antd: {},
-  analytics: GA_KEY ? { ga: GA_KEY } : false,
+  analytics: GA_KEY
+    ? {
+        ga: GA_KEY,
+      }
+    : false,
   dva: {
     hmr: true,
   },
@@ -182,6 +183,12 @@ export default defineConfig({
               ],
             },
             {
+              name: '查询表格',
+              icon: 'smile',
+              path: '/system/operations',
+              component: './system/operation',
+            },
+            {
               component: './404',
             },
           ],
@@ -216,7 +223,7 @@ export default defineConfig({
           resourcePath: string;
         },
         _: string,
-        localName: string,
+        localName: string
       ) => {
         if (
           context.resourcePath.includes('node_modules') ||
@@ -225,7 +232,9 @@ export default defineConfig({
         ) {
           return localName;
         }
+
         const match = context.resourcePath.match(/src(.*)/);
+
         if (match && match[1]) {
           const antdProPath = match[1].replace('.less', '');
           const arr = winPath(antdProPath)
@@ -234,6 +243,7 @@ export default defineConfig({
             .map((a: string) => a.toLowerCase());
           return `antd-pro${arr.join('-')}-${localName}`.replace(/--/g, '-');
         }
+
         return localName;
       },
     },

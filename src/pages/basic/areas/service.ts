@@ -1,6 +1,6 @@
 import request from '@/utils/request';
-import { AreaListParams } from './data';
 import { getDvaApp } from 'umi';
+import { AreaListParams } from './data';
 
 export async function getAllAreas() {
   return request('/api/all-areas');

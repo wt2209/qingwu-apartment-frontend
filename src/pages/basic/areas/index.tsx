@@ -3,12 +3,12 @@ import { Button, Divider, message, Select, Badge } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
+import { exportXlsx } from '@/utils/exportXlsx';
+import { ExportRender } from '@/global.d';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { AreaListItem } from './data';
 import { queryArea, updateArea, addArea, restoreArea, removeArea, queryExportArea } from './service';
-import { exportXlsx } from '@/utils/exportXlsx';
-import { ExportRender } from '@/global.d';
 
 const handleAdd = async (fields: FormValueType) => {
   const hide = message.loading('正在添加');
