@@ -1,3 +1,5 @@
+import { Moment } from "moment";
+
 export interface LivingStatisticsList {
   area: string,
   category: string,
@@ -9,18 +11,25 @@ export interface LivingStatisticsList {
 }
 
 export interface BillStatisticsList {
-  fee_type: string;
+  title: string;
   money: number;
 }
 
 export interface LivingStatisticsParams {
   areas?: number[];
-  types?: number[];
+  types?: string[];
   categories?: number[];
+  room?: string;
 }
 
 export interface BillStatisticsParams {
-
+  range?: Moment[]; // 开始时间, 结束时间
+  fee_types?: string[]; // 费用类型
+  areas?: number[]; // id
+  location?: string;
+  name?: string;
+  turn_in?: 'yes' | 'no' | 'all';
+  is_refund?: 0 | 1; // true false
 }
 
 export interface RepairStatisticsParams {

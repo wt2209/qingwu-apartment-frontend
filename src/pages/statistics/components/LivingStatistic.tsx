@@ -1,30 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { Table, Row, Col, Form, Card, Divider, Select, Button, Spin, Input } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
-import { LivingStatisticsList, LivingStatisticsParams } from '../data'
 import { AreaListItem } from '@/pages/basic/areas/data'
 import { CategoryListItem } from '@/pages/basic/categories/data'
-import { getAllAreas } from '@/pages/basic/areas/service'
-import { getAllCategories } from '@/pages/basic/categories/service'
+import { LivingStatisticsList, LivingStatisticsParams } from '../data'
 import { getLivingStatistics } from '../service'
 
-// const list: LivingStatisticsList[] = [
-//   {
-//     area: '职工公寓',
-//     type: 'person',
-//     category: '单身职工',
-//     rooms_all_count: 100,
-//     rooms_used_count: 80,
-//     rooms_empty_count: 20,
-//     people_count: 200,
-//   }
-// ]
-
-const LivingStatistic = () => {
+interface Props {
+  areas: AreaListItem[] | undefined;
+  categories: CategoryListItem[] | undefined;
+}
+const LivingStatistic = (props: Props) => {
+  const { areas, categories } = props
   const [form] = Form.useForm()
   const [statistics, setStatistics] = useState<LivingStatisticsList[]>()
-  const [areas, setAreas] = useState<AreaListItem[]>()
-  const [categories, setCategories] = useState<CategoryListItem[]>()
   const [loading, setLoading] = useState<boolean>(false)
   const types = [
     { label: '个人入住', value: 'person' },
@@ -33,28 +22,16 @@ const LivingStatistic = () => {
   ]
 
   const fetchStatistics = async (params: LivingStatisticsParams) => {
+    setLoading(true)
     const res = await getLivingStatistics(params)
     if (res?.data) {
       setStatistics(res.data)
     }
+    setLoading(false)
   }
 
   useEffect(() => {
     fetchStatistics({})
-  }, [])
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true)
-      const [res1, res2] = await Promise.all([getAllAreas(), getAllCategories()])
-      if (res1?.data) {
-        setAreas(res1.data)
-      }
-      if (res2?.data) {
-        setCategories(res2.data)
-      }
-      setLoading(false)
-    })()
   }, [])
 
   const initialForm = {
