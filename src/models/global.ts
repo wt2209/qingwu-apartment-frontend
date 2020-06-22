@@ -116,7 +116,6 @@ const GlobalModel: GlobalModelType = {
     },
     saveClearedNotices(state = { notices: [], collapsed: true }, { payload }): GlobalModelState {
       return {
-        collapsed: false,
         ...state,
         notices: state.notices.filter((item): boolean => item.type !== payload),
       };
@@ -126,7 +125,7 @@ const GlobalModel: GlobalModelType = {
   subscriptions: {
     setup({ history }): void {
       // Subscribe history(url) change, trigger `load` action if pathname is `/`
-      history.listen(({ pathname, search }): void => {
+      history.listen(({ pathname, search }: any): void => {
         if (typeof window.ga !== 'undefined') {
           window.ga('send', 'pageview', pathname + search);
         }

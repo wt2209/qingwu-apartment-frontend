@@ -1,11 +1,12 @@
 import { Tooltip, Tag } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import React from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { ConnectProps, ConnectState } from '@/models/connect';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
+import NoticeIconView from './NoticeIconView';
 
 export type SiderTheme = 'light' | 'dark';
 export interface GlobalHeaderRightProps extends ConnectProps {
@@ -62,6 +63,7 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
           <QuestionCircleOutlined />
         </a>
       </Tooltip>
+      <NoticeIconView />
       <Avatar />
       {REACT_APP_ENV && (
         <span>

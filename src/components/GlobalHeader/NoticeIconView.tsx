@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Tag, message } from 'antd';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import groupBy from 'lodash/groupBy';
 import moment from 'moment';
 import { NoticeItem } from '@/models/global';
@@ -22,9 +22,9 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
     const { dispatch } = this.props;
 
     if (dispatch) {
-      dispatch({
-        type: 'global/fetchNotices',
-      });
+      // dispatch({
+      //   type: 'global/fetchNotices',
+      // });
     }
   }
 
@@ -32,7 +32,8 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
     const { id } = clickedItem;
     const { dispatch } = this.props;
 
-    if (dispatch) {
+    // 需要打开dispatch
+    if (!dispatch) {
       dispatch({
         type: 'global/changeNoticeReadState',
         payload: id,
@@ -44,7 +45,8 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
     const { dispatch } = this.props;
     message.success(`${'清空了'} ${title}`);
 
-    if (dispatch) {
+    // 需要打开dispatch
+    if (!dispatch) {
       dispatch({
         type: 'global/clearNotices',
         payload: key,
@@ -57,11 +59,11 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   } => {
     const { notices = [] } = this.props;
 
-    if (notices.length === 0) {
+    if (!notices || notices.length === 0) {
       return {};
     }
 
-    const newNotices = notices.map(notice => {
+    const newNotices = notices?.map(notice => {
       const newNotice = { ...notice };
 
       if (newNotice.datetime) {
