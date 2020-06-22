@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { queryOperation } from './service';
-import { OperationListItem } from './data.d';
+import { OperationListItem } from './data';
 
 const OperationList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();

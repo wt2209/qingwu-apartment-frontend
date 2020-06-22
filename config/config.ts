@@ -12,8 +12,8 @@ export default defineConfig({
   antd: {},
   analytics: GA_KEY
     ? {
-        ga: GA_KEY,
-      }
+      ga: GA_KEY,
+    }
     : false,
   dva: {
     hmr: true,
@@ -133,16 +133,28 @@ export default defineConfig({
                   component: './basic/rooms',
                 },
                 {
-                  name: '区域管理',
+                  name: '人员明细',
                   icon: 'smile',
-                  path: '/basic/areas',
-                  component: './basic/areas',
+                  path: '/basic/people',
+                  component: './basic/people',
+                },
+                {
+                  name: '公司明细',
+                  icon: 'smile',
+                  path: '/basic/companies',
+                  component: './basic/companies',
                 },
                 {
                   name: '类型管理',
                   icon: 'smile',
                   path: '/basic/categories',
                   component: './basic/categories',
+                },
+                {
+                  name: '区域管理',
+                  icon: 'smile',
+                  path: '/basic/areas',
+                  component: './basic/areas',
                 },
                 {
                   name: '收费规则',
@@ -155,18 +167,6 @@ export default defineConfig({
                   icon: 'smile',
                   path: '/basic/fee-types',
                   component: './basic/feeTypes',
-                },
-                {
-                  name: '人员明细',
-                  icon: 'smile',
-                  path: '/basic/people',
-                  component: './basic/people',
-                },
-                {
-                  name: '公司明细',
-                  icon: 'smile',
-                  path: '/basic/companies',
-                  component: './basic/companies',
                 },
                 {
                   name: '续签记录',
@@ -183,10 +183,17 @@ export default defineConfig({
               ],
             },
             {
-              name: '查询表格',
-              icon: 'smile',
-              path: '/system/operations',
-              component: './system/operation',
+              name: '系统相关',
+              icon: 'setting',
+              path: '/system',
+              routes: [
+                {
+                  name: '操作记录',
+                  icon: 'smile',
+                  path: '/system/operations',
+                  component: './system/operations',
+                },
+              ]
             },
             {
               component: './404',

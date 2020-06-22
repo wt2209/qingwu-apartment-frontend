@@ -4,8 +4,8 @@ import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { DownloadOutlined } from '@ant-design/icons';
 import { exportXlsx } from '@/utils/exportXlsx';
 import { Button } from 'antd';
-import { queryRename, queryExportRename } from './service';
 import { ExportRender } from '@/global.d';
+import { queryRename, queryExportRename } from './service';
 
 const RenameTableList: React.FC<{}> = () => {
   const [exportParams, setExportParams] = useState({})
@@ -37,7 +37,7 @@ const RenameTableList: React.FC<{}> = () => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
       <ProTable<any>
         headerTitle="公司改名"
         actionRef={actionRef}

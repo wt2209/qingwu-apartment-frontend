@@ -3,10 +3,10 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { Badge, Button } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-import { PersonListItem } from './data';
-import { queryPerson, queryExportPerson } from './service';
 import { exportXlsx } from '@/utils/exportXlsx';
 import { ExportRender } from '@/global.d';
+import { PersonListItem } from './data';
+import { queryPerson, queryExportPerson } from './service';
 
 const PeopleTableList: React.FC<{}> = () => {
   const [exportParams, setExportParams] = useState({})
@@ -67,7 +67,7 @@ const PeopleTableList: React.FC<{}> = () => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
       <ProTable<PersonListItem>
         headerTitle="人员明细"
         actionRef={actionRef}

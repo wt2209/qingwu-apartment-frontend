@@ -5,6 +5,8 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import moment from 'moment';
 
+import { ExportRender } from '@/global.d';
+import { exportXlsx } from '@/utils/exportXlsx';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import { RoomListItem, RoomFormValueType } from './data';
@@ -15,8 +17,6 @@ import { getAllCategories } from '../categories/service';
 import { getAllAreas } from '../areas/service';
 import { getAllChargeRules } from '../chargeRules/service';
 import { ChargeRuleListItem } from '../chargeRules/data';
-import { ExportRender } from '@/global.d';
-import { exportXlsx } from '@/utils/exportXlsx';
 
 const handleAdd = async (fields: RoomFormValueType) => {
   const hide = message.loading('正在添加');
@@ -213,7 +213,7 @@ const RoomList: React.FC<{}> = () => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
       <ProTable<RoomListItem>
         headerTitle="房间明细"
         actionRef={actionRef}

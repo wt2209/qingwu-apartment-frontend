@@ -3,11 +3,11 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { DownloadOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
+import { ExportRender } from '@/global.d';
+import { exportXlsx } from '@/utils/exportXlsx';
 import { RenewListItem } from './data';
 import { queryRenew, queryExportRenew } from './service';
 import { typeMapper } from '../categories/mapper';
-import { ExportRender } from '@/global.d';
-import { exportXlsx } from '@/utils/exportXlsx';
 
 const RenewTableList: React.FC<{}> = () => {
   const [exportParams, setExportParams] = useState({})
@@ -62,7 +62,7 @@ const RenewTableList: React.FC<{}> = () => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
       <ProTable<RenewListItem>
         headerTitle="续签记录"
         actionRef={actionRef}

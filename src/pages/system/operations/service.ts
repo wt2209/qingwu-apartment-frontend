@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { OperationListParams } from './data.d';
+import { OperationListParams } from './data';
 
 export async function queryOperation(params?: OperationListParams) {
   return request('/api/system/operations', {

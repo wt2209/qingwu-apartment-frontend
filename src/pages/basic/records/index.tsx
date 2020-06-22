@@ -2,15 +2,15 @@ import React, { useRef, useState, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { Select, Button } from 'antd';
+import { ExportRender } from '@/global.d';
+import { DownloadOutlined } from '@ant-design/icons';
+import { exportXlsx } from '@/utils/exportXlsx';
 import { queryRecord, queryExportRecord } from './service';
 import { RecordListItem } from './data';
 import { AreaListItem } from '../areas/data';
 import { getAllAreas } from '../areas/service';
 import { CategoryListItem } from '../categories/data';
 import { getAllCategories } from '../categories/service';
-import { ExportRender } from '@/global.d';
-import { DownloadOutlined } from '@ant-design/icons';
-import { exportXlsx } from '@/utils/exportXlsx';
 
 const RecordTableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
@@ -126,7 +126,7 @@ const RecordTableList: React.FC<{}> = () => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
       <ProTable<RecordListItem>
         headerTitle="入住记录"
         actionRef={actionRef}

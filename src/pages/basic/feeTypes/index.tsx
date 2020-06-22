@@ -3,12 +3,12 @@ import { Button, Divider, message, Tag, Badge, Select } from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
+import { exportXlsx } from '@/utils/exportXlsx';
+import { ExportRender } from '@/global.d';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { queryFeeType, restoreFeeType, removeFeeType, updateFeeType, addFeeType, queryExportFeeType } from './service';
 import { FeeTypeListItem } from './data';
-import { exportXlsx } from '@/utils/exportXlsx';
-import { ExportRender } from '@/global.d';
 
 const handleAdd = async (fields: FormValueType) => {
   const hide = message.loading('正在添加');
@@ -162,7 +162,7 @@ const TableList: React.FC<{}> = () => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
       <ProTable<FeeTypeListItem>
         headerTitle="费用类型"
         actionRef={actionRef}

@@ -140,7 +140,7 @@ const TableList: React.FC<{}> = () => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
       <ProTable<AreaListItem>
         headerTitle="区域明细"
         actionRef={actionRef}

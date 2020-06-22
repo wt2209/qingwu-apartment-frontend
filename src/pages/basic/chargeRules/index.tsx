@@ -162,7 +162,7 @@ const TableList: React.FC<{}> = () => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
       <ProTable<ChargeRuleListItem>
         headerTitle="收费规则"
         actionRef={actionRef}

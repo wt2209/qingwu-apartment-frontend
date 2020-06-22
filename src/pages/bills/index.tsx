@@ -290,14 +290,16 @@ const BillList: React.FC<Props> = (props: Props) => {
  * @param ids 需要缴费的bill主键
  * @param lates 根据需要缴费的bills生成的滞纳金，需要插入到数据库
  */
-  const handleCharge = async (ids: string[], lates: any[] | undefined, chargeDate: string | undefined) => {
+  const handleCharge = async (
+    ids: string[], lates: any[] | undefined, chargeDate: string | undefined, way: string
+  ) => {
     const hide = message.loading('正在缴费');
     try {
-      await chargeBill(ids, lates, chargeDate)
+      await chargeBill(ids, lates, chargeDate, way)
       handleChargeModalVisible(false)
       reloadData()
       hide();
-      message.success('缴费成功，即将刷新');
+      message.success('缴费成功');
       return true;
     } catch (error) {
       hide();

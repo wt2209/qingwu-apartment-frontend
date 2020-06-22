@@ -3,10 +3,10 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import { Badge, Button } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-import { CompanyListItem } from './data';
-import { queryCompany, queryExportCompany } from './service';
 import { exportXlsx } from '@/utils/exportXlsx';
 import { ExportRender } from '@/global.d';
+import { CompanyListItem } from './data';
+import { queryCompany, queryExportCompany } from './service';
 
 const TableList: React.FC<{}> = () => {
   const [exportParams, setExportParams] = useState({})
@@ -60,7 +60,7 @@ const TableList: React.FC<{}> = () => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
       <ProTable<CompanyListItem>
         headerTitle="公司明细"
         actionRef={actionRef}
