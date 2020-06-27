@@ -1,11 +1,12 @@
 import request from '@/utils/request';
-import { TableListParams } from './data';
+import { RecordListParams } from './data';
 
-export async function queryRecord(params?: TableListParams) {
+export async function queryRecord(params: RecordListParams) {
+  const { current, ...rest } = params
   return request('/api/records', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   }).then(res => ({
     data: res.data,
@@ -16,11 +17,12 @@ export async function queryRecord(params?: TableListParams) {
   }))
 }
 
-export async function queryExportRecord(params?: TableListParams) {
+export async function queryExportRecord(params: RecordListParams) {
+  const { current, ...rest } = params
   return request('/api/records', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   })
 }

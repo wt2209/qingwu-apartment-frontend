@@ -1,11 +1,12 @@
 import request from '@/utils/request';
-import { TableListParams } from './data';
+import { PersonListParams } from './data';
 
-export async function queryPerson(params?: TableListParams) {
+export async function queryPerson(params: PersonListParams) {
+  const { current, ...rest } = params
   return request('/api/people', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   }).then(res => ({
     data: res.data,
@@ -16,11 +17,12 @@ export async function queryPerson(params?: TableListParams) {
   }))
 }
 
-export async function queryExportPerson(params?: TableListParams) {
+export async function queryExportPerson(params: PersonListParams) {
+  const { current, ...rest } = params
   return request('/api/people', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   })
 }

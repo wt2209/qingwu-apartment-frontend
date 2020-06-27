@@ -39,7 +39,7 @@ const handleUpdate = async (id: number, fields: FormValueType) => {
   }
 };
 
-const handleChangeStatus = async (id: number, status: boolean) => {
+const handleChangeStatus = async (id: string, status: boolean) => {
   const hide = message.loading('正在修改');
   try {
     if (status) {

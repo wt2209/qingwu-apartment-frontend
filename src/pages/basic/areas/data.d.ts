@@ -1,5 +1,5 @@
 export interface AreaListItem {
-  id: number;
+  id: string;
   title: string;
   description?: string;
   deleted_at?: Date;
@@ -7,23 +7,12 @@ export interface AreaListItem {
   created_at?: Date;
 }
 
-export interface AreaListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
-
-export interface AreaListData {
-  list: AreaListItem[];
-  pagination: Partial<AreaListPagination>;
-}
-
 export interface AreaListParams {
   sorter?: string;
   status?: string;
   title?: string;
   description?: string;
-  id?: number;
+  id?: string;
   pageSize?: number;
   current?: number;
   export?: number;

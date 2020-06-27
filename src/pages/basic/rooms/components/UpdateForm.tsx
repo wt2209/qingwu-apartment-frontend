@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { Form, Button, Modal } from 'antd';
 
-import { RoomListItem, RoomFormValueType } from '../data';
-import CommonFormItems from './CommonFormItems';
 import { AreaListItem } from '@/pages/basic/areas/data';
 import { CategoryListItem } from '@/pages/basic/categories/data';
 import { ChargeRuleListItem } from '@/pages/basic/chargeRules/data';
+import CommonFormItems from './CommonFormItems';
+import { RoomListItem, RoomFormValueType } from '../data';
 
 export interface UpdateFormProps {
   areas: AreaListItem[] | undefined;
   categories: CategoryListItem[] | undefined;
   chargeRules?: ChargeRuleListItem[];
   onCancel: (flag?: boolean, formVals?: RoomFormValueType) => void;
-  onSubmit: (values: RoomFormValueType) => void;
+  onSubmit: (values: Partial<RoomFormValueType>) => void;
   updateModalVisible: boolean;
   values: Partial<RoomListItem>;
 }
@@ -27,14 +27,14 @@ const formLayout = {
 };
 
 const UpdateForm: React.FC<UpdateFormProps> = props => {
-  const [formVals, setFormVals] = useState<RoomFormValueType>({
+  const [formVals, setFormVals] = useState<Partial<RoomFormValueType>>({
     title: props.values.title,
     building: props.values.building,
     unit: props.values.unit,
     number: props.values.number,
-    area_id: props.values.area ? props.values.area.id : undefined,
-    category_id: props.values.category ? props.values.category.id : undefined,
-    charge_rule_id: props.values.charge_rule ? props?.values?.charge_rule.id : undefined,
+    area_id: props.values.area?.id,
+    category_id: props.values.category?.id,
+    charge_rule_id: props.values.charge_rule?.id,
     remark: props.values.remark,
   });
 
@@ -48,7 +48,7 @@ const UpdateForm: React.FC<UpdateFormProps> = props => {
 
   const handleNext = async () => {
     const fieldsValue = await form.validateFields();
-    const result = { ...formVals, ...fieldsValue }
+    const result: Partial<RoomFormValueType> = { ...formVals, ...fieldsValue }
     setFormVals(result);
     handleUpdate(result);
   };

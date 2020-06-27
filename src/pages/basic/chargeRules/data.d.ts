@@ -1,5 +1,5 @@
 export interface ChargeRuleListItem {
-  id: number;
+  id: string;
   title: string;
   type: string;
   way: string;
@@ -18,23 +18,9 @@ export interface ChargeRule {
   rate: string;
 }
 
-export interface TableListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
-
-export interface TableListData {
-  list: ChargeRuleListItem[];
-  pagination: Partial<TableListPagination>;
-}
-
-export interface TableListParams {
-  sorter?: string;
-  status?: string;
-  name?: string;
-  desc?: string;
-  key?: number;
+export interface ChargeRuleListParams {
+  type?: 'person' | 'company' | 'other';
+  way?: 'before' | 'after';
   pageSize?: number;
-  currentPage?: number;
+  current?: number;
 }

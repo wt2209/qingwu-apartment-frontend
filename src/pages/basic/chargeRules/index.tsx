@@ -31,7 +31,7 @@ const handleAdd = async (fields: FormValueType) => {
  * 更新节点
  * @param fields
  */
-const handleUpdate = async (id: number, fields: FormValueType) => {
+const handleUpdate = async (id: string, fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
     await updateChargeRule(id, fields);
@@ -46,7 +46,7 @@ const handleUpdate = async (id: number, fields: FormValueType) => {
   }
 };
 
-const handleChangeStatus = async (id: number, status: boolean) => {
+const handleChangeStatus = async (id: string, status: boolean) => {
   const hide = message.loading('正在修改');
   try {
     if (status) {

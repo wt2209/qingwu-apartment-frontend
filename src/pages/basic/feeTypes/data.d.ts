@@ -1,5 +1,5 @@
 export interface FeeTypeListItem {
-  id: number;
+  id: string;
   title: string;
   turn_in: boolean;
   rate: number;
@@ -9,23 +9,9 @@ export interface FeeTypeListItem {
   deleted_at: Date | null;
 }
 
-export interface TableListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
-
-export interface TableListData {
-  list: FeeTypeListItem[];
-  pagination: Partial<TableListPagination>;
-}
-
-export interface TableListParams {
-  sorter?: string;
-  status?: string;
-  name?: string;
-  desc?: string;
-  key?: number;
+export interface FeeTypeListParams {
+  turn_in?: 1 | 0;
+  status?: 'all' | 'deleted' | 'using';
   pageSize?: number;
-  currentPage?: number;
+  current?: number;
 }

@@ -1,11 +1,12 @@
 import request from '@/utils/request';
 import { BillListParams } from './data.d';
 
-export async function queryBill(params?: BillListParams) {
+export async function queryBill(params: BillListParams) {
+  const { current, ...rest } = params
   return request('/api/bills', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   })
 }

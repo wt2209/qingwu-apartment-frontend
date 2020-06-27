@@ -39,7 +39,7 @@ const Living = (props: Props) => {
   const [renameModalVisible, setRenameModalVisible] = useState<boolean>(false)
   const [roomEditModalVisible, setRoomEditModalVisible] = useState<boolean>(false)
   const [record, setRecord] = useState<RecordListItem>()
-  const [roomId, setRoomId] = useState<number>(0)
+  const [roomId, setRoomId] = useState<string>()
 
   const fetchData = (payload: LivingFetchParams) => {
     dispatch({ type: 'living/fetch', payload })
@@ -127,7 +127,7 @@ const Living = (props: Props) => {
   }
 
   const renderContent = (room: LivingListItem) => {
-    const number = room.category.type === 'person'
+    const number = room?.category?.type === 'person'
       ? Math.max(room.number, room.records.length)
       : Math.max(1, room.records.length);
     const xlCols = number === 1 ? 24 : 12;
@@ -211,7 +211,7 @@ const Living = (props: Props) => {
         <div style={{ flex: 1 }}>
           <Row gutter={24}>
             {list?.map(room => (
-              <Col md={room.category.type === 'person' ? 12 : 6} sm={24} key={room.id} style={{ width: '100%' }}>
+              <Col md={room?.category?.type === 'person' ? 12 : 6} sm={24} key={room.id} style={{ width: '100%' }}>
                 <Card
                   style={{ marginBottom: 24 }}
                   headStyle={{ padding: '0 12px' }}
@@ -274,11 +274,13 @@ const Living = (props: Props) => {
         />
       }
       {
-        roomId > 0 && <RoomEditModal
-          roomId={roomId}
-          modalVisible={roomEditModalVisible}
-          handleVisible={(visible: boolean) => setRoomEditModalVisible(visible)}
-        />
+        roomId
+          ? <RoomEditModal
+            roomId={roomId}
+            modalVisible={roomEditModalVisible}
+            handleVisible={(visible: boolean) => setRoomEditModalVisible(visible)}
+          />
+          : null
       }
       <BackTop />
     </PageHeaderWrapper >

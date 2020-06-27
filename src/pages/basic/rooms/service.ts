@@ -1,12 +1,13 @@
 import request from '@/utils/request';
-import { RoomListParams, RoomFormValueType, RoomListItem } from './data';
 import { getDvaApp } from 'umi'
+import { RoomListParams, RoomFormValueType, RoomListItem } from './data';
 
-export async function queryRoom(params?: RoomListParams) {
+export async function queryRoom(params: RoomListParams) {
+  const { current, ...rest } = params
   return request('/api/rooms', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   }).then(res => ({
     data: res.data,
@@ -17,20 +18,21 @@ export async function queryRoom(params?: RoomListParams) {
   }))
 }
 
-export async function queryExportRoom(params?: RoomListParams) {
+export async function queryExportRoom(params: RoomListParams) {
+  const { current, ...rest } = params
   return request('/api/rooms', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   })
 }
 
-export async function getRoom(id: number) {
+export async function getRoom(id: string) {
   return request(`/api/rooms/${id}`)
 }
 
-export async function removeRoom(id: number) {
+export async function removeRoom(id: string) {
   return request(`/api/rooms/${id}`, {
     method: 'POST',
     data: {
@@ -45,7 +47,7 @@ export async function removeRoom(id: number) {
   })
 }
 
-export async function restoreRoom(id: number) {
+export async function restoreRoom(id: string) {
   return request(`/api/rooms/${id}`, {
     method: 'POST',
     data: {
@@ -73,7 +75,7 @@ export async function addRoom(data: Partial<RoomListItem>) {
   })
 }
 
-export async function updateRoom(id: number | undefined, formVals: RoomFormValueType) {
+export async function updateRoom(id: string | undefined, formVals: Partial<RoomFormValueType>) {
   return request(`/api/rooms/${id}`, {
     method: 'POST',
     data: {

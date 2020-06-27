@@ -1,14 +1,18 @@
 import request from '@/utils/request';
 import { getDvaApp } from 'umi';
-import { TableListParams, FeeTypeListItem } from './data';
+import { FeeTypeListParams, FeeTypeListItem } from './data';
 
 export async function getAllFeeTypes() {
   return request('/api/all-fee-types');
 }
 
-export async function queryFeeType(params?: TableListParams) {
+export async function queryFeeType(params: FeeTypeListParams) {
+  const { current, ...rest } = params
   return request('/api/fee-types', {
-    params,
+    params: {
+      ...rest,
+      page: current,
+    },
   }).then(res =>
     ({
       data: res.data,
@@ -20,13 +24,17 @@ export async function queryFeeType(params?: TableListParams) {
   );
 }
 
-export async function queryExportFeeType(params?: TableListParams) {
+export async function queryExportFeeType(params: FeeTypeListParams) {
+  const { current, ...rest } = params
   return request('/api/fee-types', {
-    params,
+    params: {
+      ...rest,
+      page: current,
+    },
   })
 }
 
-export async function removeFeeType(id: number) {
+export async function removeFeeType(id: string) {
   return request(`/api/fee-types/${id}`, {
     method: 'POST',
     data: {
@@ -45,7 +53,7 @@ export async function removeFeeType(id: number) {
   })
 }
 
-export async function restoreFeeType(id: number) {
+export async function restoreFeeType(id: string) {
   return request(`/api/fee-types/${id}`, {
     method: 'POST',
     data: {
@@ -75,7 +83,7 @@ export async function addFeeType(data: Partial<FeeTypeListItem>) {
   })
 }
 
-export async function updateFeeType(id: number, data: Partial<FeeTypeListItem>) {
+export async function updateFeeType(id: string, data: Partial<FeeTypeListItem>) {
   return request(`/api/fee-types/${id}`, {
     method: 'POST',
     data: {

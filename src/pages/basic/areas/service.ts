@@ -6,11 +6,12 @@ export async function getAllAreas() {
   return request('/api/all-areas');
 }
 
-export async function queryArea(params?: AreaListParams) {
+export async function queryArea(params: AreaListParams) {
+  const { current, ...rest } = params
   return request('/api/areas', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   }).then(res => ({
     data: res.data,
@@ -22,15 +23,16 @@ export async function queryArea(params?: AreaListParams) {
 }
 
 export async function queryExportArea(params: AreaListParams) {
+  const { current, ...rest } = params
   return request('/api/areas', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   })
 }
 
-export async function removeArea(id: number) {
+export async function removeArea(id: string) {
   return request(`/api/areas/${id}`, {
     method: 'POST',
     data: {
@@ -49,7 +51,7 @@ export async function removeArea(id: number) {
   })
 }
 
-export async function restoreArea(id: number) {
+export async function restoreArea(id: string) {
   return request(`/api/areas/${id}`, {
     method: 'POST',
     data: {

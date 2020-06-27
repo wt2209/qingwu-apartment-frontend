@@ -8,7 +8,7 @@ export interface FormValueType extends Partial<CategoryListItem> {
 
 export interface UpdateFormProps {
   onCancel: (flag?: boolean, formVals?: FormValueType) => void;
-  onSubmit: (id: number, values: FormValueType) => void;
+  onSubmit: (id: string, values: FormValueType) => void;
   updateModalVisible: boolean;
   values: Partial<CategoryListItem>;
 }
@@ -44,7 +44,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
     const fieldsValue = await form.validateFields();
     const result = { ...formVals, ...fieldsValue }
     setFormVals(result);
-    handleUpdate(props.values.id || 0, result);
+    handleUpdate(props.values.id || '', result);
   };
 
   const renderFooter = () => {

@@ -1,15 +1,16 @@
 import request from '@/utils/request';
 import { getDvaApp } from 'umi';
-import { TableListParams, CategoryListItem } from './data';
+import { CategoryListParams, CategoryListItem } from './data';
 
 export async function getAllCategories() {
   return request('/api/all-categories');
 }
 
-export async function queryCategory(params?: TableListParams) {
+export async function queryCategory(params: CategoryListParams) {
+  const { current, ...rest } = params
   return request('/api/categories', {
     params: {
-      ...params,
+      ...rest,
       page: params && params.current,
     },
   }).then(res => ({
@@ -21,16 +22,17 @@ export async function queryCategory(params?: TableListParams) {
   }))
 }
 
-export async function queryExportCategory(params?: TableListParams) {
+export async function queryExportCategory(params: CategoryListParams) {
+  const { current, ...rest } = params
   return request('/api/categories', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   })
 }
 
-export async function removeCategory(id: number) {
+export async function removeCategory(id: string) {
   return request(`/api/categories/${id}`, {
     method: 'POST',
     data: {
@@ -49,7 +51,7 @@ export async function removeCategory(id: number) {
   })
 }
 
-export async function restoreCategory(id: number) {
+export async function restoreCategory(id: string) {
   return request(`/api/categories/${id}`, {
     method: 'POST',
     data: {
@@ -85,7 +87,7 @@ export async function addCategory(data: Partial<CategoryListItem>) {
   })
 }
 
-export async function updateCategory(id: number, data: Partial<CategoryListItem>) {
+export async function updateCategory(id: string, data: Partial<CategoryListItem>) {
   return request(`/api/categories/${id}`, {
     method: 'POST',
     data: {

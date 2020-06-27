@@ -139,8 +139,8 @@ const BillList: React.FC<Props> = (props: Props) => {
       title: '所属区域',
       dataIndex: 'area_id',
       order: 10,
-      render: (value, { area }) => area.title,
-      exportRender: row => row?.area.title,
+      render: (value, { area }) => area?.title,
+      exportRender: row => row?.area?.title,
       renderFormItem: (record, { value, onChange }) => (
         <Select placeholder="请选择" value={value} onChange={onChange}>
           {areas?.map(area => (

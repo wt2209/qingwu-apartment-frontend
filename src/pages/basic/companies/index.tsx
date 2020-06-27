@@ -8,7 +8,7 @@ import { ExportRender } from '@/global.d';
 import { CompanyListItem } from './data';
 import { queryCompany, queryExportCompany } from './service';
 
-const TableList: React.FC<{}> = () => {
+const CompanyList: React.FC<{}> = () => {
   const [exportParams, setExportParams] = useState({})
 
   const actionRef = useRef<ActionType>();
@@ -36,6 +36,7 @@ const TableList: React.FC<{}> = () => {
     {
       title: '在用房间数',
       dataIndex: 'records_count',
+      hideInSearch: true,
     },
     {
       title: '状态',
@@ -81,4 +82,4 @@ const TableList: React.FC<{}> = () => {
   );
 };
 
-export default TableList;
+export default CompanyList;

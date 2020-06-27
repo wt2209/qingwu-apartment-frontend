@@ -1,11 +1,12 @@
 import request from '@/utils/request';
 import { CompanyListParams } from './data';
 
-export async function queryCompany(params?: CompanyListParams) {
+export async function queryCompany(params: CompanyListParams) {
+  const { current, ...rest } = params
   return request('/api/companies', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   }).then(res => ({
     data: res.data,
@@ -15,11 +16,12 @@ export async function queryCompany(params?: CompanyListParams) {
     current: res.meta.current_page
   }))
 }
-export async function queryExportCompany(params?: CompanyListParams) {
+export async function queryExportCompany(params: CompanyListParams) {
+  const { current, ...rest } = params
   return request('/api/companies', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   })
 }

@@ -1,7 +1,6 @@
 import { AreaListItem } from "../basic/areas/data";
 
 export interface BillListItem {
-  bill: any;
   id: string; // uuid
   area: AreaListItem;
   type: 'person' | 'company' | 'other';

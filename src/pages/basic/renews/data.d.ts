@@ -1,7 +1,7 @@
 import { RecordListItem } from "../records/data";
 
 export interface RenewListItem {
-  id: number;
+  id: string;
   record: RecordListItem;
   old_rent_end: Date;
   new_rent_end: Date;
@@ -10,23 +10,7 @@ export interface RenewListItem {
   updated_at: Date;
 }
 
-export interface TableListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
-
-export interface TableListData {
-  list: RenewListItem[];
-  pagination: Partial<TableListPagination>;
-}
-
-export interface TableListParams {
-  sorter?: string;
-  status?: string;
-  name?: string;
-  desc?: string;
-  key?: number;
+export interface RenewListParams {
   pageSize?: number;
   current?: number;
 }

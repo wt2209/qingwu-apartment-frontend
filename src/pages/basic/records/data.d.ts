@@ -5,11 +5,10 @@ import { CompanyListItem } from "../companies/data";
 import { RoomListItem } from "../rooms/data";
 
 export interface RecordListItem {
-  id: number;
+  id: string;
   room: RoomListItem;
   to_room?: RoomListItem;
   area: AreaListItem;
-  area_id: number;
   category: CategoryListItem;
   type: 'person' | 'company' | 'functional';
   record_at?: Date;
@@ -22,23 +21,14 @@ export interface RecordListItem {
   proof_files: UploadFile<any>[];
 }
 
-export interface TableListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
-
-export interface TableListData {
-  list: RecordListItem[];
-  pagination: Partial<TableListPagination>;
-}
-
-export interface TableListParams {
-  sorter?: string;
-  status?: string;
-  name?: string;
-  desc?: string;
-  key?: number;
+export interface RecordListParams {
+  status?: 'living' | 'quitted' | 'moved';
+  area_id?: string;
+  category_id?: string;
+  room?: string;
+  name?: string; // 姓名
+  identify?: string;
+  company_name?: number;
   pageSize?: number;
   current?: number;
 }

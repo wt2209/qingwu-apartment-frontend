@@ -24,7 +24,7 @@ const handleAdd = async (fields: FormValueType) => {
   }
 };
 
-const handleUpdate = async (id: number, fields: FormValueType) => {
+const handleUpdate = async (id: string, fields: FormValueType) => {
   const hide = message.loading('正在配置');
   try {
     await updateFeeType(id, fields);
@@ -39,7 +39,7 @@ const handleUpdate = async (id: number, fields: FormValueType) => {
   }
 };
 
-const handleChangeStatus = async (id: number, status: boolean) => {
+const handleChangeStatus = async (id: string, status: boolean) => {
   const hide = message.loading('正在修改');
   try {
     if (status) {

@@ -1,5 +1,5 @@
 export interface PersonListItem {
-  id: number;
+  id: string;
   name: string;
   gender?: '男' | '女';
   education?: string;
@@ -15,23 +15,12 @@ export interface PersonListItem {
   updated_at: Date;
 }
 
-export interface TableListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
-
-export interface TableListData {
-  list: PersonListItem[];
-  pagination: Partial<TableListPagination>;
-}
-
-export interface TableListParams {
-  sorter?: string;
-  status?: string;
+export interface PersonListParams {
   name?: string;
-  desc?: string;
-  key?: number;
+  department?: string;
+  identify?: string;
+  serial?: string;
+  phone?: string;
   pageSize?: number;
   current?: number;
 }

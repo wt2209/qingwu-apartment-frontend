@@ -32,7 +32,7 @@ const handleAdd = async (fields: RoomFormValueType) => {
   }
 };
 
-const handleUpdate = async (id: number | undefined, fields: RoomFormValueType) => {
+const handleUpdate = async (id: string | undefined, fields: Partial<RoomFormValueType>) => {
   const hide = message.loading('正在修改');
   try {
     await updateRoom(id, fields);
@@ -46,7 +46,7 @@ const handleUpdate = async (id: number | undefined, fields: RoomFormValueType) =
   }
 };
 
-const handleChangeStatus = async (id: number, status: boolean) => {
+const handleChangeStatus = async (id: string, status: boolean) => {
   const hide = message.loading('正在修改');
   try {
     if (status) {
@@ -140,7 +140,7 @@ const RoomList: React.FC<{}> = () => {
         const rule = chargeRules?.find(r => r.id === row.charge_rule_id)
         return rule?.title || ''
       },
-      renderText: (id: number) => {
+      renderText: (id: string) => {
         const rule = chargeRules?.find(r => r.id === id)
         return rule?.title
       },

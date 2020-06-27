@@ -1,11 +1,12 @@
 import request from '@/utils/request';
-import { TableListParams } from './data';
+import { RenewListParams } from './data';
 
-export async function queryRenew(params?: TableListParams) {
+export async function queryRenew(params: RenewListParams) {
+  const { current, ...rest } = params
   return request('/api/renews', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   }).then(res => ({
     data: res.data,
@@ -16,11 +17,12 @@ export async function queryRenew(params?: TableListParams) {
   }))
 }
 
-export async function queryExportRenew(params?: TableListParams) {
+export async function queryExportRenew(params: RenewListParams) {
+  const { current, ...rest } = params
   return request('/api/renews', {
     params: {
-      ...params,
-      page: params && params.current,
+      ...rest,
+      page: current,
     },
   })
 }

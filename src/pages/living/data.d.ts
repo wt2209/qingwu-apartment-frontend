@@ -4,7 +4,7 @@ import { RecordListItem } from "../basic/records/data";
 
 // 以房间为主题，计算出来的 “居住情况”
 export interface LivingListItem {
-  id: number;
+  id: string;
   area_id: number;
   category_id: number;
   area: AreaListItem;

@@ -1,5 +1,5 @@
 export interface CompanyListItem {
-  id: number;
+  id: string;
   company_name: string;
   manager?: string;
   manager_phone?: string;
@@ -10,23 +10,12 @@ export interface CompanyListItem {
   created_at?: Date;
 }
 
-export interface TableListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
-
-export interface TableListData {
-  list: CompanyListItem[];
-  pagination: Partial<TableListPagination>;
-}
-
 export interface CompanyListParams {
-  sorter?: string;
-  status?: string;
-  name?: string;
-  desc?: string;
-  key?: number;
+  company_name?: string;
+  manager?: string;
+  manager_phone?: string;
+  linkman?: string;
+  linkman_phone?: number;
   pageSize?: number;
   current?: number;
 }
