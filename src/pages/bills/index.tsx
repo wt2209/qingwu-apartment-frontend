@@ -45,7 +45,7 @@ const handleAdd = async (fields: BillFormValueType) => {
   }
 };
 
-const handleUpdate = async (id: string, fields: BillFormValueType) => {
+const handleUpdate = async (id: number, fields: BillFormValueType) => {
   const hide = message.loading('正在配置');
   try {
     await updateBill(id, fields);
@@ -291,7 +291,7 @@ const BillList: React.FC<Props> = (props: Props) => {
  * @param lates 根据需要缴费的bills生成的滞纳金，需要插入到数据库
  */
   const handleCharge = async (
-    ids: string[], lates: any[] | undefined, chargeDate: string | undefined, way: string
+    ids: number[], lates: any[] | undefined, chargeDate: string | undefined, way: string
   ) => {
     const hide = message.loading('正在缴费');
     try {

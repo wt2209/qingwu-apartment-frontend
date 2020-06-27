@@ -1,15 +1,15 @@
 import React from 'react';
 import { Form, Modal } from 'antd';
 import moment from 'moment';
-import { BillListItem, BillFormValueType } from '../data.d';
 import { AreaListItem } from '@/pages/basic/areas/data';
 import { FeeTypeListItem } from '@/pages/basic/feeTypes/data';
+import { BillListItem, BillFormValueType } from '../data.d';
 import CommonFormItems from './CommonFormItems';
 import styles from './style.less';
 
 export interface Props {
   onCancel: (flag?: boolean, formVals?: BillFormValueType) => void;
-  onSubmit: (id: string, values: BillFormValueType) => void;
+  onSubmit: (id: number, values: BillFormValueType) => void;
   updateModalVisible: boolean;
   bill: BillListItem;
   areas: AreaListItem[] | undefined;

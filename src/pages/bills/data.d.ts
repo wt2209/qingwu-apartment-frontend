@@ -1,7 +1,8 @@
 import { AreaListItem } from "../basic/areas/data";
 
 export interface BillListItem {
-  id: string; // uuid
+  id: number;
+  uuid?: string; // 唯一标识符
   area: AreaListItem;
   type: 'person' | 'company' | 'other';
   way: 'before' | 'after';

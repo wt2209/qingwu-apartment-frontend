@@ -9,7 +9,7 @@ interface Props {
   bills: BillListItem[];
   modalVisible: boolean;
   feeTypes: FeeTypeListItem[] | undefined;
-  onOk: (ids: string[], lates: any[] | undefined, chargeDate: string | undefined, way: string) => void;
+  onOk: (ids: number[], lates: any[] | undefined, chargeDate: string | undefined, way: string) => void;
   onCancel: () => void;
 }
 
