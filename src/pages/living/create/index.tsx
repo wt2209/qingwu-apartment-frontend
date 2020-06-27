@@ -5,21 +5,21 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { LeftOutlined, InboxOutlined } from '@ant-design/icons';
 import { Link, history, connect, Dispatch } from 'umi';
 import locale from "antd/es/date-picker/locale/zh_CN"
-import styles from './style.less';
 import { CategoryListItem } from '@/pages/basic/categories/data';
 import { RoomListItem } from '@/pages/basic/rooms/data';
 import { getRoom } from '@/pages/basic/rooms/service';
 import { getAllCategories } from '@/pages/basic/categories/service';
-import { removeFile } from '../service';
 import { FILE_UPLOAD_URL } from '@/config';
 import { ChargeRuleListItem } from '@/pages/basic/chargeRules/data';
 import { getAllChargeRules } from '@/pages/basic/chargeRules/service';
+import { removeFile } from '../service';
+import styles from './style.less';
 import PersonFormItems from './components/PersonFormItems';
 import CompanyFormItems from './components/CompanyFormItems';
 
 interface Props {
   dispatch: Dispatch;
-  match: { params: { roomId: number } }
+  match: { params: { roomId: string } }
 }
 
 const itemLayout = {
@@ -76,8 +76,8 @@ const CreateLiving = (props: Props) => {
     })()
   }, [roomId])
 
-  const handleChargeRuleChange = (value: number) => {
-    if (value > 0) {
+  const handleChargeRuleChange = (value: string) => {
+    if (value) {
       const chargeRule = chargeRules!.find(item => item.id === value)
       const recordAt: Moment = form.getFieldValue('record_at')
       const rentDate: Array<Moment> = form.getFieldValue('rent_date')
@@ -196,7 +196,7 @@ const CreateLiving = (props: Props) => {
               <DatePicker.RangePicker locale={locale} placeholder={['开始日期', '结束日期']} format={dateFormater} />
             </Form.Item>
             <Form.Item {...itemLayout} label="选择收费规则" name="charge_rule_id">
-              <Select placeholder="请选择" onChange={(value: number) => handleChargeRuleChange(value)}>
+              <Select placeholder="请选择" onChange={(value: string) => handleChargeRuleChange(value)}>
                 <Select.Option value={0}>无</Select.Option>
                 {chargeRules?.map(rule =>
                   <Select.Option key={rule.id} value={rule.id}>{rule.title}</Select.Option>

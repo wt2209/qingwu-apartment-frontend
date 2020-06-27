@@ -3,9 +3,9 @@ import React, { Fragment, useState, useEffect } from "react"
 import locale from "antd/es/date-picker/locale/zh_CN"
 import { FormInstance } from "antd/lib/form"
 import moment from "moment"
-import { dateFormater } from "../.."
 import { getOnePerson } from "@/pages/basic/people/service"
 import { educationOptions } from "@/pages/living/mapper"
+import { dateFormater } from "../.."
 
 const PersonFormItems = (props: { itemLayout: any, form: FormInstance }) => {
   const { itemLayout, form } = props
